@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Ладь</string>
+
+	<!-- Common actions -->
+	<string name="action_back">Назад</string>
+	<string name="action_add">Добавить</string>
+	<string name="action_delete">Удалить</string>
+	<string name="action_archive">Архив</string>
+	<string name="action_save">Сохранить</string>
+	<string name="action_ok">OK</string>
+	<string name="action_cancel">Отмена</string>
+	<string name="action_clear">Сброс</string>
+	<string name="action_select">Выберите</string>
+
+	<!-- Formats -->
+	<string name="format_time_hm">HH:mm</string>
+	<string name="format_date_from">С %1$s</string>
+	<string name="format_date_to">По %1$s</string>
+	<string name="format_time_from">С %1$s</string>
+	<string name="format_time_to">До %1$s</string>
+	<string name="format_time_optional">Время: %1$s</string>
+	<string name="format_habit_supporting">%1$s %2$s · %3$s</string>
+	<string name="format_schedule_supporting">%1$s – %2$s, %3$s–%4$s · %5$s</string>
+
+	<!-- Home / shell -->
+	<string name="home_headline">Главный экран</string>
+	<string name="home_subtitle">Списки → Добавить</string>
+	<string name="home_categories">Категории</string>
+	<string name="home_habits">Привычки</string>
+	<string name="home_time">Время</string>
+	<string name="home_calendar">Календарь</string>
+	<string name="home_devices">Устройства</string>
+	<string name="home_calsync">Календари</string>
+
+	<string name="nav_calendar">Календарь</string>
+	<string name="nav_chat">Чат</string>
+	<string name="nav_habits">Привычки</string>
+	<string name="nav_time">Время</string>
+	<string name="nav_more">Ещё</string>
+	<string name="more_title">Ещё</string>
+	<string name="today_section_title">Сегодня</string>
+	<string name="today_free">Свободно: %1$s</string>
+	<string name="today_due_summary">Привычки: %1$d из %2$d отмечено</string>
+	<string name="today_due_empty">Нет привычек на сегодня</string>
+	<string name="today_open_calendar">Открыть календарь</string>
+	<string name="more_section_lists">Списки</string>
+	<string name="more_section_links">Справочники и подключения</string>
+	<string name="chat_stub">Скоро: быстрый ввод по шаблонам (например «бег 10 мин»).</string>
+
+	<string name="devices_title">Устройства</string>
+	<string name="devices_stub_message">Подключение устройств — этап 2</string>
+	<string name="calsync_title">Календари</string>
+	<string name="calsync_stub_message">Подключение внешних календарей (calsync) — позже</string>
+
+	<!-- Calendar -->
+	<string name="calendar_title">Календарь</string>
+	<string name="calendar_view_day">День</string>
+	<string name="calendar_view_feed">Лента</string>
+	<string name="calendar_view_month">Месяц</string>
+	<string name="calendar_view_week">Неделя</string>
+	<string name="calendar_today">Сегодня</string>
+	<string name="calendar_prev_day">Предыдущий день</string>
+	<string name="calendar_next_day">Следующий день</string>
+	<string name="calendar_prev_week">Предыдущая неделя</string>
+	<string name="calendar_next_week">Следующая неделя</string>
+	<string name="calendar_week_range">%1$s – %2$s</string>
+	<string name="calendar_week_day_title">%1$s, %2$s</string>
+	<string name="calendar_week_day_summary">Блоков: %1$d · свободно %2$s · привычек: %3$d</string>
+	<string name="calendar_free_summary">Свободно: %1$s</string>
+	<string name="calendar_busy_empty">Нет занятости на этот день</string>
+	<string name="calendar_habits_empty">Нет привычек на этот день</string>
+	<string name="calendar_busy_add">Добавить блок</string>
+	<string name="calendar_habit_add">Добавить привычку</string>
+	<string name="calendar_create_sheet_title">Создать</string>
+	<string name="calendar_create_for_date">На %1$s</string>
+	<string name="calendar_create_block">Разовый блок</string>
+	<string name="calendar_create_habit">Привычку</string>
+	<string name="calendar_legend_busy">Занятость</string>
+	<string name="calendar_legend_habits">Привычки</string>
+	<string name="calendar_week_strip_busy">%1$d</string>
+	<string name="calendar_week_strip_habits">%1$d</string>
+	<string name="calendar_week_preview_more">ещё %1$d</string>
+	<string name="calendar_section_busy">Занятость</string>
+	<string name="calendar_section_habits">Привычки</string>
+	<string name="calendar_source_schedule">Расписание</string>
+	<string name="calendar_source_manual">Вручную</string>
+	<string name="calendar_source_health">Здоровье</string>
+	<string name="calendar_source_calendar">Календарь</string>
+	<string name="calendar_feed_empty">Нет записей в ленте</string>
+	<string name="calendar_feed_jump_today">К сегодня</string>
+	<string name="calendar_day_mode_list">Список</string>
+	<string name="calendar_day_mode_timeline">Лента часов</string>
+	<string name="calendar_week_mode_list">Список</string>
+	<string name="calendar_week_mode_grid">Сетка</string>
+	<string name="calendar_feed_filter_all">Все</string>
+	<string name="calendar_feed_filter_schedule">Расписание</string>
+	<string name="calendar_feed_filter_manual">Вручную</string>
+	<string name="calendar_feed_filter_habit">Привычки</string>
+	<string name="calendar_feed_filter_health">Здоровье</string>
+	<string name="calendar_feed_filter_calendar">Календарь</string>
+	<string name="calendar_prev_month">Предыдущий месяц</string>
+	<string name="calendar_next_month">Следующий месяц</string>
+	<string name="format_time_range">%1$s–%2$s</string>
+	<string name="format_duration_hm">%1$d ч %2$d мин</string>
+	<string name="format_habit_goal">%1$s %2$s</string>
+	<string name="format_habit_goal_time">%1$s %2$s · %3$s</string>
+
+	<!-- Categories -->
+	<string name="categories_title">Категории</string>
+	<string name="category_new">Новая категория</string>
+	<string name="category_edit">Категория</string>
+	<string name="category_field_title">Название</string>
+	<string name="category_field_color">Цвет</string>
+	<string name="category_key_custom">своя</string>
+	<string name="category_selector_label">Категория</string>
+
+	<!-- Habits -->
+	<string name="habits_title">Привычки</string>
+	<string name="habits_empty">Нет привычек. Нажмите +, чтобы добавить</string>
+	<string name="habit_new">Новая привычка</string>
+	<string name="habit_edit">Привычка</string>
+	<string name="habit_field_title">Название</string>
+	<string name="habit_field_goal">Цель</string>
+	<string name="habit_field_unit">Единица</string>
+	<string name="habit_unit_km">км</string>
+	<string name="habit_unit_min">мин</string>
+	<string name="habit_unit_reps">раз</string>
+	<string name="habit_mark_done">Сделано</string>
+	<string name="habit_mark_skip">Пропуск</string>
+	<string name="habit_status_done">сделано</string>
+	<string name="habit_status_skipped">пропуск</string>
+	<string name="habit_mark_undo">Отменить</string>
+	<string name="habit_mark_snackbar_done">Отмечено: сделано</string>
+	<string name="habit_mark_snackbar_skipped">Отмечено: пропуск</string>
+	<string name="habit_streak_format">Серия: %1$d</string>
+	<string name="habit_history_sheet_title">Отметки · %1$s</string>
+	<string name="habit_history_open">История отметок</string>
+	<string name="habit_not_due_today">Сегодня не в ритме</string>
+
+	<!-- Time schedules -->
+	<string name="time_schedules_title">Расписания</string>
+	<string name="time_schedule_new">Новое расписание</string>
+	<string name="time_schedule_edit">Расписание</string>
+	<string name="time_schedule_field_title">Название</string>
+	<string name="time_block_new">Разовый блок</string>
+	<string name="time_block_edit">Блок</string>
+	<string name="time_block_field_title">Название</string>
+	<string name="time_block_untitled">Без названия</string>
+	<string name="time_block_error_overlap">Интервал пересекается с другим или превышает сутки</string>
+
+	<!-- Temporal -->
+	<string name="temporal_section_date">Дата</string>
+	<string name="temporal_section_date_range">Период дат</string>
+	<string name="temporal_section_time">Время</string>
+	<string name="temporal_section_time_range">Интервал суток</string>
+	<string name="temporal_section_recurrence">Повторение</string>
+	<string name="temporal_section_alarm">Будильник</string>
+	<string name="temporal_section_reminder">Напоминание</string>
+	<string name="temporal_pick_date">Выбрать дату</string>
+	<string name="temporal_time_unset">не задано</string>
+	<string name="temporal_field_type">Тип</string>
+	<string name="temporal_field_interval">Интервал</string>
+	<string name="temporal_field_days">Дни недели</string>
+	<string name="temporal_field_mode">Режим</string>
+	<string name="temporal_field_reminder">Заранее</string>
+
+	<string name="recurrence_daily">Каждый день</string>
+	<string name="recurrence_weekdays">Будни</string>
+	<string name="recurrence_weekly">Еженедельно</string>
+	<string name="recurrence_every_n_days">Каждые N дней</string>
+	<string name="recurrence_monthly">Ежемесячно</string>
+	<string name="recurrence_yearly">Ежегодно</string>
+
+	<string name="weekday_mon">Пн</string>
+	<string name="weekday_tue">Вт</string>
+	<string name="weekday_wed">Ср</string>
+	<string name="weekday_thu">Чт</string>
+	<string name="weekday_fri">Пт</string>
+	<string name="weekday_sat">Сб</string>
+	<string name="weekday_sun">Вс</string>
+
+	<string name="alarm_mode_none">Нет</string>
+	<string name="alarm_mode_notification">Уведомление</string>
+	<string name="alarm_mode_alarm">Будильник</string>
+
+	<string name="reminder_none">Нет</string>
+	<string name="reminder_5min">За 5 мин</string>
+	<string name="reminder_15min">За 15 мин</string>
+	<string name="reminder_30min">За 30 мин</string>
+	<string name="reminder_1hour">За 1 час</string>
+
+	<!-- Seed category titles -->
+	<string name="seed_category_sleep">Сон</string>
+	<string name="seed_category_work">Работа</string>
+	<string name="seed_category_lunch">Обед</string>
+	<string name="seed_category_meal">Еда</string>
+	<string name="seed_category_commute">Дорога</string>
+	<string name="seed_category_sport">Спорт</string>
+	<string name="seed_category_run">Бег</string>
+	<string name="seed_category_walk">Ходьба</string>
+	<string name="seed_category_health">Здоровье</string>
+	<string name="seed_category_study">Учёба</string>
+	<string name="seed_category_home">Быт</string>
+	<string name="seed_category_family">Семья</string>
+	<string name="seed_category_leisure">Отдых</string>
+	<string name="seed_category_care">Уход за собой</string>
+	<string name="seed_category_other">Прочее</string>
+</resources>

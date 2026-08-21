@@ -1,0 +1,24 @@
+package app.lade.categories.ui.list
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import app.lade.categories.domain.CategoryRepository
+import app.lade.categories.domain.model.Category
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class CategoriesListViewModel @Inject constructor(
+	private val repository: CategoryRepository,
+) : ViewModel() {
+	val categories: StateFlow<List<Category>> = repository.observeActive()
+		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+	fun archive(id: Long) {
+		viewModelScope.launch { repository.archive(id) }
+	}
+}

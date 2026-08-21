@@ -1,0 +1,42 @@
+---
+description: Ладь UI — ресурсы, Material 3, без лишних стилей
+globs: "**/ui/**/*.kt,**/res/values/**,**/res/values-*/**"
+alwaysApply: false
+---
+
+# UI: ресурсы и Material
+
+## Строки и значения
+
+- Пользовательский текст — только `res/values/strings.xml` (+ `values-xx` при локализации). В Compose: `stringResource(R.string.*)`.
+- Форматы и плюралы: `stringResource(id, args…)` / `plurals.xml`. Паттерны даты-времени (`HH:mm`) — тоже string resources.
+- Не хардкодить в Kotlin/XML-разметке: отступы, размеры — в `dimens.xml`; цвета бренда — в `colors.xml`, дальше через тему.
+- Content description иконок — string resources. Диалоги (OK/Отмена) — тоже.
+- Подписи enum/кодов — в UI + `strings`, не в `domain`.
+- Исключение: превью/`@Preview` dummy-текст можно локально; в прод-комposable — нет.
+
+## Тема и стили
+
+- Один визуальный язык: `LadeTheme` + `MaterialTheme` (Material 3). Цвет/тип/форма — из `colorScheme` / `typography` / `shapes`.
+- XML: один app-theme (`Theme.Lade`), без параллельных «стилей экрана».
+- Не плодить `TextStyle` / `Modifier` / XML `style` на каждый экран. Сначала переиспользовать токены Material; общий паттерн → тема или один shared composable, не третий стиль.
+- Вторичный текст: `onSurfaceVariant` (и аналоги role-токенов), не `onSurface.copy(alpha = …)` без причины.
+- Кастомный цвет/стиль — только если нет подходящего токена M3; тогда в ресурсы/тему и переиспользовать.
+
+## Material Design
+
+- Каркас экрана: `Scaffold` + `TopAppBar` / FAB / snackbar по гайдам M3.
+- Сетка 8 dp; интерактив ≥ 48 dp.
+- Не изобретать свои кнопки/списки, если хватает Material3 components.
+
+## Антипримеры
+
+```kotlin
+// ❌
+Text("Календарь")
+Text(..., color = Color(0xFF1E3A5F), fontSize = 18.sp)
+
+// ✅
+Text(stringResource(R.string.calendar_title))
+Text(..., style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
+```

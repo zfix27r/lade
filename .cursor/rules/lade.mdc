@@ -1,0 +1,37 @@
+---
+description: Ладь — где правда в доках и границы пакетов
+alwaysApply: true
+---
+
+# Ладь
+
+## Где читать
+
+- Архитектура: `docs/architecture.md`
+- Фича: `app/src/main/java/app/lade/<пакет>/doc/` (шаблоны — `lade-doc-readme`, `lade-doc-tasks`)
+- `human/` — сводка прогресса для человека; **не источник** для ответов/правок
+
+В `docs/` только `architecture.md`.
+
+## Контракт пакетов (вместо секции в README)
+
+- Снаружи пакета: только `*.domain` (интерфейсы + модели) и **явные** UI-виджеты (`CategorySelector`, `CategoryColorIndicator`, `temporal.ui`).
+- Не импортировать чужие `*.data`, DAO, чужой feature-`ui` (кроме виджетов выше).
+- `habits` ↛ `time`, `time` ↛ `habits`. Стык — `calendar` через порты domain.
+- `chat` — чат/шаблоны ввода; пишет только через `habits.domain` / `time.domain` (не в чужой ui/data).
+- `calendar` — экран Ладь; `calsync` — внешние календари. SSOT = Room (`database`); DAO только из `*.data`.
+- `temporal.domain` — RRULE / RecurrenceDraft; `temporal.ui` — пикеры. `reminders` — уведомления/будильники.
+- `database` — без UI/use-case; канон полей сущностей в `doc/` фичи-владельца.
+
+## Прогресс
+
+- Таблицы задач — в `doc/tasks-vN.md` (`Task | Описание | Статус`: `done`/`todo`/`backlog`).
+- `doc/README.md` → секция Tasks только как указатель на текущую волну / архив.
+- `scope` — только в `tasks-v1`. Новая волна — по эвристике в `lade-doc-tasks`.
+- `versionCode` = число файлов `tasks-v*.md` по всем пакетам.
+- Даты реализации — `human/collect-progress.ps1` (+ `implemented.json`).
+
+## Не раздувать
+
+Не плодить корневые доки. Правила фичи — в её `doc/`.  
+UI (ресурсы, Material): `ui/doc/rules.md` + правило `lade-ui`.

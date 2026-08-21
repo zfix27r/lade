@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="ic_launcher_background">#1E3A5F</color>
+
+	<color name="lade_navy">#1E3A5F</color>
+	<color name="lade_mist">#F5F7FA</color>
+	<color name="lade_accent">#3D7EA6</color>
+	<color name="lade_white">#FFFFFF</color>
+	<color name="lade_dark_background">#121820</color>
+	<color name="lade_dark_surface">#1A222D</color>
+
+	<!-- Category ColorKey (canonical hex from categories/doc) -->
+	<color name="category_slate">#64748B</color>
+	<color name="category_stone">#78716C</color>
+	<color name="category_red">#DC2626</color>
+	<color name="category_orange">#EA580C</color>
+	<color name="category_amber">#D97706</color>
+	<color name="category_green">#16A34A</color>
+	<color name="category_teal">#0D9488</color>
+	<color name="category_sky">#0284C7</color>
+	<color name="category_blue">#2563EB</color>
+	<color name="category_violet">#7C3AED</color>
+	<color name="category_pink">#DB2777</color>
+</resources>
