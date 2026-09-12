@@ -1,18 +1,22 @@
 plugins {
 	alias(libs.plugins.android.application)
-	alias(libs.plugins.kotlin.android)
 	alias(libs.plugins.kotlin.compose)
 	alias(libs.plugins.ksp)
 	alias(libs.plugins.hilt.android)
 }
 
 fun countTaskWaveFiles(): Int {
-	val lade = file("src/main/java/app/lade")
-	if (!lade.isDirectory) return 1
-	return lade.walkTopDown()
-		.filter { it.isFile && it.name.matches(Regex("""tasks-v\d+\.md""")) }
-		.count()
-		.coerceAtLeast(1)
+	val roots = listOf(
+		file("src/main/java/app/lade"),
+		rootProject.file("feed/src/main/java/app/lade"),
+		rootProject.file("database/src/main/java/app/lade"),
+	)
+	return roots.sumOf { root ->
+		if (!root.isDirectory) 0
+		else root.walkTopDown()
+			.filter { it.isFile && it.name.matches(Regex("""tasks-v\d+\.md""")) }
+			.count()
+	}.coerceAtLeast(1)
 }
 
 android {
@@ -42,37 +46,58 @@ android {
 		targetCompatibility = JavaVersion.VERSION_17
 	}
 
-	kotlinOptions {
-		jvmTarget = "17"
-	}
-
 	buildFeatures {
 		compose = true
 	}
 }
 
+// AGP 9 may omit empty androidTest aggregates; older IDE actions still request them.
+tasks.register("androidTestClasses") {
+	description = "No-op shim for IDEs expecting the AGP 8 androidTestClasses task."
+}
+
+// Архитектурная проверка (ArchGuard) запускается первой при сборке приложения.
+tasks.named("preBuild") {
+	dependsOn(":validateArchitecture")
+}
+
 dependencies {
+	implementation(project(":analytics"))
+	implementation(project(":calendar"))
+	implementation(project(":categories"))
+	implementation(project(":chat"))
+	implementation(project(":database"))
+	implementation(project(":entry"))
+	implementation(project(":feed"))
+	implementation(project(":habits"))
+	implementation(project(":more"))
+	implementation(project(":notifications"))
+	implementation(project(":reminders"))
+	implementation(project(":resources"))
+	implementation(project(":scenarios"))
+	implementation(project(":settings"))
+	implementation(project(":synccalendar"))
+	implementation(project(":syncdevices"))
+	implementation(project(":temporal"))
+	implementation(project(":time"))
+	implementation(project(":ui"))
+
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.lifecycle.runtime.compose)
 	implementation(libs.androidx.lifecycle.viewmodel.compose)
 	implementation(libs.androidx.activity.compose)
+
 	implementation(platform(libs.androidx.compose.bom))
 	implementation(libs.androidx.compose.ui)
 	implementation(libs.androidx.compose.ui.graphics)
 	implementation(libs.androidx.compose.ui.tooling.preview)
 	implementation(libs.androidx.compose.material3)
-	implementation("androidx.compose.material:material-icons-extended")
 	implementation(libs.androidx.navigation.compose)
-
-	implementation(libs.androidx.room.runtime)
-	implementation(libs.androidx.room.ktx)
-	ksp(libs.androidx.room.compiler)
 
 	implementation(libs.hilt.android)
 	ksp(libs.hilt.compiler)
 	implementation(libs.hilt.navigation.compose)
-	implementation(libs.biweekly)
 
 	debugImplementation(libs.androidx.compose.ui.tooling)
 }

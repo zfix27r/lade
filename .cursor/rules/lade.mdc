@@ -15,12 +15,12 @@ alwaysApply: true
 
 ## Контракт пакетов (вместо секции в README)
 
-- Снаружи пакета: только `*.domain` (интерфейсы + модели) и **явные** UI-виджеты (`CategorySelector`, `CategoryColorIndicator`, `temporal.ui`).
+- Снаружи пакета: только `*.domain` (интерфейсы + модели) и **явные** UI-виджеты (`CategorySelector`, `CategoryColorIndicator`, `CategoryColorPicker`, `temporal.ui`, `ui.edit.EditSectionCard`, `entry.ui` mark/unit).
 - Не импортировать чужие `*.data`, DAO, чужой feature-`ui` (кроме виджетов выше).
-- `habits` ↛ `time`, `time` ↛ `habits`. Стык — `calendar` через порты domain.
-- `chat` — чат/шаблоны ввода; пишет только через `habits.domain` / `time.domain` (не в чужой ui/data).
+- `entry` — SSOT модель (Entry + EntryHistory); `habits`/`time` — только архив `doc/` (код удалён).
+- `chat` → `entry.domain` (+ `categories.domain`); не в чужой ui/data.
 - `calendar` — экран Ладь; `calsync` — внешние календари. SSOT = Room (`database`); DAO только из `*.data`.
-- `temporal.domain` — RRULE / RecurrenceDraft; `temporal.ui` — пикеры. `reminders` — уведомления/будильники.
+- `temporal.domain` — RRULE / RecurrenceDraft / DayPart; `temporal.ui` — пикеры, daypart chips. `reminders` — уведомления/будильники от Entry.
 - `database` — без UI/use-case; канон полей сущностей в `doc/` фичи-владельца.
 
 ## Прогресс

@@ -1,0 +1,11 @@
+---
+description: Feed domain — frozen contract; не менять без запроса
+globs: "feed/**/domain/**"
+alwaysApply: false
+---
+
+# feed.domain
+
+- Не менять `FeedEntry`, `FeedState`, `FeedRepository` без **явного запроса** пользователя.
+- Расширение полей — только задача в `feed/doc/tasks-v1.md` (например `feed-entry-extend`) **и** правка `FeedDomainContractTest` + секции «Контракт (frozen)» в `feed/doc/rules.md`.
+- Канон полей — в `rules.md`; проверка — `FeedDomainContractTest`, `:feed:testDebugUnitTest`.

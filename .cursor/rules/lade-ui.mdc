@@ -13,7 +13,7 @@ alwaysApply: false
 - Не хардкодить в Kotlin/XML-разметке: отступы, размеры — в `dimens.xml`; цвета бренда — в `colors.xml`, дальше через тему.
 - Content description иконок — string resources. Диалоги (OK/Отмена) — тоже.
 - Подписи enum/кодов — в UI + `strings`, не в `domain`.
-- Исключение: превью/`@Preview` dummy-текст можно локально; в прод-комposable — нет.
+- Исключение: превью/`@Preview` dummy-текст можно локально; в прод-composable — нет.
 
 ## Тема и стили
 
@@ -28,6 +28,12 @@ alwaysApply: false
 - Каркас экрана: `Scaffold` + `TopAppBar` / FAB / snackbar по гайдам M3.
 - Сетка 8 dp; интерактив ≥ 48 dp.
 - Не изобретать свои кнопки/списки, если хватает Material3 components.
+
+## UX-паттерны
+
+- TopAppBar: title = контекст (дата/счёт), actions = режимы; не декоративная надпись.
+- Create: FAB → sheet (короткая развилка) → edit с дефолтами; поля в `EditSectionCard`.
+- Канон: `ui/doc/rules.md`.
 
 ## Антипримеры
 

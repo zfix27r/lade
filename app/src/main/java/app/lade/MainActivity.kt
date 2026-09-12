@@ -1,5 +1,6 @@
 package app.lade
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,9 +20,27 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			LadeTheme {
 				Surface(modifier = Modifier.fillMaxSize()) {
-					LadeApp()
+					LadeApp(
+						deepLink = handleDeepLink(intent)
+					)
 				}
 			}
 		}
 	}
+
+	override fun onNewIntent(intent: Intent) {
+		super.onNewIntent(intent)
+		setIntent(intent)
+	}
+
+	private fun handleDeepLink(intent: Intent?): String? {
+		if (intent?.action == Intent.ACTION_VIEW) {
+			val uri = intent.data
+			if (uri?.scheme == "lade" && uri.host == "open") {
+				return "calendar"
+			}
+		}
+		return null
+	}
 }
+

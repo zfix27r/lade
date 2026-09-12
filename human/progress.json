@@ -1,0 +1,1797 @@
+{
+    "generated":  "2026-08-23T13:30:56",
+    "versionCode":  35,
+    "summary":  {
+                    "done":  193,
+                    "todo":  0,
+                    "backlog":  15,
+                    "total":  208,
+                    "pct":  92.8
+                },
+    "byFeature":  [
+                      {
+                          "pkg":  "analytics",
+                          "done":  0,
+                          "todo":  0,
+                          "backlog":  3,
+                          "total":  3,
+                          "pct":  0
+                      },
+                      {
+                          "pkg":  "calendar",
+                          "done":  48,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  48,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "calsync",
+                          "done":  0,
+                          "todo":  0,
+                          "backlog":  5,
+                          "total":  5,
+                          "pct":  0
+                      },
+                      {
+                          "pkg":  "categories",
+                          "done":  14,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  14,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "chat",
+                          "done":  34,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  34,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "database",
+                          "done":  14,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  14,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "devices",
+                          "done":  0,
+                          "todo":  0,
+                          "backlog":  6,
+                          "total":  6,
+                          "pct":  0
+                      },
+                      {
+                          "pkg":  "entry",
+                          "done":  18,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  18,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "habits",
+                          "done":  18,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  18,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "reminders",
+                          "done":  10,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  10,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "temporal",
+                          "done":  6,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  6,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "time",
+                          "done":  12,
+                          "todo":  0,
+                          "backlog":  0,
+                          "total":  12,
+                          "pct":  100
+                      },
+                      {
+                          "pkg":  "ui",
+                          "done":  19,
+                          "todo":  0,
+                          "backlog":  1,
+                          "total":  20,
+                          "pct":  95
+                      }
+                  ],
+    "velocity":  [
+                     {
+                         "date":  "2026-08-23",
+                         "count":  4
+                     },
+                     {
+                         "date":  "2026-08-21",
+                         "count":  114
+                     },
+                     {
+                         "date":  "2026-08-20",
+                         "count":  75
+                     }
+                 ],
+    "tasks":  [
+                  {
+                      "pkg":  "analytics",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Метрики adherence/streak и free/busy; контуры не смешивать",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "analytics",
+                      "wave":  1,
+                      "task":  "adherence-ui",
+                      "description":  "Adherence / streak UI (в т.ч. данные для list-streak-preview в habits)",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "analytics",
+                      "wave":  1,
+                      "task":  "free-busy",
+                      "description":  "Free/busy сводка (в т.ч. для home-as-today в ui)",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Единый экран записей: день / неделя / месяц / лента",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "create-entry",
+                      "description":  "Создание записи с календаря",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-busy",
+                      "description":  "Проекция занятости на дату из TimeSchedule + free",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-busy-ui",
+                      "description":  "UI занятости: список интервалов (не timeline 0–24)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-habits",
+                      "description":  "Список due-привычек на дату",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-mark-status",
+                      "description":  "Статус отметки в дне (после mark-day в habits)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-nav",
+                      "description":  "Выбор даты / «сегодня» / листание",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-smoke",
+                      "description":  "Прогон вида «день» (вкл. пустые состояния)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "day-timeblocks",
+                      "description":  "День читает TimeBlock (после expand-blocks в time)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "feed",
+                      "description":  "Вид лента: хронология",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "feed-filters",
+                      "description":  "Лента: фильтры источника",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "feed-smoke",
+                      "description":  "Прогон вида «лента»",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "month-grid",
+                      "description":  "Вид месяц: сетка",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "month-markers",
+                      "description":  "Вид месяц: маркеры",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "month-smoke",
+                      "description":  "Прогон вида «месяц»",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "open-day",
+                      "description":  "Тап по дню в месяце/неделе → вид день",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "package-route",
+                      "description":  "Пакет + route + кнопка на Home",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "view-switcher",
+                      "description":  "Переключатель видов (день активен; остальные позже)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "week-smoke",
+                      "description":  "Прогон вида «неделя»",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  1,
+                      "task":  "week-view",
+                      "description":  "Вид неделя: сжатая сетка или список дней + due/busy",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "create-sheet",
+                      "description":  "Bottom sheet создания: блок · привычка",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-agenda-hierarchy",
+                      "description":  "Иерархия секций дня: due vs busy",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-busy-source-chips",
+                      "description":  "Цвет/иконка источника блока (schedule / manual / …)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-empty-cta",
+                      "description":  "Пустые состояния с CTA «блок» / «привычка»",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-habit-density",
+                      "description":  "Компактные строки due: категория, статус, крупные Done/Skip",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-swipe-nav",
+                      "description":  "Свайп влево/вправо между сутками",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "day-timeline-opt",
+                      "description":  "Опция timeline 0–24 рядом со списком",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "fab-context-date",
+                      "description":  "FAB/create с датой текущего вида",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "feed-group-by-day",
+                      "description":  "Заголовки-разделители дат в ленте",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "feed-habit-rows",
+                      "description":  "Строки отметок привычек в ленте",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "feed-jump-today",
+                      "description":  "Кнопка / переход к «сегодня» в ленте",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "month-legend",
+                      "description":  "Легенда маркеров busy / habits",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "month-progress-fill",
+                      "description":  "Заливка ячейки месяца по % отмеченных due",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "remember-last-view",
+                      "description":  "Prefs: последний вид календаря + дата",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "view-switcher-compact",
+                      "description":  "Компактный переключатель видов на узких экранах",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "week-preview-rows",
+                      "description":  "Превью названий в строке недели (+ «ещё N»)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "week-strip",
+                      "description":  "Горизонтальная полоса 7 дней с due/busy counts",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  2,
+                      "task":  "week-time-grid",
+                      "description":  "Сетка часов × дни",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  3,
+                      "task":  "appbar-date-title",
+                      "description":  "Title app bar = дата / диапазон текущего вида; тап → пикер (+ Сегодня в диалоге)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  3,
+                      "task":  "appbar-view-icons",
+                      "description":  "Переключение Day / Week / Month / Feed иконками в actions app bar (не табами)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  3,
+                      "task":  "view-scale-gestures",
+                      "description":  "Pinch: zoom out Day→Week→Month, zoom in Month→Week→Day (лента вне цепочки)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  3,
+                      "task":  "view-tabs-remove",
+                      "description":  "Убрать SecondaryScrollableTabRow / FilterChip-ряд видов под app bar",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  4,
+                      "task":  "view-feed-place",
+                      "description":  "Лента остаётся пунктом меню режимов (не терять доступ)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  4,
+                      "task":  "view-menu",
+                      "description":  "Одна кнопка в app bar → меню: День, Неделя, Месяц, Год, Лента",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  4,
+                      "task":  "view-year",
+                      "description":  "Вид «Год» (сетка месяцев → месяц/день)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  5,
+                      "task":  "drop-old-ports",
+                      "description":  "Убрать прямые порты habits/time после cutover",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  5,
+                      "task":  "entry-day-week",
+                      "description":  "День/неделя: проекция Entry + History + маска одиночка\u003eсерия + слои kind-priority",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calendar",
+                      "wave":  5,
+                      "task":  "entry-month-feed",
+                      "description":  "Месяц / лента на Entry + History",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "calsync",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Внешние календари → строки на экран `calendar`; не SSOT",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "calsync",
+                      "wave":  1,
+                      "task":  "peek",
+                      "description":  "Peek событий на дату",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "calsync",
+                      "wave":  1,
+                      "task":  "project-rows",
+                      "description":  "Строки на calendar (source=calendar)",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "calsync",
+                      "wave":  1,
+                      "task":  "provider-access",
+                      "description":  "Доступ Provider + статус",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "calsync",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон на устройстве",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Справочник ярлыков для сущностей других фич",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  1,
+                      "task":  "edit",
+                      "description":  "Карточка create/edit/архив",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  1,
+                      "task":  "list",
+                      "description":  "Список категорий",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  1,
+                      "task":  "selector",
+                      "description":  "Compose `CategorySelector`",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон CRUD",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  2,
+                      "task":  "color-indicator",
+                      "description":  "Compose индикатор цвета категории для строк списков",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  3,
+                      "task":  "category-as-axis",
+                      "description":  "Категории = общие оси (спорт, сон); частные виды (бег) — title привычки, не категория",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  3,
+                      "task":  "color-custom-picker",
+                      "description":  "Последняя иконка с градиентом → произвольный цвет",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  3,
+                      "task":  "color-preset-circles",
+                      "description":  "~20 предустановленных цветов кружками",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  3,
+                      "task":  "selector-expand-create",
+                      "description":  "Тап по «текст/создать»: иконки → название + цвет inline",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  3,
+                      "task":  "selector-icon-row",
+                      "description":  "CategorySelector: ряд круглых иконок (буква / ключ), не dropdown",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  4,
+                      "task":  "selector-flow",
+                      "description":  "CategorySelector: FlowRow по ширине карточки, без горизонтального скролла",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  4,
+                      "task":  "selector-label-opt",
+                      "description":  "Label селектора опционален / выкл. когда заголовок уже в `EditSectionCard`",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "categories",
+                      "wave":  4,
+                      "task":  "selector-show-title",
+                      "description":  "Рядом с кружком или в selection — видно название выбранной категории",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Быстрый текстовый ввод по шаблонам; без ИИ; запись через порты habits/time",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "ai-hook",
+                      "description":  "Порт ChatParseEnhancer (identity); LLM позже, тот же пайплайн",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "bridge-habit-mark",
+                      "description":  "Команда → HabitHistory (actual + метрики)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "bridge-time-block",
+                      "description":  "Команда → manual TimeBlock",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "chat-ui",
+                      "description":  "Экран чата: сообщения пользователя / подтверждение / ошибка разбора",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "entry-point",
+                      "description":  "Bottom tab «Чат» (рядом с Календарь / Ещё)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "parse-engine",
+                      "description":  "Токен-парсер + словари единиц; без NLP",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "rename-from-intake",
+                      "description":  "Пакет `intake` → `chat`",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "seed-templates",
+                      "description":  "Сиды базовых шаблонов (бег и т.п.)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон: фраза → запись → видно в календаре",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "template-editor",
+                      "description":  "CRUD шаблонов (триггеры, слоты, цель записи)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  1,
+                      "task":  "template-model",
+                      "description":  "Модель шаблона: trigger, slots, defaults, target (history / block)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  2,
+                      "task":  "bridge-habit-or-hint",
+                      "description":  "Если шаблон найден, а привычки нет — понятная ошибка + путь создать; не путать с «шаблон не найден»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  2,
+                      "task":  "chat-clear",
+                      "description":  "Очистка истории: действие в настройках шаблонов чата",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  2,
+                      "task":  "chat-history",
+                      "description":  "Сохранять историю сообщений чата (Room); восстанавливать при открытии; choice-кнопки не персистить (см. v3 choice-ephemeral)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  2,
+                      "task":  "seed-idempotent",
+                      "description":  "Сиды шаблонов: досеивать недостающие (бег/работа), не только `count==0`",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  2,
+                      "task":  "smoke-persist",
+                      "description":  "Прогон: история переживает kill; clear очищает; seed досеивает",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "apply-entry",
+                      "description":  "Apply пишет через entry.domain",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "chat-template-retarget",
+                      "description":  "Эволюция шаблонов → словари Entry/History; target под Entry; seed/idempotent стык с dict-system-user",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "choice-ephemeral",
+                      "description":  "Уточнение кнопками в чате; кнопки не в истории — выбрал → исчезли; выбор фиксируется текстом в ленте / вводе",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "dict-daypart",
+                      "description":  "утро / день / вечер → start_time (DayPart prefs)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "dict-intent-verbs",
+                      "description":  "Глаголы → kind (купить→task, встретиться→event, бегать→habit, работать→schedule)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "dict-past-mark",
+                      "description":  "Past/синонимы (пробежал, бег, run) → одна Entry; History result+actuals",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "dict-relative-date",
+                      "description":  "Словарь: сегодня / завтра / вчера → date",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "dict-system-user",
+                      "description":  "Словари: системные (неубиваемые / restore) + пользовательские правки и расширения; UI редактирования",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "multi-slot-actuals",
+                      "description":  "Несколько метрик в одной фразе («23 мин 5 км») → actuals как написал пользователь",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "parse-candidates",
+                      "description":  "Выход = список гипотез; ровно один ясный match Entry → apply; иначе choice",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "parse-pipeline",
+                      "description":  "Пайплайн стадий (normalize → candidates → resolve Entry → disambiguate → apply); правила в отдельных файлах, не God-parser",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "parse-to-entry",
+                      "description":  "Парсер → draft Entry / EntryHistory (не HabitMark/TimeBlock)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  3,
+                      "task":  "suggest-create",
+                      "description":  "Нет Entry: предложить вариант (напр. создать привычку), не тупик «не найден»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  4,
+                      "task":  "parse-intent-anywhere",
+                      "description":  "Intent: искать фразу anywhere в токенах (не только с начала); rest = все токены кроме matched; приоритет длиннее, при равной длине MARK_DONE \u003e NAME_OR_CREATE",
+                      "status":  "done",
+                      "implemented":  "2026-08-23"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  4,
+                      "task":  "parse-intent-stage",
+                      "description":  "Новый файл Intent: по токенам определить намерение (заглушка/минимальный match ок); подключить вторым шагом",
+                      "status":  "done",
+                      "implemented":  "2026-08-23"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  4,
+                      "task":  "parse-normalize-wire",
+                      "description":  "Normalize — отдельный файл (есть `NormalizeStage`); подключить к оркестратору первым шагом",
+                      "status":  "done",
+                      "implemented":  "2026-08-23"
+                  },
+                  {
+                      "pkg":  "chat",
+                      "wave":  4,
+                      "task":  "parse-orchestrator",
+                      "description":  "Новый оркестратор: `String` in → пока наружу Intent (или UNCLEAR); внутри только цепочка stage-файлов",
+                      "status":  "done",
+                      "implemented":  "2026-08-23"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "SSOT Room: entity, dao, миграции, сиды; без UI/use-case",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "entity-category",
+                      "description":  "Entity/Dao Category + сиды",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "entity-habit",
+                      "description":  "Entity/Dao Habit",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "entity-habit-history",
+                      "description":  "Entity/Dao HabitHistory",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "entity-time-block",
+                      "description":  "Entity/Dao TimeBlock",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "entity-time-schedule",
+                      "description":  "Entity/Dao TimeSchedule",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "room-module",
+                      "description":  "Room + Hilt `DatabaseModule`",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  1,
+                      "task":  "smoke-persist",
+                      "description":  "Прогон: cold start + persist после kill",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "entity-chat-template",
+                      "description":  "Entity/Dao шаблонов chat",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "entity-entry",
+                      "description":  "Entity/Dao `entries` + `entry_history` (целевая модель)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "entity-habit-fields",
+                      "description":  "Таблицы определений полей привычки + значения в History (нормализованный SQL, порядок)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "migrations-explicit",
+                      "description":  "Явные Migration не нужны: целевая схема + destructive",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "smoke-migrate",
+                      "description":  "Upgrade: destructive dropAll (v11 без habits/time); данные Entry сохраняются при той же версии схемы",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "database",
+                      "wave":  2,
+                      "task":  "time-schedule-open-ended",
+                      "description":  "Схема TimeSchedule: `dateTo` nullable (бессрочно)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Health Connect / Huawei → факты в Ладь; не SSOT целей",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "gateway-ui",
+                      "description":  "Экран статуса + порт gateway",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "health-connect",
+                      "description":  "Health Connect: подключение",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "peek",
+                      "description":  "Peek данных без persist",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "persist",
+                      "description":  "Persist в domain (выборка)",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "devices",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон на устройстве",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Entry=настройки; History=фиксация на дату/время; kind task/event/habit/schedule; schedule без History; одиночка \u003e серия; удаление habits+time после cutover",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "cutover-gate",
+                      "description":  "Create + календарь + history/mark + reminders + чат → Entry; legacy UI снят",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "day-list-order",
+                      "description":  "День: сначала без времени (открытые due), ниже по времени; слои при пересечении",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "delete-legacy",
+                      "description":  "Удалены пакеты habits/time (код) и таблицы Room; остался архив doc/",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "kind-priority",
+                      "description":  "Дефолт schedule \u003c habit \u003c task \u003c event; порядок хранится в настройках",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "model-entry",
+                      "description":  "Канон Entry + create-матрица по kind; goalDefs, reminder, archive",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "model-history",
+                      "description":  "Канон History: снимки goals/actuals; result done/skipped/cancelled; только по действию пользователя; не для schedule",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "overlap-containment",
+                      "description":  "Полное накрытие (History + проекция Entry) → диалог: удалить накрытую / разрезать накрывающую",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "project-series",
+                      "description":  "Развёртка серии для UI/календаря без insert History",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "room-migrate",
+                      "description":  "Entity/DAO + миграция данных с Habit/TimeSchedule/TimeBlock/HabitHistory/Field*",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "series-mask",
+                      "description":  "Одиночная Entry важнее проекции серии на пересекающийся слот",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "series-vs-single",
+                      "description":  "UX: изменить всю серию / создать одиночную на день",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  1,
+                      "task":  "split-interval",
+                      "description":  "Операция разреза интервала по согласию пользователя",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  2,
+                      "task":  "create-unified",
+                      "description":  "Один create: название / даты-время / повтор; видимость и обязательность по kind; сильные дефолты",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  2,
+                      "task":  "entry-list",
+                      "description":  "Список Entry + фильтр kind + архив (устарела)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  2,
+                      "task":  "missing-prompt",
+                      "description":  "Нехватка обязательного поля — короткий уточняющий шаг, не полная форма",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  2,
+                      "task":  "overlap-dialog",
+                      "description":  "UI диалога полного накрытия: удалить накрытую / разрезать накрывающую",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "entry",
+                      "wave":  2,
+                      "task":  "routes-rewire",
+                      "description":  "FAB / Nav / More → Entry; убрать экраны Habit и Time",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Ритм и цель; время суток необязательно",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "edit",
+                      "description":  "Карточка CRUD",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "history-repo",
+                      "description":  "Repository HabitHistory (без UI)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "list",
+                      "description":  "Список привычек",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "mark-day",
+                      "description":  "UI отметки done/skip → HabitHistory",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон CRUD",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  2,
+                      "task":  "history-sheet",
+                      "description":  "Мини-календарь отметок привычки за месяц",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  2,
+                      "task":  "list-streak-preview",
+                      "description":  "Мини-streak / last-7 у строки (после analytics)",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  2,
+                      "task":  "list-today-mark",
+                      "description":  "Отметка на сегодня в HabitsList",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  2,
+                      "task":  "mark-motion",
+                      "description":  "Короткая анимация / haptic при Done",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  2,
+                      "task":  "mark-undo",
+                      "description":  "Snackbar «Отменить» после Done/Skip",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "edit-defaults-minimal",
+                      "description":  "Create: минимум обязательного; сильные дефолты (повтор/цель/без якоря)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "edit-section-cards",
+                      "description":  "HabitEdit: блоки-карточки (категория, цель, уведомление, повтор), не сплошные поля",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "field-presets",
+                      "description":  "Пресеты полей (расстояние, темп, каденс, …) + «своё»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "goal-modes",
+                      "description":  "Цель: каждый due-день vs накопительная сумма; явно в UI и модели",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "habit-custom-fields",
+                      "description":  "Несколько полей у привычки: SQL (определения + значения, M:N / order); не JSON-blob",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "history-field-values",
+                      "description":  "HabitHistory: слепок значений полей дня в SQL-таблицах",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "habits",
+                      "wave":  3,
+                      "task":  "model-habit-fields",
+                      "description":  "Канон в doc/: таблицы определений/значений, роли goal vs metric",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Уведомления и будильники по якорям привычки / начала блока",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "alarm-vs-notification",
+                      "description":  "Поведение и копирайт: notification = мягкий push; alarm = жёсткий exact",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "daypart-chips",
+                      "description":  "UI: три частых слота утро 09:00 / обед 12:00 / вечер 18:00 + «своё»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "daypart-prefs",
+                      "description":  "Пользователь может перенастроить утро/обед/вечер глобально",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "habit-anchor",
+                      "description":  "Планирование по якорю habits",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "permissions",
+                      "description":  "Разрешения + канал уведомлений",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "reboot",
+                      "description":  "Восстановление после reboot",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон на устройстве (код Entry: soft/alarm, reboot reschedule)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  1,
+                      "task":  "time-anchor",
+                      "description":  "Планирование по началу time-блока",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "reminders",
+                      "wave":  2,
+                      "task":  "reminders-entry",
+                      "description":  "Планирование soft/alarm от Entry (серия и разовые); не из History; убрать зависимость от Habit/TimeBlock",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "RRULE, due-движок, пикеры даты/времени; без своих таблиц Room",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  1,
+                      "task":  "pickers",
+                      "description":  "Пикеры / TemporalOptionsPanel",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  1,
+                      "task":  "schedule-engine",
+                      "description":  "`ScheduleEngine` + RecurrenceDraft + DaysOfWeekFlags",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  2,
+                      "task":  "daypart-labels",
+                      "description":  "Подписи/хелперы слотов утра·обеда·вечера для UI напоминаний (prefs — снаружи)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  2,
+                      "task":  "recurrence-collapsed",
+                      "description":  "Блок повтора по умолчанию свёрнут: иконка «добавить»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "temporal",
+                      "wave":  2,
+                      "task":  "recurrence-sheet",
+                      "description":  "Настройка RRULE/дней в bottom sheet / диалоге, не всегда на экране",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Занятость суток интервалами; свободное = 24h − busy",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "edit",
+                      "description":  "Карточка CRUD TimeSchedule",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "expand-blocks",
+                      "description":  "Развёртка TimeSchedule → TimeBlock",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "list",
+                      "description":  "Список TimeSchedule",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "manual-block",
+                      "description":  "Разовый manual TimeBlock",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  1,
+                      "task":  "smoke",
+                      "description":  "Прогон CRUD",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  2,
+                      "task":  "block-edit-cards",
+                      "description":  "TimeBlockEdit: те же паттерны карточек, без лишнего",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  2,
+                      "task":  "period-in-temporal",
+                      "description":  "Период dateFrom/dateTo — часть универсального TemporalOptions; в create как блок периода, не отдельная «странная» фича",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  2,
+                      "task":  "schedule-crash-fix",
+                      "description":  "Починить падение при создании TimeSchedule / последующий cold start; зафиксировать причину",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  2,
+                      "task":  "schedule-edit-cards",
+                      "description":  "TimeScheduleEdit: карточки категория / интервал / повтор / период (shared-секции)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  2,
+                      "task":  "schedule-positioning",
+                      "description":  "Копирайт и empty-states: фича = управление/анализ занятости суток",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "time",
+                      "wave":  3,
+                      "task":  "block-edit-polish",
+                      "description":  "TimeBlockEdit polish — superseded Entry; пакет time удалён",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  1,
+                      "task":  "scope",
+                      "description":  "Shell: Home, NavHost, Routes, тема; склеивает навигацию, не владеет доменом",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  1,
+                      "task":  "extras",
+                      "description":  "Виджеты / Wear / облако",
+                      "status":  "backlog",
+                      "implemented":  null
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  1,
+                      "task":  "home-routes",
+                      "description":  "Home + маршруты на списки и заглушки",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  1,
+                      "task":  "scaffold",
+                      "description":  "Каркас Android / Compose / Gradle",
+                      "status":  "done",
+                      "implemented":  "2026-08-20"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  1,
+                      "task":  "smoke-install",
+                      "description":  "Прогон установки на устройстве",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  2,
+                      "task":  "deep-links-entry",
+                      "description":  "Старт с календаря на сегодня; справочники и stubs во «Ещё»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  2,
+                      "task":  "home-as-today",
+                      "description":  "Home = сводка «сегодня» (free + due + CTA), не каталог кнопок",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  2,
+                      "task":  "nav-shell",
+                      "description":  "Bottom bar: Календарь · Привычки · Время · Ещё",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "appbar-contract",
+                      "description":  "Контракт TopAppBar: title = контекст (дата/поиск/счёт), actions = режимы; не декоративная надпись",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "create-flow-unify",
+                      "description":  "Единый жест создания (календарь/FAB): дефолты делают работу; тип entity выбирается умно или короткой развилкой",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "nav-chat-tab",
+                      "description":  "Bottom bar: Календарь · Чат · Ещё; Привычки и Время — пункты в Ещё",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "nav-merge-rhythms",
+                      "description":  "Свести списки Привычки + Время → Entry list (фильтр kind); Habit/Time nav снят",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "shared-edit-sections",
+                      "description":  "Общие Compose-секции create/edit: категория, цель/интервал, повтор, напоминание",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  3,
+                      "task":  "ux-patterns",
+                      "description":  "Зафиксировать в rules.md: контекстный app bar, карточки-секции create, simple→advanced",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  4,
+                      "task":  "edit-section-labels",
+                      "description":  "Один заголовок секции: убрать дубль «Категория» / floating label у title; clear (✕) в title-поле",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  4,
+                      "task":  "keyboard-ime",
+                      "description":  "IME: app bar не уезжает; клавиатура двигает только контент (чат + create)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  4,
+                      "task":  "root-insets",
+                      "description":  "Корневой Scaffold: без лишнего top inset; убрать пустой зазор «как app bar»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  4,
+                      "task":  "title-capitalize",
+                      "description":  "Title-поля create/edit: `KeyboardCapitalization.Sentences`",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  5,
+                      "task":  "kind-priority-settings",
+                      "description":  "Настройка порядка приоритетов kind (дефолт schedule \u003c habit \u003c task \u003c event)",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  },
+                  {
+                      "pkg":  "ui",
+                      "wave":  5,
+                      "task":  "more-entry-nav",
+                      "description":  "Ещё: список записей (фильтр kind) вместо Привычки/Время; убрать или заменить виджет «свободно N ч»",
+                      "status":  "done",
+                      "implemented":  "2026-08-21"
+                  }
+              ]
+}

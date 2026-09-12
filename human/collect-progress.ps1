@@ -1,4 +1,4 @@
-# Collect Tasks from package doc/tasks-v*.md into human/progress.html
+# Collect Tasks from package doc/tasks-v*.md into human/progress.html (+ progress.json)
 # Docs table: | Task | Description | Status |
 # Dates live in human/implemented.json (gitignored)
 # Run: powershell -File human/collect-progress.ps1
@@ -77,6 +77,75 @@ $total = $sorted.Count
 $pct = 0
 if ($total -gt 0) { $pct = [math]::Round(100.0 * $doneCount / $total, 1) }
 
+$pkgNames = @($sorted | Select-Object -ExpandProperty Pkg -Unique | Sort-Object)
+$pkgStatsHtml = New-Object System.Collections.Generic.List[string]
+$pkgStatsJson = New-Object System.Collections.Generic.List[object]
+foreach ($pkgName in $pkgNames) {
+	$pkgRows = @($sorted | Where-Object { $_.Pkg -eq $pkgName })
+	$pDone = @($pkgRows | Where-Object { $_.Status -eq 'done' }).Count
+	$pTodo = @($pkgRows | Where-Object { $_.Status -eq 'todo' }).Count
+	$pBack = @($pkgRows | Where-Object { $_.Status -eq 'backlog' }).Count
+	$pTotal = $pkgRows.Count
+	$pOther = $pDone + $pTodo
+	$pPct = 0
+	if ($pTotal -gt 0) { $pPct = [math]::Round(100.0 * $pDone / $pTotal, 0) }
+	$otherPct = 0
+	$backPct = 0
+	if ($pTotal -gt 0) {
+		$backPct = [math]::Round(100.0 * $pBack / $pTotal, 0)
+		$otherPct = 100 - $backPct
+	}
+	$doneInOther = 0
+	if ($pOther -gt 0) { $doneInOther = [math]::Round(100.0 * $pDone / $pOther, 0) }
+	$pkgEsc = Escape-Html $pkgName
+	$pkgTitle = Escape-Html ("{0}: {1} done / {2} todo / {3} backlog" -f $pkgName, $pDone, $pTodo, $pBack)
+	[void]$pkgStatsHtml.Add(@"
+<button type="button" class="pkg-stat" data-pkg="$pkgEsc" aria-pressed="false" title="$pkgTitle">
+  <span class="pkg-name mono">$pkgEsc</span>
+  <span class="pkg-meta"><strong>$pDone</strong>/$pTotal</span>
+  <span class="pkg-bar" aria-hidden="true">
+    <span class="seg-other" style="width:${otherPct}%"><span class="seg-done" style="width:${doneInOther}%"></span></span>
+    <span class="seg-backlog" style="width:${backPct}%"></span>
+  </span>
+</button>
+"@)
+	$pkgStatsJson.Add([pscustomobject]@{
+		pkg     = $pkgName
+		done    = $pDone
+		todo    = $pTodo
+		backlog = $pBack
+		total   = $pTotal
+		pct     = $pPct
+	})
+}
+
+$byDate = @{}
+foreach ($r in $sorted) {
+	if ($r.Status -ne 'done' -or $r.Date -eq '-') { continue }
+	if (-not $byDate.ContainsKey($r.Date)) { $byDate[$r.Date] = 0 }
+	$byDate[$r.Date]++
+}
+$velocityDates = @($byDate.Keys | Sort-Object -Descending)
+$velMax = 1
+foreach ($d in $velocityDates) {
+	if ($byDate[$d] -gt $velMax) { $velMax = $byDate[$d] }
+}
+$velocityHtml = New-Object System.Collections.Generic.List[string]
+$velocityJson = New-Object System.Collections.Generic.List[object]
+foreach ($d in $velocityDates) {
+	$cnt = $byDate[$d]
+	$w = [math]::Round(100.0 * $cnt / $velMax, 0)
+	$dEsc = Escape-Html $d
+	[void]$velocityHtml.Add(@"
+<div class="vel-row">
+  <span class="mono vel-date">$dEsc</span>
+  <span class="vel-bar" aria-hidden="true"><span style="width:${w}%"></span></span>
+  <span class="vel-count">$cnt</span>
+</div>
+"@)
+	$velocityJson.Add([pscustomobject]@{ date = $d; count = $cnt })
+}
+
 $bodyRows = New-Object System.Collections.Generic.List[string]
 foreach ($r in $sorted) {
 	$pkg = Escape-Html $r.Pkg
@@ -86,7 +155,7 @@ foreach ($r in $sorted) {
 	$date = Escape-Html $r.Date
 	$wave = $r.Wave
 	[void]$bodyRows.Add(@"
-<tr data-status="$status">
+<tr data-status="$status" data-pkg="$pkg">
 <td class="mono">$pkg</td>
 <td data-sort="$wave">v$wave</td>
 <td class="mono">$task</td>
@@ -96,6 +165,9 @@ foreach ($r in $sorted) {
 </tr>
 "@)
 }
+
+$pkgStatsBlock = $pkgStatsHtml -join "`n"
+$velocityBlock = if ($velocityHtml.Count -gt 0) { $velocityHtml -join "`n" } else { '<p class="muted">No completed tasks yet.</p>' }
 
 $html = @"
 <!DOCTYPE html>
@@ -119,6 +191,7 @@ $html = @"
   --backlog-bg: #efeee9;
   --accent: #2c4a6e;
   --accent-soft: #e8eef5;
+  --bar: #9bb0c9;
 }
 * { box-sizing: border-box; }
 body {
@@ -130,64 +203,163 @@ body {
 main {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
+  padding: 0 1.25rem 3rem;
 }
-h1 {
-  margin: 0 0 0.35rem;
-  font-size: 1.65rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
+.muted { color: var(--muted); font-size: 0.9rem; }
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--bg);
+  margin: 0 -1.25rem;
+  padding: 0.45rem 0 0.35rem;
+  border-bottom: 1px solid var(--line);
 }
 .stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin: 1rem 0;
+  gap: 0.4rem;
+  padding: 0 1.25rem;
 }
 .stat {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.65rem 0.9rem;
-  min-width: 6.5rem;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  min-width: 5.25rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.stat:hover { border-color: #c8c4b8; }
+.stat[aria-pressed="true"] {
+  border-color: #b8c8dc;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px #b8c8dc;
 }
 .stat strong {
   display: block;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 650;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 .stat span {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
 }
-.filters {
+.pkg-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 0.85rem;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+  padding: 0.15rem 1.25rem 0.4rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
-.filters button {
-  border: 1px solid var(--line);
+.pkg-stat {
+  flex: 0 0 auto;
+  width: 7.25rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.2rem 0.3rem;
+  align-items: center;
   background: var(--surface);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.35rem 0.45rem;
   font: inherit;
-  font-size: 0.85rem;
+  color: inherit;
+  text-align: left;
   cursor: pointer;
 }
-.filters button[aria-pressed="true"] {
-  background: var(--accent-soft);
+.pkg-stat:hover { border-color: #c8c4b8; }
+.pkg-stat[aria-pressed="true"] {
   border-color: #b8c8dc;
-  color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px #b8c8dc;
+}
+.pkg-name {
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pkg-meta {
+  font-size: 0.68rem;
+  color: var(--muted);
+  justify-self: end;
+  white-space: nowrap;
+}
+.pkg-meta strong { color: var(--text); font-weight: 650; }
+.pkg-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.seg-other {
+  display: block;
+  height: 100%;
+  background: var(--todo-bg);
+  min-width: 0;
+}
+.seg-done {
+  display: block;
+  height: 100%;
+  background: var(--done);
+  opacity: 0.85;
+}
+.seg-backlog {
+  display: block;
+  height: 100%;
+  background: var(--backlog);
+  opacity: 0.55;
+  min-width: 0;
+}
+.velocity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 28rem;
+  margin-top: 0.85rem;
+}
+.vel-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr 2rem;
+  gap: 0.5rem;
+  align-items: center;
+}
+.vel-date { font-size: 0.85rem; color: var(--muted); }
+.vel-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.vel-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--done);
+  border-radius: inherit;
+  opacity: 0.75;
+}
+.vel-count {
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-align: right;
 }
 .table-wrap {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: auto;
-  max-height: calc(100vh - 12rem);
+  max-height: calc(100vh - 11rem);
+  margin-top: 0.15rem;
 }
 table {
   width: 100%;
@@ -248,18 +420,16 @@ tbody tr:hover { background: #faf8f2; }
 </head>
 <body>
 <main>
-  <h1>Progress</h1>
-  <div class="stats">
-    <div class="stat"><strong>$doneCount</strong><span>done</span></div>
-    <div class="stat"><strong>$todoCount</strong><span>todo</span></div>
-    <div class="stat"><strong>$backCount</strong><span>backlog</span></div>
-    <div class="stat"><strong>$total</strong><span>total ($pct%)</span></div>
-  </div>
-  <div class="filters" role="group" aria-label="Filter by status">
-    <button type="button" data-filter="all" aria-pressed="true">all</button>
-    <button type="button" data-filter="done" aria-pressed="false">done</button>
-    <button type="button" data-filter="todo" aria-pressed="false">todo</button>
-    <button type="button" data-filter="backlog" aria-pressed="false">backlog</button>
+  <div class="top-bar">
+    <div class="stats" role="group" aria-label="Filter by status">
+      <button type="button" class="stat" data-status="done" aria-pressed="false"><strong>$doneCount</strong><span>done</span></button>
+      <button type="button" class="stat" data-status="todo" aria-pressed="false"><strong>$todoCount</strong><span>todo</span></button>
+      <button type="button" class="stat" data-status="backlog" aria-pressed="false"><strong>$backCount</strong><span>backlog</span></button>
+      <button type="button" class="stat" data-status="all" aria-pressed="true"><strong>$total</strong><span>total ($pct%)</span></button>
+    </div>
+    <div class="pkg-grid" role="group" aria-label="Filter by feature">
+$pkgStatsBlock
+    </div>
   </div>
   <div class="table-wrap">
     <table id="tasks">
@@ -278,13 +448,18 @@ $($bodyRows -join "`n")
       </tbody>
     </table>
   </div>
+  <div class="velocity">
+$velocityBlock
+  </div>
 </main>
 <script>
 (function () {
   const table = document.getElementById("tasks");
   const tbody = table.tBodies[0];
-  const filterBtns = document.querySelectorAll(".filters button");
-  let filter = "all";
+  const statusBtns = document.querySelectorAll(".stats .stat");
+  const pkgBtns = document.querySelectorAll(".pkg-stat");
+  let statusFilter = "all";
+  let pkgFilter = "all";
   let sortCol = 0;
   let sortDir = "asc";
 
@@ -305,8 +480,9 @@ $($bodyRows -join "`n")
       return sortDir === "asc" ? cmp : -cmp;
     });
     rows.forEach((row) => {
-      const show = filter === "all" || row.dataset.status === filter;
-      row.classList.toggle("hidden", !show);
+      const okStatus = statusFilter === "all" || row.dataset.status === statusFilter;
+      const okPkg = pkgFilter === "all" || row.dataset.pkg === pkgFilter;
+      row.classList.toggle("hidden", !(okStatus && okPkg));
       tbody.appendChild(row);
     });
     table.querySelectorAll("th").forEach((th) => {
@@ -324,10 +500,24 @@ $($bodyRows -join "`n")
     });
   });
 
-  filterBtns.forEach((btn) => {
+  statusBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      filter = btn.dataset.filter;
-      filterBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      statusFilter = btn.dataset.status;
+      statusBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      apply();
+    });
+  });
+
+  pkgBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pkg = btn.dataset.pkg;
+      if (pkgFilter === pkg) {
+        pkgFilter = "all";
+        pkgBtns.forEach((b) => b.setAttribute("aria-pressed", "false"));
+      } else {
+        pkgFilter = pkg;
+        pkgBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      }
       apply();
     });
   });
@@ -342,9 +532,40 @@ $($bodyRows -join "`n")
 $out = Join-Path $PSScriptRoot 'progress.html'
 [System.IO.File]::WriteAllText($out, $html, [System.Text.UTF8Encoding]::new($false))
 
+$taskJson = New-Object System.Collections.Generic.List[object]
+foreach ($r in $sorted) {
+	$implDate = $null
+	if ($r.Date -ne '-') { $implDate = $r.Date }
+	[void]$taskJson.Add([pscustomobject]@{
+		pkg         = $r.Pkg
+		wave        = $r.Wave
+		task        = $r.Task
+		description = $r.Desc
+		status      = $r.Status
+		implemented = $implDate
+	})
+}
+$progressPayload = [pscustomobject]@{
+	generated   = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss')
+	versionCode = $waveCount
+	summary     = [pscustomobject]@{
+		done    = $doneCount
+		todo    = $todoCount
+		backlog = $backCount
+		total   = $total
+		pct     = $pct
+	}
+	byFeature   = $pkgStatsJson.ToArray()
+	velocity    = $velocityJson.ToArray()
+	tasks       = $taskJson.ToArray()
+}
+$progressJsonPath = Join-Path $PSScriptRoot 'progress.json'
+$progressJson = ($progressPayload | ConvertTo-Json -Depth 6)
+[System.IO.File]::WriteAllText($progressJsonPath, $progressJson, [System.Text.UTF8Encoding]::new($false))
+
 $legacyMd = Join-Path $PSScriptRoot 'progress.md'
 if (Test-Path -LiteralPath $legacyMd) {
 	Remove-Item -LiteralPath $legacyMd -Force
 }
 
-Write-Host ('Wrote {0} ({1} tasks, {2}% done, versionCode={3})' -f $out, $total, $pct, $waveCount)
+Write-Host ('Wrote {0} + progress.json ({1} tasks, {2}% done, versionCode={3})' -f $out, $total, $pct, $waveCount)

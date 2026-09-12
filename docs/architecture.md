@@ -26,14 +26,15 @@
 
 ```
 app/src/main/java/app/lade/
-├── database/     # Room: entity, dao, миграции, сиды + doc/
+├── database/     # Room: entity, dao, сиды + doc/
 ├── temporal/     # domain (RRULE) + ui (пикеры) + doc/
 ├── categories/   # domain / data / ui + doc/
-├── habits/       # domain / data / ui + doc/
-├── time/         # domain / data / ui + doc/
+├── entry/        # Entry + EntryHistory (заменил habits/time)
+├── habits/       # архив doc/ only (код удалён после cutover)
+├── time/         # архив doc/ only (код удалён после cutover)
 ├── calendar/     # экран дня/недели/месяца/ленты
-├── chat/         # чат/шаблоны быстрого ввода → порты habits/time
-├── reminders/    # уведомления / будильники
+├── chat/         # чат/шаблоны → entry.domain
+├── reminders/    # уведомления / будильники → Entry
 ├── devices/      # Health
 ├── calsync/      # внешние календари → calendar
 ├── analytics/    # аналитика
@@ -63,32 +64,30 @@ feature/
 
 ```
 ui → domain ← data → database
-habits|time|calendar → categories.domain + CategorySelector / CategoryColorIndicator   # исключение
+calendar|entry → categories.domain + CategorySelector / CategoryColorIndicator / CategoryColorPicker
 *.ui → temporal.ui
-habits|time → temporal.domain
-habits ↛ time, time ↛ habits
-chat → habits.domain + time.domain   # пишет только через порты; ↛ чужой ui/data
+entry|calendar → temporal.domain
+chat → entry.domain + categories.domain
 *.domain ↛ Compose, Room
 temporal.domain ↛ Compose
-temporal ↛ database, habits, time, categories
+temporal ↛ database, categories, entry
 ```
 
-Чужой пакет снаружи видит только `*.domain` (интерфейсы + модели) и явные UI-виджеты (`CategorySelector`, `CategoryColorIndicator`, пикеры). Не импортировать чужие `data` / DAO.
+Чужой пакет снаружи видит только `*.domain` (интерфейсы + модели) и явные UI-виджеты
+(`CategorySelector`, `CategoryColorIndicator`, `CategoryColorPicker`, `temporal.ui`,
+`ui.edit.EditSectionCard`, `entry.ui` mark/unit labels). Не импортировать чужие `data` / DAO.
 
 ```
                     ┌──────── shell (ui) ────────┐
                     │  NavHost, Home, Hilt       │
                     └──────┬──────┬──────┬───────┘
-         chat.ui     habits.ui  time.ui  categories.ui
+         chat.ui     entry.ui  calendar.ui  categories.ui
               │           │        │           │
          *.domain    *.domain *.domain    *.domain
               │           ▲        ▲           ▲
               └───────────┴────────┴───────────┘
                               ▲
                          *.data → database (Room)
-
-habits.ui / time.ui ──► temporal.ui + temporal.domain
-chat ──► habits.domain + time.domain
 ```
 
 ## Room = SSOT
@@ -107,7 +106,3 @@ chat ──► habits.domain + time.domain
 | AlarmManager / Notifications | жёсткие / мягкие напоминания |
 
 Не брать: чужой all-in-one трекер как основу; Calendar/Health как единственный SoT; только FCM вместо exact alarms; обязательный backend с дня 1.
-
-## Первый срез (уже в коде) vs полное
-
-В UI CRUD сейчас сужено: у `TimeSchedule` один `startTime`/`endTime`; HabitHistory в Room есть, UI отметок — ещё нет. Полные поля — в `doc/` фичи.
