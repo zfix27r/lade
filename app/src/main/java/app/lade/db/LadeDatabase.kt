@@ -8,10 +8,12 @@ import app.lade.chatstore.ChatDictDao
 import app.lade.chatstore.ChatDictEntity
 import app.lade.chatstore.ChatMessageDao
 import app.lade.chatstore.ChatMessageEntity
-import app.lade.entrystore.entry.EntryDao
-import app.lade.entrystore.entry.EntryEntity
-import app.lade.entrystore.log.LogDao
-import app.lade.entrystore.log.LogEntity
+import app.lade.agendastore.entry.EntryDao
+import app.lade.agendastore.entry.EntryEntity
+import app.lade.agendastore.goal.GoalDao
+import app.lade.agendastore.goal.GoalEntity
+import app.lade.agendastore.log.LogDao
+import app.lade.agendastore.log.LogEntity
 
 
 @Database(
@@ -20,6 +22,7 @@ import app.lade.entrystore.log.LogEntity
 		ChatDictEntity::class,
 		ChatMessageEntity::class,
 		EntryEntity::class,
+		GoalEntity::class,
 		LogEntity::class,
 	],
 	version = 14,
@@ -30,5 +33,6 @@ abstract class LadeDatabase : RoomDatabase() {
 	abstract fun chatDictDao(): ChatDictDao
 	abstract fun chatMessageDao(): ChatMessageDao
 	abstract fun entryDao(): EntryDao
-	abstract fun entryHistoryDao(): LogDao
+	abstract fun goalDao(): GoalDao
+	abstract fun logDao(): LogDao
 }

@@ -86,7 +86,7 @@ dependencies {
 	implementation(project(":feature:settings"))
 	implementation(project(":feature:synccalendar"))
 	implementation(project(":feature:syncdevices"))
-	implementation(project(":feature:temporal"))
+	implementation(project(":feature:recurrence"))
 	implementation(project(":feature:time"))
 
 	implementation(libs.androidx.core.ktx)

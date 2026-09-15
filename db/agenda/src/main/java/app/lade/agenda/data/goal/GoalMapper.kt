@@ -1,7 +1,7 @@
 package app.lade.agenda.data.goal
 
 import app.lade.agenda.api.goal.GoalModel
-import app.lade.entrystore.goal.GoalEntity
+import app.lade.agendastore.goal.GoalEntity
 
 fun GoalEntity.toApi(): GoalModel = GoalModel(
     id = id,
@@ -15,7 +15,7 @@ fun GoalEntity.toApi(): GoalModel = GoalModel(
     archivedAtEpochMs = archivedAtEpochMs,
 )
 
-fun GoalModel.toEntity(): GoalEntity = GoalEntity(
+fun GoalModel.toEntity(entryId: Long): GoalEntity = GoalEntity(
     id = id,
     entryId = entryId,
     templateId = templateId,

@@ -1,7 +1,8 @@
 package app.lade.agenda.data.log
 
 import app.lade.agenda.api.log.LogModel
-import app.lade.entrystore.log.LogEntity
+import app.lade.agenda.api.log.LogOrigin
+import app.lade.agendastore.log.LogEntity
 
 fun LogEntity.toApi(): LogModel = LogModel(
     id = id,
@@ -16,7 +17,7 @@ fun LogEntity.toApi(): LogModel = LogModel(
     actualAmount = actualAmount,
     actualRepeat = actualRepeat,
     actualWeight = actualWeight,
-    source = source,
+    origin = LogOrigin.fromStorage(origin),
     createdAtEpochMs = createdAtEpochMs,
 )
 
@@ -33,6 +34,6 @@ fun LogModel.toEntity(): LogEntity = LogEntity(
     actualAmount = actualAmount,
     actualRepeat = actualRepeat,
     actualWeight = actualWeight,
-    source = source,
+    origin = origin.storage,
     createdAtEpochMs = createdAtEpochMs,
 )

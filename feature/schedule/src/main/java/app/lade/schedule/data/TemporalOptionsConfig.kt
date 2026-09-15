@@ -1,7 +1,7 @@
 package app.lade.schedule.data
 
 import app.lade.daypart.domain.DayPartClock
-import app.lade.temporal.domain.RecurrencePreset
+import app.lade.temporal.api.RecurrencePreset
 
 data class TemporalOptionsConfig(
     val showDate: Boolean = false,

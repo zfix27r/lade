@@ -2,7 +2,7 @@ package app.lade.agenda.data.entry
 
 import app.lade.agenda.api.entry.EntryKind
 import app.lade.agenda.api.entry.EntryModel
-import app.lade.entrystore.entry.EntryEntity
+import app.lade.agendastore.entry.EntryEntity
 import java.time.LocalDate
 import java.time.LocalTime
 

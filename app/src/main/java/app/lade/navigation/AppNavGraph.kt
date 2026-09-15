@@ -16,7 +16,6 @@ import app.lade.chat.ui.templates.ChatDictEditScreen
 import app.lade.chat.ui.templates.ChatTemplatesListScreen
 import app.lade.agenda.api.entry.EntryKind
 import app.lade.entrydetailsscreen.ui.EntryEditScreen
-import app.lade.entrydetailsscreen.ui.kindpriority.KindPrioritySettingsScreen
 import app.lade.entrydetailsscreen.ui.list.EntryListScreen
 import app.lade.more.ui.MoreScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
@@ -90,9 +89,6 @@ fun AppNavGraph(
                 onDayPartSettings = { navController.navigate(Routes.DayPartSettings) },
                 onKindPrioritySettings = { navController.navigate(Routes.KindPrioritySettings) },
             )
-        }
-        composable(Routes.KindPrioritySettings) {
-            KindPrioritySettingsScreen(onBack = { navController.popBackStack() })
         }
         composable(Routes.Devices) {
             DevicesStubScreen(onBack = { navController.popBackStack() })

@@ -1,7 +1,7 @@
 package app.lade.schedule.data
 
 import app.lade.schedule.ui.AlarmModeOption
-import app.lade.temporal.domain.RecurrenceDraft
+import app.lade.temporal.api.RecurrenceDraft
 import java.time.LocalDate
 import java.time.LocalTime
 

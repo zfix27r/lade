@@ -13,6 +13,6 @@ data class LogModel(
 	val actualAmount: Int? = null,
 	val actualRepeat: Int? = null,
 	val actualWeight: Double? = null,
-	val source: String? = null,
+	val origin: LogOrigin = LogOrigin.UNKNOWN,
 	val createdAtEpochMs: Long,
 )

@@ -6,8 +6,9 @@ import app.lade.categorystore.CategoryDao
 import app.lade.chatstore.ChatDictDao
 import app.lade.chatstore.ChatMessageDao
 import app.lade.db.LadeDatabase
-import app.lade.entrystore.entry.EntryDao
-import app.lade.entrystore.log.LogDao
+import app.lade.agendastore.entry.EntryDao
+import app.lade.agendastore.goal.GoalDao
+import app.lade.agendastore.log.LogDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,5 +44,10 @@ object DatabaseModule {
 	fun provideEntryDao(db: LadeDatabase): EntryDao = db.entryDao()
 
 	@Provides
-	fun provideEntryHistoryDao(db: LadeDatabase): LogDao = db.entryHistoryDao()
+	@Singleton
+	fun provideGoalDao(db: LadeDatabase): GoalDao = db.goalDao()
+
+	@Provides
+	@Singleton
+	fun provideLogDao(db: LadeDatabase): LogDao = db.logDao()
 }
