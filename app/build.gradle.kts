@@ -62,25 +62,32 @@ tasks.named("preBuild") {
 }
 
 dependencies {
-	implementation(project(":analytics"))
-	implementation(project(":calendar"))
-	implementation(project(":categories"))
-	implementation(project(":chat"))
-	implementation(project(":database"))
-	implementation(project(":entry"))
-	implementation(project(":feed"))
-	implementation(project(":habits"))
-	implementation(project(":more"))
-	implementation(project(":notifications"))
-	implementation(project(":reminders"))
-	implementation(project(":resources"))
-	implementation(project(":scenarios"))
-	implementation(project(":settings"))
-	implementation(project(":synccalendar"))
-	implementation(project(":syncdevices"))
-	implementation(project(":temporal"))
-	implementation(project(":time"))
-	implementation(project(":ui"))
+
+	implementation(project(":db:agenda"))
+	implementation(project(":core:resources"))
+	implementation(project(":core:ui"))
+
+	implementation(project(":db:category-store"))
+	implementation(project(":db:chat-store"))
+    implementation(project(":db:agenda-store"))
+
+
+    implementation(project(":feature:analytics"))
+	implementation(project(":feature:calendar"))
+	implementation(project(":feature:categories"))
+	implementation(project(":feature:chat"))
+	implementation(project(":feature:entryDetails"))
+	implementation(project(":feature:feed"))
+	implementation(project(":feature:habits"))
+	implementation(project(":feature:more"))
+	implementation(project(":feature:notifications"))
+	implementation(project(":feature:reminders"))
+	implementation(project(":feature:scenarios"))
+	implementation(project(":feature:settings"))
+	implementation(project(":feature:synccalendar"))
+	implementation(project(":feature:syncdevices"))
+	implementation(project(":feature:temporal"))
+	implementation(project(":feature:time"))
 
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -94,6 +101,11 @@ dependencies {
 	implementation(libs.androidx.compose.ui.tooling.preview)
 	implementation(libs.androidx.compose.material3)
 	implementation(libs.androidx.navigation.compose)
+	implementation("androidx.compose.material:material-icons-extended")
+
+	implementation(libs.androidx.room.runtime)
+	implementation(libs.androidx.room.ktx)
+	ksp(libs.androidx.room.compiler)
 
 	implementation(libs.hilt.android)
 	ksp(libs.hilt.compiler)

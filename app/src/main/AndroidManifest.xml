@@ -7,7 +7,7 @@
 	<uses-permission android:name="android.permission.VIBRATE" />
 
 	<application
-		android:name=".LadeApplication"
+		android:name=".ui.LadeApplication"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
@@ -15,7 +15,7 @@
 		android:supportsRtl="true"
 		android:theme="@style/Theme.Lade">
 		<activity
-			android:name=".MainActivity"
+			android:name=".ui.MainActivity"
 			android:exported="true"
 			android:theme="@style/Theme.Lade"
 			android:windowSoftInputMode="adjustNothing">
@@ -36,7 +36,7 @@
 			android:name=".notifications.data.ReminderReceiver"
 			android:exported="false" />
 		<receiver
-			android:name=".BootCompletedReceiver"
+			android:name=".ui.BootCompletedReceiver"
 			android:exported="false">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />

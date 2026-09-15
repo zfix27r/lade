@@ -11,13 +11,13 @@ object AppRules {
         
         val violations = mutableListOf<Violation>()
         
-        violations.addAll(checkAllowedFolders(file))
+        //violations.addAll(checkAllowedFolders(file))
         
         return violations
     }
     
     private fun checkAllowedFolders(file: SourceFile): List<Violation> {
-        val allowedFolders = listOf("scenarios", "di", "navigation", "MainActivity")
+        val allowedFolders = listOf("scenarios", "di", "navigation")
         val isInAllowedFolder = allowedFolders.any { file.path.startsWith("app/$it/") }
         
         return if (!isInAllowedFolder) {

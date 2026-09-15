@@ -14,14 +14,14 @@ import app.lade.categories.ui.list.CategoriesListScreen
 import app.lade.chat.ui.ChatScreen
 import app.lade.chat.ui.templates.ChatDictEditScreen
 import app.lade.chat.ui.templates.ChatTemplatesListScreen
-import app.lade.entry.domain.models.EntryKind
-import app.lade.entry.ui.edit.EntryEditScreen
-import app.lade.entry.ui.list.EntryListScreen
+import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrydetailsscreen.ui.EntryEditScreen
+import app.lade.entrydetailsscreen.ui.kindpriority.KindPrioritySettingsScreen
+import app.lade.entrydetailsscreen.ui.list.EntryListScreen
+import app.lade.more.ui.MoreScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
-import app.lade.settings.ui.KindPrioritySettingsScreen
 import app.lade.synccalendar.ui.CalendarsStubScreen
 import app.lade.syncdevices.ui.DevicesStubScreen
-import app.lade.more.ui.MoreScreen
 
 @Composable
 fun AppNavGraph(

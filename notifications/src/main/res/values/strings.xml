@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="reminders_channel_soft_name">Напоминания</string>
-    <string name="reminders_channel_soft_desc">Мягкие уведомления о привычках и занятости</string>
-    <string name="reminders_channel_alarm_name">Будильники</string>
-    <string name="reminders_channel_alarm_desc">Точные будильники по якорю привычки</string>
-
-</resources>
