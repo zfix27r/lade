@@ -27,7 +27,9 @@ dependencies {
     implementation(project(":core:resources"))
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

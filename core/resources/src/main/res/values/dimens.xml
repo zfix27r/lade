@@ -18,4 +18,5 @@
 	<dimen name="calendar_timeline_hour_height">48dp</dimen>
 	<dimen name="calendar_week_grid_hour_height">36dp</dimen>
 	<dimen name="calendar_week_grid_hour_label">36dp</dimen>
+	<dimen name="timeline_time_width">48dp</dimen>
 </resources>

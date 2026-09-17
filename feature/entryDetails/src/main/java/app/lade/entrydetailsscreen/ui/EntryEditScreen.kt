@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,12 +19,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,18 +41,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.agenda.api.entry.EntryError
 import app.lade.agenda.api.entry.EntryKind
 import app.lade.agenda.api.goal.GoalUnit
+import app.lade.agenda.api.goal.labelRes
 import app.lade.agenda.api.overlap.OverlapChoice
 import app.lade.resources.R
 import app.lade.schedule.ui.TemporalOptionsPanel
-import app.lade.ui.components.layout.EditSectionCard
 import app.lade.ui.components.inputs.TitleTextField
-import app.lade.agenda.api.goal.labelRes
+import app.lade.ui.components.layout.EditSectionCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -138,7 +139,7 @@ fun EntryEditScreen(
 								ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded)
 							},
 							modifier = Modifier
-								.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+								.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
 								.fillMaxWidth(),
 						)
 						ExposedDropdownMenu(

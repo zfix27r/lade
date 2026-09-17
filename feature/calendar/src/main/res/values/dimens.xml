@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="calendar_empty_horizontal_padding">16dp</dimen>
+    <dimen name="calendar_empty_vertical_padding">16dp</dimen>
+    <dimen name="calendar_empty_icon_size">64dp</dimen>
+    <dimen name="calendar_empty_title_spacing">16dp</dimen>
+    <dimen name="calendar_empty_subtitle_spacing">8dp</dimen>
+</resources>

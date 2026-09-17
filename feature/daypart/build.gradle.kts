@@ -27,7 +27,7 @@ dependencies {
     implementation(project(":core:resources"))
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material3)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -1,5 +1,6 @@
 package app.lade.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -8,13 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import app.lade.agenda.api.entry.EntryKind
 import app.lade.calendar.ui.CalendarScreen
 import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
 import app.lade.chat.ui.ChatScreen
 import app.lade.chat.ui.templates.ChatDictEditScreen
 import app.lade.chat.ui.templates.ChatTemplatesListScreen
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.entrydetailsscreen.ui.EntryEditScreen
 import app.lade.entrydetailsscreen.ui.list.EntryListScreen
 import app.lade.more.ui.MoreScreen
@@ -32,18 +33,29 @@ fun AppNavGraph(
     NavHost(
         navController = navController,
         startDestination = Routes.Calendar,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
         modifier = modifier,
     ) {
         composable(Routes.Calendar) {
             CalendarScreen(
-                onCreateEntry = { kind, dateEpochDay ->
-                    navController.navigate(Routes.entryEdit(kind = kind, dateEpochDay = dateEpochDay))
+                onEntryClick = { entryId ->
+                    navController.navigate("entry/details/$entryId")
                 },
-                onEditEntry = { entryId ->
-                    navController.navigate(Routes.entryEdit(id = entryId))
+                onCreateEntry = { kind, dateEpochDay ->
+                    navController.navigate(
+                        Routes.entryEdit(
+                            id = -1L,
+                            kind = kind,
+                            dateEpochDay = dateEpochDay,
+                        ),
+                    )
                 },
             )
         }
+
         composable(Routes.Chat) {
             ChatScreen(
                 bottomNavHeight = bottomNavHeight,
@@ -115,7 +127,7 @@ fun AppNavGraph(
         composable(
             route = Routes.EntryEdit,
             arguments = listOf(
-                navArgument("entryId") { type = NavType.LongType },
+                navArgument("entryId") { type = NavType.LongType; defaultValue = -1L },
                 navArgument("kind") { type = NavType.StringType; defaultValue = EntryKind.TASK.storage },
                 navArgument("dateEpochDay") { type = NavType.LongType; defaultValue = -1L },
                 navArgument("titleHint") { type = NavType.StringType; defaultValue = "" },

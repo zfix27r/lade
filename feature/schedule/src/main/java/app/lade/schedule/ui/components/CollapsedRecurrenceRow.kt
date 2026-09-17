@@ -13,8 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,6 @@ import app.lade.schedule.ui.label
 import app.lade.temporal.api.RecurrenceDraft
 import app.lade.temporal.api.RecurrencePreset
 
-/** Collapsed: add icon + summary; full RRULE editor in a bottom sheet. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollapsedRecurrenceRow(
@@ -58,7 +58,10 @@ fun CollapsedRecurrenceRow(
         }
     }
     if (sheetOpen) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val sheetState = rememberBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+        )
         ModalBottomSheet(
             onDismissRequest = { sheetOpen = false },
             sheetState = sheetState,

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_list_empty_title">Нет записей</string>
+    <string name="calendar_list_empty_subtitle">На этот день ничего не запланировано</string>
+    <string name="calendar_time_block_untitled">Без названия</string>
+</resources>

@@ -1,13 +1,16 @@
 package app.lade.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
 import app.lade.resources.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LadeTheme(
 	darkTheme: Boolean = isSystemInDarkTheme(),
@@ -46,6 +49,6 @@ fun LadeTheme(
 
 	MaterialTheme(
 		colorScheme = colorScheme,
-		content = content,
-	)
+		motionScheme = MotionScheme.expressive(),
+		content = content,	)
 }

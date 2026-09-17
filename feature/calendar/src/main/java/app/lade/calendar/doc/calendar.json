@@ -1,0 +1,422 @@
+{
+  "module": "calendar",
+  "dependencies": {
+    "modules": [":entry", ":navigation"],
+    "libraries": [
+      "androidx.compose.ui",
+      "androidx.compose.material3",
+      "androidx.compose.ui.tooling.preview",
+      "androidx.lifecycle.viewmodel.compose",
+      "androidx.navigation.compose",
+      "hilt.android",
+      "hilt.compiler",
+      "hilt.navigation.compose"
+    ]
+  },
+  "files": [
+    {
+      "file": "CalendarScreen",
+      "path": "ui/",
+      "content": {
+        "AppBar": "Контейнер AppBar",
+        "CalendarListLayout": "Контейнер режима List",
+        "CalendarWeekLayout": "Контейнер режима Week",
+        "CalendarMonthGrid": "Контейнер режима Month",
+        "CalendarYearGrid": "Контейнер режима Year"
+      },
+      "usage": "Экран. Главный экран модуля"
+    },
+    {
+      "file": "CalendarViewModel",
+      "path": "ui/",
+      "content": {},
+      "usage": "Логика. ViewModel экрана"
+    },
+    {
+      "file": "AppBar",
+      "path": "ui/component/layout/",
+      "content": {
+        "AppBarModeBtn": "Кнопка режима",
+        "AppBarViewBtn": "Кнопка вида",
+        "AppBarMoreMenu": "Меню"
+      },
+      "usage": "Контейнер AppBar. Стандартно. Верх экрана во всех режимах. Остальные слои делят пространство под AppBar"
+    },
+    {
+      "file": "CalendarListLayout",
+      "path": "ui/component/layout/",
+      "content": {
+        "CalendarListStrip": "Контейнер для календаря неделя-месяц",
+        "CalendarListEntries": "Показывает список Entries",
+        "CalendarDateSwipe": "Свайп по датам"
+      },
+      "usage": "Контейнер режима List. Под AppBar"
+    },
+    {
+      "file": "CalendarListStrip",
+      "path": "ui/component/layout/",
+      "content": {},
+      "usage": "Контейнер для календаря неделя-месяц. Верх CalendarListLayout"
+    },
+    {
+      "file": "CalendarListEntries",
+      "path": "ui/component/layout/",
+      "content": {},
+      "usage": "Показывает список Entries. Под CalendarListStrip все пространство свободное"
+    },
+    {
+      "file": "CalendarWeekLayout",
+      "path": "ui/component/layout/",
+      "content": {
+        "CalendarWeekStrip": "Контейнер для отображения дней недели, трех дней, дня",
+        "CalendarWeekTimeline": "Контейнер для отображения записей по времени",
+        "CalendarDateSwipe": "Свайп по датам"
+      },
+      "usage": "Контейнер режима Week. Под AppBar"
+    },
+    {
+      "file": "CalendarWeekStrip",
+      "path": "ui/component/layout/",
+      "content": {},
+      "usage": "Контейнер для отображения дней недели, трех дней, дня. Верх CalendarWeekLayout"
+    },
+    {
+      "file": "CalendarWeekTimeline",
+      "path": "ui/component/layout/",
+      "content": {},
+      "usage": "Контейнер для отображения записей по времени. Под CalendarWeekStrip все пространство свободное"
+    },
+    {
+      "file": "CalendarMonthGrid",
+      "path": "ui/component/layout/",
+      "content": {
+        "CalendarDateSwipe": "Свайп по датам"
+      },
+      "usage": "Контейнер для отображения календаря месяц. Под AppBar все пространство"
+    },
+    {
+      "file": "CalendarYearGrid",
+      "path": "ui/component/layout/",
+      "content": {
+        "CalendarDateSwipe": "Свайп по датам"
+      },
+      "usage": "Контейнер для отображения календаря год. Под AppBar все пространство"
+    },
+    {
+      "file": "AppBarModeBtn",
+      "path": "ui/component/button/",
+      "content": {
+        "CalendarModeEnum": "Режим"
+      },
+      "usage": "Кнопка режима. AppBar"
+    },
+    {
+      "file": "AppBarViewBtn",
+      "path": "ui/component/button/",
+      "content": {
+        "CalendarViewEnum": "Вид"
+      },
+      "usage": "Кнопка вида. AppBar"
+    },
+    {
+      "file": "AppBarMoreMenu",
+      "path": "ui/component/menu/",
+      "content": {
+        "Share": "Расшарить экран картинкой"
+      },
+      "usage": "Выпадающее меню в AppBar для остальных функций. AppBar"
+    },
+    {
+      "file": "CalendarDateSwipe",
+      "path": "ui/component/swipe/",
+      "content": {
+        "CalendarDateModeEnum": "Направление свайпа"
+      },
+      "usage": "Свободное пространство экрана от других событий и AppBar"
+    },
+    {
+      "file": "CalendarListStripSwipe",
+      "path": "ui/component/swipe/",
+      "content": {
+        "CalendarListStripModeEnum": "Режим полосы"
+      },
+      "usage": "CalendarListLayout"
+    },
+    {
+      "file": "CalendarModeEnum",
+      "path": "domain/models/",
+      "content": {
+        "LIST": "Список",
+        "DAY": "День",
+        "DAY_3": "3 дня",
+        "WEEK": "Неделя",
+        "MONTH": "Месяц",
+        "YEAR": "Год"
+      },
+      "usage": "Ограниченный список вариантов для кнопки"
+    },
+    {
+      "file": "CalendarViewEnum",
+      "path": "domain/models/",
+      "content": {
+        "TIMELINE": "Временная линия",
+        "GROUP_KIND": "Группировка по типу",
+        "NONE": "Нет"
+      },
+      "usage": "Ограниченный список вариантов для кнопки"
+    },
+    {
+      "file": "CalendarStateModel",
+      "path": "domain/models/",
+      "content": {
+        "mode": "Режим. CalendarModeEnum.LIST",
+        "view": "Вид. CalendarViewEnum.TIMELINE",
+        "currentDate": "Текущая дата. today",
+        "entries": "Список Entry. [...]"
+      },
+      "usage": "Data Model. Состояние экрана"
+    },
+    {
+      "file": "CalendarDateModeEnum",
+      "path": "domain/models/",
+      "content": {
+        "FORWARD": "Вперед",
+        "BACKWARD": "Назад"
+      },
+      "usage": "Ограниченный список вариантов для свайпа"
+    },
+    {
+      "file": "CalendarListStripModeEnum",
+      "path": "domain/models/",
+      "content": {
+        "WEEK": "Неделя",
+        "MONTH": "Месяц"
+      },
+      "usage": "Ограниченный список вариантов для свайпа"
+    }
+  ],
+"states": [
+    {
+      "who": "CalendarMode",
+      "how": "when",
+      "what": {
+        "LIST": "CalendarListLayout",
+        "DAY, DAY_3, WEEK": "CalendarWeekLayout",
+        "MONTH": "CalendarMonthGrid",
+        "YEAR": "CalendarYearGrid"
+      }
+    },
+    {
+      "who": "CalendarView",
+      "how": "when",
+      "what": {
+        "при CalendarMode.LIST": {
+          "TIMELINE": "CalendarListEntries с временная линия. Слева полоса с временем. Записи компактные",
+          "GROUP_KIND": "Группировка. Записи группируются по типу"
+        },
+        "при остальных CalendarMode": "NONE"
+      }
+    },
+    {
+      "who": "CalendarListStripMode",
+      "how": "when",
+      "what": {
+        "при CalendarMode.LIST": {
+          "WEEK": "показать календарь недели",
+          "MONTH": "показать календарь месяца"
+        }
+      }
+    },
+    {
+      "who": "CalendarDateMode",
+      "how": "when",
+      "what": {
+        "FORWARD": "сдвинуть CalendarState.currentDate + CalendarMode",
+        "BACKWARD": "сдвинуть CalendarState.currentDate - CalendarMode"
+      }
+    }
+  ],
+  "events": [
+    {
+      "who": "CalendarScreen",
+      "how": "Observe",
+      "what": "CalendarViewModel.state",
+      "result": "Обновление экрана"
+    },
+    {
+      "who": "Пользователь",
+      "how": "Tap",
+      "what": "AppBar:ModeBtn",
+      "result": "Изменение представления экрана"
+    },
+    {
+      "who": "Пользователь",
+      "how": "Tap",
+      "what": "AppBar:ViewBtn",
+      "result": "Изменение представления экрана"
+    },
+    {
+      "who": "Пользователь",
+      "how": "Swipe",
+      "what": "CalendarDateSwipe",
+      "result": "Быстрое переключение даты вперед или назад относительно текущей"
+    },
+    {
+      "who": "Пользователь",
+      "how": "Swipe",
+      "what": "CalendarListStripSwipe",
+      "result": "Сворачивание до недели или разворачивания до месяца"
+    },
+    {
+      "who": "Пользователь",
+      "how": "Tap",
+      "what": "Элемент entry",
+      "result": "Переход к экрану EntryDetails"
+    }
+  ],
+"viewmodel": [
+    {
+      "method": "observeEntries()",
+      "params": {
+        "date": "LocalDate"
+      },
+      "returns": "Flow<List<EntryUiModel>>",
+      "what": "Подписка на Entry"
+    },
+    {
+      "method": "onModeChange(mode)",
+      "params": {
+        "mode": "CalendarMode"
+      },
+      "returns": "",
+      "what": "Меняет режим"
+    },
+    {
+      "method": "onViewChange(view)",
+      "params": {
+        "view": "CalendarView"
+      },
+      "returns": "",
+      "what": "Меняет вид"
+    },
+    {
+      "method": "onSwipe(direction)",
+      "params": {
+        "direction": "CalendarDateMode"
+      },
+      "returns": "",
+      "what": "Меняет дату"
+    },
+    {
+      "method": "onStripSwipe(mode)",
+      "params": {
+        "mode": "CalendarListStripMode"
+      },
+      "returns": "",
+      "what": "Меняет режим полосы"
+    },
+    {
+      "method": "onEntryClick(id)",
+      "params": {
+        "id": "Long"
+      },
+      "returns": "",
+      "what": "Открывает Entry"
+    }
+  ],
+"composables": [
+    {
+      "composable": "CalendarScreen()",
+      "params": {
+        "viewModel": "CalendarViewModel"
+      }
+    },
+    {
+      "composable": "AppBar()",
+      "params": {
+        "title": "String",
+        "mode": "CalendarMode",
+        "onModeChange": "(CalendarMode) -> Unit",
+        "view": "CalendarView",
+        "onViewChange": "(CalendarView) -> Unit"
+      }
+    },
+    {
+      "composable": "CalendarListLayout()",
+      "params": {
+        "state": "CalendarState"
+      }
+    },
+    {
+      "composable": "CalendarListStrip()",
+      "params": {
+        "mode": "CalendarListStripMode"
+      }
+    },
+    {
+      "composable": "CalendarListStripSwipe()",
+      "params": {
+        "mode": "CalendarListStripMode",
+        "onSwipe": "(CalendarListStripMode) -> Unit",
+        "content": "@Composable () -> Unit"
+      }
+    },
+    {
+      "composable": "CalendarListEntries()",
+      "params": {
+        "entries": "List<EntryUiModel>",
+        "onEntryClick": "(Long) -> Unit"
+      }
+    },
+    {
+      "composable": "CalendarDateSwipe()",
+      "params": {
+        "mode": "CalendarDateMode",
+        "onSwipe": "(CalendarDateMode) -> Unit",
+        "content": "@Composable () -> Unit"
+      }
+    },
+    {
+      "composable": "CalendarWeekLayout()",
+      "params": {
+        "state": "CalendarState"
+      }
+    },
+    {
+      "composable": "CalendarWeekStrip()",
+      "params": {
+        "mode": "CalendarMode"
+      }
+    },
+    {
+      "composable": "CalendarWeekTimeline()",
+      "params": {
+        "entries": "List<EntryUiModel>"
+      }
+    },
+    {
+      "composable": "CalendarMonthGrid()",
+      "params": {
+        "month": "YearMonth"
+      }
+    },
+    {
+      "composable": "CalendarYearGrid()",
+      "params": {
+        "year": "Int"
+      }
+    }
+  ],
+  "navigation": [
+    {
+      "action": "Тап на Entry",
+      "route": "entry/details/{id}",
+      "target": "EntryDetailsScreen"
+    },
+    {
+      "action": "Создание Entry",
+      "route": "entry/edit/{kind}?date={date}",
+      "target": "EntryEditScreen"
+    }
+  ]
+}
