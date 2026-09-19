@@ -29,6 +29,7 @@ import app.lade.resources.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoreScreen(
+	onOpenProfile: () -> Unit,
 	onOpenCalendar: () -> Unit,
 	onEntries: () -> Unit,
 	onCategories: () -> Unit,

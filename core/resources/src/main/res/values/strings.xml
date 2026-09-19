@@ -2,6 +2,20 @@
 <resources>
 	<string name="app_name">Ладь</string>
 
+
+	<string name="action_profile">Профиль</string>
+	<string name="profile_settings">Настройки</string>
+
+
+	<string name="entry_kind_auto">Авто</string>
+
+	<string name="goal_field_title">Название цели</string>
+	<string name="goal_field_amount">Количество</string>
+	<string name="goal_field_unit">Единица</string>
+	<string name="goal_field_repeat">Повторов</string>
+	<string name="goal_add">Добавить цель</string>
+	<string name="goal_remove">Удалить цель</string>
+
 	<!-- Common actions -->
 	<string name="action_back">Назад</string>
 	<string name="action_add">Добавить</string>
@@ -298,6 +312,7 @@
 	<string name="recurrence_every_n_days">Каждые N дней</string>
 	<string name="recurrence_monthly">Ежемесячно</string>
 	<string name="recurrence_yearly">Ежегодно</string>
+	<string name="recurrence_none">Не повторять</string>
 
 	<string name="weekday_mon">Пн</string>
 	<string name="weekday_tue">Вт</string>
@@ -350,16 +365,12 @@
 	<string name="entries_title_count">Записи · %1$d</string>
 	<string name="entries_empty">Нет записей</string>
 	<string name="entries_archived_empty">Нет архивных записей</string>
+	<string name="entries_empty_filtered">Нет записей по фильтру</string>
 	<string name="entry_edit">Запись</string>
 	<string name="entry_new_task">Новая задача</string>
 	<string name="entry_new_event">Новое событие</string>
 	<string name="entry_new_habit">Новая привычка</string>
 	<string name="entry_new_schedule">Новое расписание</string>
-	<string name="entry_kind_task">Задача</string>
-	<string name="entry_kind_event">Событие</string>
-	<string name="entry_kind_habit">Привычка</string>
-	<string name="entry_kind_schedule">Расписание</string>
-	<string name="entry_kind_unknown">Не найдено</string>
 	<string name="entry_filter_all">Все</string>
 	<string name="entry_filter_archived">Архив</string>
 	<string name="entry_restore">Вернуть из архива</string>

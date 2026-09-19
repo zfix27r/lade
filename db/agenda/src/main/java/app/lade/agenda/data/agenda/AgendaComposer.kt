@@ -20,19 +20,22 @@ class AgendaComposer @Inject constructor(
     private val logDao: LogDao,
     private val dayProjector: AgendaDayProjector,
 ) {
-    suspend fun get(entryId: Long, date: LocalDate): AgendaModel? {
+    suspend fun get(entryId: Long, date: LocalDate?): AgendaModel? {
         val entry = entryDao.getById(entryId)?.toApi() ?: return null
         val goals = goalDao.getByEntryId(entryId).map { it.toApi() }
-        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay()).map { it.toApi() }
+        val logs = if (date != null) {
+            logDao.getByEntryAndDay(entryId, date.toEpochDay()).map { it.toApi() }
+        } else {
+            emptyList()
+        }
         return AgendaModel(
-            date = date,
+            date = date ?: LocalDate.now(),
             entry = entry,
             goals = goals,
             logs = logs,
             fromSeries = entry.isSeries,
         )
     }
-
     fun observeList(date: LocalDate): Flow<List<AgendaModel>> {
         val epochDay = date.toEpochDay()
         return combine(

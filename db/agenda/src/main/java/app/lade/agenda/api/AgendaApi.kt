@@ -1,6 +1,8 @@
 package app.lade.agenda.api
 
+import app.lade.agenda.api.agenda.AgendaError
 import app.lade.agenda.api.agenda.AgendaModel
+import app.lade.agenda.api.agenda.AgendaSaveModel
 import app.lade.agenda.api.entry.EntryError
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.agenda.api.goal.GoalError
@@ -19,16 +21,16 @@ import java.time.LocalDate
 
 interface AgendaApi {
     // Agenda
-    suspend fun get(entryId: Long, date: LocalDate): AgendaModel?
+    suspend fun get(entryId: Long, date: LocalDate?): AgendaModel?
     fun observeList(date: LocalDate): Flow<List<AgendaModel>>
     fun observeRange(from: LocalDate, to: LocalDate): Flow<List<AgendaModel>>
-
+    suspend fun saveAgenda(model: AgendaSaveModel): Result<Long, AgendaError>
+    suspend fun restoreEntry(entryId: Long): Result<Unit, EntryError>
     // Entry
     fun observeAllEntries(): Flow<List<EntryModel>>
     fun observeArchivedEntries(): Flow<List<EntryModel>>
     suspend fun saveEntry(entry: EntryModel): Result<Long, EntryError>
     suspend fun archiveEntry(entryId: Long): Result<Unit, EntryError>
-
     // Goal
     suspend fun saveGoals(entryId: Long, goals: List<GoalModel>): Result<Unit, GoalError>
 

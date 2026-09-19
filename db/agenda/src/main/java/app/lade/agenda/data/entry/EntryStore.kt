@@ -33,4 +33,9 @@ class EntryStore @Inject constructor(
         val target = entryDao.getById(entryId) ?: return
         entryDao.update(target.copy(archivedAtEpochMs = System.currentTimeMillis()))
     }
+
+    suspend fun restore(entryId: Long) {
+        val target = entryDao.getById(entryId) ?: return
+        entryDao.update(target.copy(archivedAtEpochMs = null))
+    }
 }

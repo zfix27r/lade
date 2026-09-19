@@ -1,10 +1,8 @@
 package app.lade.chat.domain.pipeline
 
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 
-/**
- * User intent after normalize (target pipeline). Minimal set for skeleton.
- */
+
 enum class UserIntent {
 	/** Past / done: «пробежал…» → mark history. */
 	MARK_DONE,

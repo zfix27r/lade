@@ -1,7 +1,7 @@
 package app.lade.chat.domain.pipeline
 
 import app.lade.chat.domain.ChatCommand
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 
 /** Orchestrator output after resolve + decide. */
 sealed class ParseOutcome {

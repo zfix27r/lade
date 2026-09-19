@@ -3,20 +3,19 @@ package app.lade.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.calendar.ui.CalendarScreen
 import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
 import app.lade.chat.ui.ChatScreen
 import app.lade.chat.ui.templates.ChatDictEditScreen
 import app.lade.chat.ui.templates.ChatTemplatesListScreen
-import app.lade.entrydetailsscreen.ui.EntryEditScreen
+import app.lade.draft.DraftApi
+import app.lade.draft.DraftEditorScreen
 import app.lade.entrydetailsscreen.ui.list.EntryListScreen
 import app.lade.more.ui.MoreScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
@@ -26,47 +25,46 @@ import app.lade.syncdevices.ui.DevicesStubScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    bottomNavHeight: Dp,
-    switchTab: (String) -> Unit,
+    onOpenProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.Calendar,
-        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
-        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
-        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
-        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
+        enterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+        },
+        exitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+        },
+        popEnterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+        },
+        popExitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+        },
         modifier = modifier,
     ) {
         composable(Routes.Calendar) {
             CalendarScreen(
                 onEntryClick = { entryId ->
-                    navController.navigate("entry/details/$entryId")
+                    TODO()
                 },
-                onCreateEntry = { kind, dateEpochDay ->
-                    navController.navigate(
-                        Routes.entryEdit(
-                            id = -1L,
-                            kind = kind,
-                            dateEpochDay = dateEpochDay,
-                        ),
-                    )
-                },
+                onOpenProfile = onOpenProfile,
             )
         }
 
         composable(Routes.Chat) {
             ChatScreen(
-                bottomNavHeight = bottomNavHeight,
+                onOpenProfile = onOpenProfile,
                 onOpenTemplates = { navController.navigate(Routes.ChatDicts) },
-                onCreateEntry = { kind, title ->
-                    navController.navigate(
-                        Routes.entryEdit(kind = kind, titleHint = title),
-                    )
+                onCreateEntry = { _, title ->
+                    // TODO: ChatScreen тоже создаёт запись через draftApi
+                    // пока — заглушка
                 },
             )
         }
+
         composable(Routes.ChatDicts) {
             ChatTemplatesListScreen(
                 onBack = { navController.popBackStack() },
@@ -74,34 +72,35 @@ fun AppNavGraph(
                 onEditDict = { id -> navController.navigate(Routes.chatDictEdit(id)) },
             )
         }
+
         composable(
             route = Routes.ChatDictEdit,
             arguments = listOf(navArgument("dictId") { type = NavType.LongType }),
         ) {
             ChatDictEditScreen(onBack = { navController.popBackStack() })
         }
+
         composable(Routes.Entries) {
             EntryListScreen(
-                onBack = { navController.popBackStack() },
-                onAdd = { kind ->
-                    navController.navigate(Routes.entryEdit(kind = kind.storage))
-                },
-                onEdit = { id, kind ->
-                    navController.navigate(Routes.entryEdit(id = id, kind = kind.storage))
-                },
+                onAdd = { TODO() },
+                onEdit = { id, _ -> TODO()   },
             )
         }
-        composable(Routes.More) {
+
+        composable(Routes.Settings) {
             MoreScreen(
-                onOpenCalendar = { switchTab(Routes.Calendar) },
+                onOpenProfile = onOpenProfile,
                 onEntries = { navController.navigate(Routes.Entries) },
                 onCategories = { navController.navigate(Routes.Categories) },
                 onDevices = { navController.navigate(Routes.Devices) },
                 onCalendars = { navController.navigate(Routes.Calsync) },
                 onDayPartSettings = { navController.navigate(Routes.DayPartSettings) },
                 onKindPrioritySettings = { navController.navigate(Routes.KindPrioritySettings) },
+                onOpenCalendar = TODO(),
+                viewModel = TODO(),
             )
         }
+
         composable(Routes.Devices) {
             DevicesStubScreen(onBack = { navController.popBackStack() })
         }
@@ -124,16 +123,11 @@ fun AppNavGraph(
         ) {
             CategoryEditScreen(onBack = { navController.popBackStack() })
         }
-        composable(
-            route = Routes.EntryEdit,
-            arguments = listOf(
-                navArgument("entryId") { type = NavType.LongType; defaultValue = -1L },
-                navArgument("kind") { type = NavType.StringType; defaultValue = EntryKind.TASK.storage },
-                navArgument("dateEpochDay") { type = NavType.LongType; defaultValue = -1L },
-                navArgument("titleHint") { type = NavType.StringType; defaultValue = "" },
-            ),
-        ) {
-            EntryEditScreen(onBack = { navController.popBackStack() })
+
+        composable(Routes.DraftEditor) {
+            DraftEditorScreen(
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

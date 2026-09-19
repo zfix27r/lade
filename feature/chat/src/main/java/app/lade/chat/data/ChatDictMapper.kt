@@ -1,8 +1,8 @@
 package app.lade.chat.data
 
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.chat.domain.model.ChatDictEntry
 import app.lade.chatstore.ChatDictEntity
+import app.lade.entrykind.EntryKind
 
 fun ChatDictEntity.toDomain() = ChatDictEntry(
 	id = id,

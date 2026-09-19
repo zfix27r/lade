@@ -16,8 +16,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -30,28 +28,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
+import app.lade.entrykind.labelRes
 import app.lade.resources.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EntryListScreen(
 	onBack: (() -> Unit)? = null,
-	onAdd: (EntryKind) -> Unit,
+	onAdd: (EntryKind?) -> Unit,
 	onEdit: (Long, EntryKind) -> Unit,
 	viewModel: EntryListViewModel = hiltViewModel(),
 ) {
 	val state by viewModel.state.collectAsStateWithLifecycle()
-	var addMenuExpanded by remember { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
@@ -72,24 +67,11 @@ fun EntryListScreen(
 			)
 		},
 		floatingActionButton = {
-			Box {
-				FloatingActionButton(onClick = { addMenuExpanded = true }) {
-					Icon(Icons.Default.Add, contentDescription = stringResource(R.string.action_add))
-				}
-				DropdownMenu(
-					expanded = addMenuExpanded,
-					onDismissRequest = { addMenuExpanded = false },
-				) {
-					EntryKind.entries.forEach { kind ->
-						DropdownMenuItem(
-							text = { Text(kind.storage) },
-							onClick = {
-								addMenuExpanded = false
-								onAdd(kind)
-							},
-						)
-					}
-				}
+			FloatingActionButton(onClick = { onAdd(null) }) {
+				Icon(
+					Icons.Default.Add,
+					contentDescription = stringResource(R.string.action_add),
+				)
 			}
 		},
 	) { padding ->
@@ -109,19 +91,22 @@ fun EntryListScreen(
 					onClick = { viewModel.setKindFilter(null) },
 					label = { Text(stringResource(R.string.entry_filter_all)) },
 				)
-				EntryKind.entries.forEach { kind ->
-					FilterChip(
-						selected = state.kindFilter == kind,
-						onClick = { viewModel.setKindFilter(kind) },
-						label = { Text(kind.storage) },
-					)
-				}
+				EntryKind.entries
+					.filter { it != EntryKind.UNKNOWN }
+					.forEach { kind ->
+						FilterChip(
+							selected = state.kindFilter == kind,
+							onClick = { viewModel.setKindFilter(kind) },
+							label = { Text(stringResource(kind.labelRes())) },
+						)
+					}
 				FilterChip(
 					selected = state.showArchived,
 					onClick = { viewModel.setShowArchived(!state.showArchived) },
 					label = { Text(stringResource(R.string.entry_filter_archived)) },
 				)
 			}
+
 			if (state.items.isEmpty()) {
 				Box(
 					modifier = Modifier.fillMaxSize(),
@@ -129,8 +114,11 @@ fun EntryListScreen(
 				) {
 					Text(
 						text = stringResource(
-							if (state.showArchived) R.string.entries_archived_empty
-							else R.string.entries_empty,
+							when {
+								state.kindFilter != null -> R.string.entries_empty_filtered
+								state.showArchived -> R.string.entries_archived_empty
+								else -> R.string.entries_empty
+							},
 						),
 						style = MaterialTheme.typography.bodyLarge,
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -141,7 +129,7 @@ fun EntryListScreen(
 					items(state.items, key = { it.id }) { entry ->
 						ListItem(
 							headlineContent = { Text(entry.title) },
-							supportingContent = { Text(entry.kind.storage) },
+							supportingContent = { Text(stringResource(entry.kind.labelRes())) },
 							trailingContent = {
 								if (entry.isArchived) {
 									IconButton(onClick = { viewModel.restore(entry.id) }) {

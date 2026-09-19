@@ -44,9 +44,9 @@ fun TemporalOptionsPanel(
 				useCard = config.useSectionCards,
 			) {
 				SingleDateButton(
-					label = value.date?.toString() ?: stringResource(R.string.temporal_pick_date),
-					date = value.date ?: LocalDate.now(),
-					onPicked = { onChange(value.copy(date = it)) },
+					label = value.dateFrom?.toString() ?: stringResource(R.string.temporal_pick_date),
+					date = value.dateFrom ?: LocalDate.now(),
+					onPicked = { onChange(value.copy(dateFrom = it)) },
 				)
 			}
 		}

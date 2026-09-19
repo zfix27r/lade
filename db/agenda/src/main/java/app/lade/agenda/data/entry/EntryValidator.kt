@@ -1,8 +1,8 @@
 package app.lade.agenda.data.entry
 
 import app.lade.agenda.api.entry.EntryError
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.agenda.api.entry.EntryModel
+import app.lade.entrykind.EntryKind
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,11 +1,7 @@
 package app.lade.chat.domain.model
 
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 
-/**
- * User dictionary row (same shape as corpus: kind + phrases → title).
- * System rows live in assets only; Room rows always have [systemKey] = null.
- */
 data class ChatDictEntry(
 	val id: Long = 0,
 	val title: String,

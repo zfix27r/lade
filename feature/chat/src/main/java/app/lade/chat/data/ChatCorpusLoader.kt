@@ -4,7 +4,7 @@ import android.content.Context
 import app.lade.chat.domain.model.CorpusEntry
 import app.lade.chat.domain.pipeline.Needle
 import app.lade.chat.domain.pipeline.UserIntent
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import javax.inject.Inject

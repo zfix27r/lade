@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="entry_kind_task">Задача</string>
+    <string name="entry_kind_event">Событие</string>
+    <string name="entry_kind_habit">Привычка</string>
+    <string name="entry_kind_schedule">Расписание</string>
+    <string name="entry_kind_unknown">Не найдено</string>
+
+</resources>

@@ -2,7 +2,9 @@ package app.lade.agenda.data
 
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.Result
+import app.lade.agenda.api.agenda.AgendaError
 import app.lade.agenda.api.agenda.AgendaModel
+import app.lade.agenda.api.agenda.AgendaSaveModel
 import app.lade.agenda.api.entry.EntryError
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.agenda.api.goal.GoalError
@@ -27,6 +29,7 @@ import app.lade.agenda.data.overlap.OverlapStore
 import app.lade.agenda.data.overlap.OverlapValidator
 import app.lade.agenda.data.series.SeriesStore
 import app.lade.agenda.data.series.SeriesValidator
+import app.lade.database.Transaction
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import javax.inject.Inject
@@ -45,11 +48,12 @@ class AgendaApiImpl @Inject constructor(
     private val overlapValidator: OverlapValidator,
     private val seriesStore: SeriesStore,
     private val seriesValidator: SeriesValidator,
+    private val transaction: Transaction,
 ) : AgendaApi {
 
     // === Agenda ===
 
-    override suspend fun get(entryId: Long, date: LocalDate): AgendaModel? =
+    override suspend fun get(entryId: Long, date: LocalDate?): AgendaModel? =
         composer.get(entryId, date)
 
     override fun observeList(date: LocalDate): Flow<List<AgendaModel>> =
@@ -60,13 +64,41 @@ class AgendaApiImpl @Inject constructor(
         to: LocalDate,
     ): Flow<List<AgendaModel>> = composer.observeRange(from, to)
 
+    override suspend fun saveAgenda(model: AgendaSaveModel): Result<Long, AgendaError> {
+        entryValidator.validate(model.entry)?.let {
+            return Result.Failure(AgendaError.Entry(it))
+        }
+        val goalErrors = goalValidator.validate(model.goals)
+        if (goalErrors.isNotEmpty()) {
+            return Result.Failure(AgendaError.Goals(goalErrors))
+        }
+        return try {
+            val entryId = transaction.runIn {
+                val id = entryStore.save(model.entry)
+                if (model.goals.isNotEmpty()) {
+                    goalStore.save(id, model.goals.map { it.copy(entryId = id) })
+                }
+                id
+            }
+            Result.Success(entryId)
+        } catch (_: Throwable) {
+            Result.Failure(AgendaError.Unknown)
+        }
+    }
+
+    override suspend fun restoreEntry(entryId: Long): Result<Unit, EntryError> {
+        entryStore.restore(entryId)
+        return Result.Success(Unit)
+    }
+
     // === Entry ===
+
     override fun observeAllEntries(): Flow<List<EntryModel>> =
         entryStore.observeAll()
 
     override fun observeArchivedEntries(): Flow<List<EntryModel>> =
         entryStore.observeArchived()
-    
+
     override suspend fun saveEntry(entry: EntryModel): Result<Long, EntryError> {
         entryValidator.validate(entry)?.let { return Result.Failure(it) }
         return Result.Success(entryStore.save(entry))
@@ -83,7 +115,10 @@ class AgendaApiImpl @Inject constructor(
         entryId: Long,
         goals: List<GoalModel>,
     ): Result<Unit, GoalError> {
-        goalValidator.validate(goals)?.let { return Result.Failure(it) }
+        val errors = goalValidator.validate(goals)
+        if (errors.isNotEmpty()) {
+            return Result.Failure(errors.values.first())
+        }
         goalStore.save(entryId, goals)
         return Result.Success(Unit)
     }

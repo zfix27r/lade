@@ -1,14 +1,19 @@
 package app.lade.calendar.ui.component.list
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,8 +27,10 @@ import app.lade.calendar.domain.CalendarStateModel
 import app.lade.calendar.ui.component.list.collapse.CalendarCollapseConnection
 import app.lade.calendar.ui.component.list.collapse.CalendarCollapseStrip
 import app.lade.calendar.ui.component.list.collapse.rememberCalendarCollapseMetrics
+import app.lade.calendar.ui.component.list.components.AgendaCard
 import app.lade.calendar.ui.component.list.components.AgendaRow
-import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
+import app.lade.calendar.ui.component.list.components.CalendarListEmptyState
+import app.lade.calendar.ui.component.list.components.entryTypeColor
 import app.lade.ui.gesture.rememberSnapToEdge
 import java.time.LocalDate
 
@@ -65,47 +72,82 @@ fun CalendarListLayout(
         )
     }
 
+    val panelHeight = config.listBottomPaddingForInputBar
+    val showEmptyState = state.entries.isEmpty() && config.showEmptyState
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(connection),
     ) {
-        CalendarDateSwipe(
-            onSwipe = onSwipe,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CalendarCollapseStrip(
-                    currentDate = state.currentDate,
-                    entries = state.entries,
-                    onDateSelected = onDateSelected,
-                    progress = collapseProgress,
-                    metrics = metrics,
-                    config = config.collapse,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = listTopOffset + config.listTopPaddingWhenCollapsed,
-                        )
-                        .background(MaterialTheme.colorScheme.surface),
-                ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CalendarCollapseStrip(
+                currentDate = state.currentDate,
+                entries = state.entries,
+                onDateSelected = onDateSelected,
+                progress = collapseProgress,
+                metrics = metrics,
+                config = config.collapse,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = listTopOffset + config.listTopPaddingWhenCollapsed)
+                    .background(MaterialTheme.colorScheme.surface),
+            ) {
+                if (showEmptyState) {
+                    CalendarListEmptyState(
+                        icon = Icons.Default.EventAvailable,
+                        modifier = Modifier.padding(bottom = panelHeight),
+                    )
+                } else {
                     LazyColumn(
                         state = listState,
+                        contentPadding = PaddingValues(
+                            start = config.listContentHorizontalPadding,
+                            end = config.listContentHorizontalPadding,
+                            bottom = panelHeight + config.listContentBottomPadding,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(config.listEntrySpacing),
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         items(
                             items = state.entries,
                             key = { "entry-${it.entry.id}-${it.date.toEpochDay()}" },
                         ) { agenda ->
-                            AgendaRow(
-                                agenda = agenda,
-                                onEditEntry = onEditEntry,
-                                onMarkDone = { onMarkDone(agenda.entry.id, agenda.date) },
-                                onMarkSkip = { onMarkSkip(agenda.entry.id, agenda.date) },
+                            val done = agenda.logs.any { (it.actualAmount ?: 0) > 0 }
+                            val containerColor by animateColorAsState(
+                                targetValue = if (done) {
+                                    MaterialTheme.colorScheme.surfaceContainerHighest
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                },
+                                label = "agendaCardContainerColor",
                             )
+                            AgendaCard(
+                                cornerRadius = config.listEntryCornerRadius,
+                                stripeColor = entryTypeColor(agenda.entry.kind),
+                                stripeWidth = config.listEntryTypeStripeWidth,
+                                containerColor = containerColor,
+                                modifier = if (config.enableEntryAnimations) {
+                                    Modifier.animateItem()
+                                } else {
+                                    Modifier
+                                },
+                            ) {
+                                AgendaRow(
+                                    agenda = agenda,
+                                    onEditEntry = onEditEntry,
+                                    onMarkDone = {
+                                        onMarkDone(agenda.entry.id, agenda.date)
+                                    },
+                                    onMarkSkip = {
+                                        onMarkSkip(agenda.entry.id, agenda.date)
+                                    },
+                                    enableMarkHaptics = config.enableMarkHaptics,
+                                )
+                            }
                         }
                     }
                 }

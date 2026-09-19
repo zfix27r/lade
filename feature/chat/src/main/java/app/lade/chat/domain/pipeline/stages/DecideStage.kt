@@ -6,7 +6,7 @@ import app.lade.chat.domain.pipeline.EntryPick
 import app.lade.chat.domain.pipeline.ParseOutcome
 import app.lade.chat.domain.pipeline.ResolvedDraft
 import app.lade.chat.domain.pipeline.UserIntent
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import javax.inject.Inject
 import javax.inject.Singleton
 

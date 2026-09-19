@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.style.TextOverflow
 import app.lade.calendar.domain.CalendarMode
 import app.lade.calendar.domain.CalendarView
+import app.lade.ui.profile.ProfileButton
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,6 +23,7 @@ fun CalendarAppBar(
     onViewChange: (CalendarView) -> Unit,
     onTitleClick: () -> Unit,
     onShare: () -> Unit,
+    onOpenProfile: () -> Unit,
 ) {
     val locale = LocalLocale.current.platformLocale
     val title = calendarTitle(mode, currentDate, locale)
@@ -44,6 +46,7 @@ fun CalendarAppBar(
                 AppBarViewBtn(view = view, onViewChange = onViewChange)
             }
             AppBarMoreMenu(onShare = onShare)
+            ProfileButton(onClick = onOpenProfile)
         },
     )
 }

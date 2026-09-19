@@ -1,14 +1,16 @@
 package app.lade.temporal.api
 
 data class RecurrenceDraft(
-	val preset: RecurrencePreset = RecurrencePreset.Weekdays,
+	val preset: RecurrencePreset = RecurrencePreset.None,
 	val interval: Int = 1,
 	val daysOfWeek: Int = DaysOfWeekFlags.WEEKDAYS,
 ) {
 	fun toRrule(): String {
+		if (preset == RecurrencePreset.None) return ""
 		val n = interval.coerceAtLeast(1)
 		val intervalPart = if (n == 1) "" else ";INTERVAL=$n"
 		return when (preset) {
+			RecurrencePreset.None -> ""
 			RecurrencePreset.Daily -> "FREQ=DAILY"
 			RecurrencePreset.EveryNDays -> "FREQ=DAILY;INTERVAL=$n"
 			RecurrencePreset.Weekdays -> "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
@@ -21,12 +23,16 @@ data class RecurrenceDraft(
 		}
 	}
 
-	fun hasValidDays(): Boolean =
-		preset != RecurrencePreset.Weekly || daysOfWeek != 0
+	fun hasValidDays(): Boolean = when (preset) {
+		RecurrencePreset.None -> false
+		RecurrencePreset.Weekly -> daysOfWeek != 0
+		else -> true
+	}
 
 	fun coercePreset(allowed: List<RecurrencePreset>): RecurrenceDraft {
 		if (preset in allowed) return this
 		return when {
+			RecurrencePreset.None in allowed -> RecurrenceDraft(RecurrencePreset.None)
 			RecurrencePreset.Weekdays in allowed && daysOfWeek == DaysOfWeekFlags.WEEKDAYS ->
 				copy(preset = RecurrencePreset.Weekdays, interval = 1)
 			RecurrencePreset.Daily in allowed &&

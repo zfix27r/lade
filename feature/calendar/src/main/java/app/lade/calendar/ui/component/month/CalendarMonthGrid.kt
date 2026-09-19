@@ -23,9 +23,9 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.calendar.domain.CalendarDateMode
 import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
+import app.lade.entrykind.EntryKind
 import app.lade.resources.R
 import java.time.LocalDate
 import java.time.YearMonth

@@ -1,6 +1,6 @@
 package app.lade.chat.domain
 
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 

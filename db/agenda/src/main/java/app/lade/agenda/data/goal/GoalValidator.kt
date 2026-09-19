@@ -7,12 +7,10 @@ import javax.inject.Singleton
 
 @Singleton
 class GoalValidator @Inject constructor() {
-    fun validate(goals: List<GoalModel>): GoalError? {
-        goals.forEach { goal ->
-            validateOne(goal)?.let { return it }
-        }
-        return null
-    }
+    fun validate(goals: List<GoalModel>): Map<Int, GoalError> =
+        goals.mapIndexedNotNull { index, goal ->
+            validateOne(goal)?.let { index to it }
+        }.toMap()
 
     private fun validateOne(goal: GoalModel): GoalError? {
         if (goal.title.isBlank()) return GoalError.TitleMissing

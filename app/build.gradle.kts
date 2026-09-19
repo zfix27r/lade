@@ -63,13 +63,15 @@ tasks.named("preBuild") {
 
 dependencies {
 
-	implementation(project(":db:agenda"))
+	implementation(project(":core:database"))
 	implementation(project(":core:resources"))
 	implementation(project(":core:ui"))
 
+	implementation(project(":db:agenda"))
 	implementation(project(":db:category-store"))
 	implementation(project(":db:chat-store"))
     implementation(project(":db:agenda-store"))
+    implementation(project(":feature:draft"))
 
 
     implementation(project(":feature:analytics"))

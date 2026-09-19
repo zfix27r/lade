@@ -1,8 +1,8 @@
 package app.lade.calendar.domain
 
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.agenda.api.goal.GoalModel
 import app.lade.agenda.api.log.LogModel
+import app.lade.entrykind.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 

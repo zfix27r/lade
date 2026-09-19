@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

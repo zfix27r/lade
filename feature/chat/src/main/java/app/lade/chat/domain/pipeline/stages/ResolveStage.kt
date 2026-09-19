@@ -5,7 +5,7 @@ import app.lade.chat.domain.pipeline.ParseDraft
 import app.lade.chat.domain.pipeline.ResolvedDraft
 import app.lade.chat.domain.pipeline.UserIntent
 import app.lade.agenda.api.entry.EntryModel
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -61,9 +61,9 @@ class ResolveStage @Inject constructor() {
 	}
 
 	private fun resolveByTitle(
-        draft: ParseDraft,
-        entries: List<EntryModel>,
-        kind: EntryKind,
+		draft: ParseDraft,
+		entries: List<EntryModel>,
+		kind: EntryKind,
 	): List<ResolvedDraft> {
 		val needle = titleNeedle(draft)
 		if (needle.isBlank()) return listOf(ResolvedDraft(draft = draft))

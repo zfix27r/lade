@@ -146,9 +146,4 @@ class CalendarViewModel @Inject constructor(
     fun goToday() {
         _state.update { it.copy(currentDate = LocalDate.now()) }
     }
-
-    companion object {
-        private const val FEED_PAST_DAYS = 60L
-        private const val FEED_FUTURE_DAYS = 14L
-    }
 }

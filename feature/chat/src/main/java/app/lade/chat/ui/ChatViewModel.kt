@@ -13,7 +13,7 @@ import app.lade.chat.domain.ChatUiState
 import app.lade.chat.domain.model.ChatMessage
 import app.lade.chat.domain.pipeline.ChatParseOrchestrator
 import app.lade.chat.domain.pipeline.ParseOutcome
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

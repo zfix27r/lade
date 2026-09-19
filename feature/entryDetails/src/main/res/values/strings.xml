@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="entry_summary_today">Сегодня</string>
+    <string name="entry_summary_tomorrow">Завтра</string>
+    <string name="entry_summary_yesterday">Вчера</string>
+    <string name="entry_summary_reminder">за %d мин</string>
+    <string name="entry_settings_open">Настроить</string>
+
+
+    <string name="entry_settings_date">Дата</string>
+    <string name="entry_settings_time_start">Начало</string>
+    <string name="entry_settings_time_end">Окончание</string>
+    <string name="entry_settings_recurrence">Повтор</string>
+    <string name="entry_settings_alarm">Уведомление</string>
+    <string name="entry_settings_not_set">Не задано</string>
+    <string name="entry_settings_section_when">Когда</string>
+    <string name="entry_settings_section_recurrence">Повтор</string>
+    <string name="entry_settings_section_alarm">Уведомление</string>
+    <string name="entry_settings_section_goals">Цели</string>
+</resources>

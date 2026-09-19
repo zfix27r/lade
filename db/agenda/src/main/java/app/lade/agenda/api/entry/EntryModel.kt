@@ -1,5 +1,6 @@
 package app.lade.agenda.api.entry
 
+import app.lade.entrykind.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import app.lade.resources.R
 import java.time.LocalDate
 import java.time.LocalTime

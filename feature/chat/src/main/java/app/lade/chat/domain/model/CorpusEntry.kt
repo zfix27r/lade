@@ -1,7 +1,7 @@
 package app.lade.chat.domain.model
 
 import app.lade.chat.domain.pipeline.Needle
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 
 /** System row from assets JSON (not in Room). */
 data class CorpusEntry(

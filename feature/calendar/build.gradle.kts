@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
     implementation(project(":db:agenda"))
+    implementation(project(":feature:draft"))
     implementation(project(":feature:categories"))
 
     implementation(libs.androidx.core.ktx)

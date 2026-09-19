@@ -1,7 +1,7 @@
 package app.lade.entrydetailsscreen.domain
 
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.agenda.api.entry.EntryModel
+import app.lade.entrykind.EntryKind
 
 data class EntryListUiState(
     val items: List<EntryModel> = emptyList(),

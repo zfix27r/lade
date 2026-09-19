@@ -1,6 +1,6 @@
 package app.lade.chat.domain.pipeline
 
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 
 /** One trigger: exact phrase or `*stem*`, optional intent override. */
 data class Needle(

@@ -19,6 +19,7 @@ fun RecurrencePreset.labelRes(): Int = when (this) {
 	RecurrencePreset.EveryNDays -> R.string.recurrence_every_n_days
 	RecurrencePreset.Monthly -> R.string.recurrence_monthly
 	RecurrencePreset.Yearly -> R.string.recurrence_yearly
+    RecurrencePreset.None -> R.string.recurrence_none
 }
 
 @Composable

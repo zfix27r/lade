@@ -9,6 +9,8 @@ import app.lade.db.LadeDatabase
 import app.lade.agendastore.entry.EntryDao
 import app.lade.agendastore.goal.GoalDao
 import app.lade.agendastore.log.LogDao
+import app.lade.database.Transaction
+import app.lade.db.TransactionImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +32,10 @@ object DatabaseModule {
 		)
 			.fallbackToDestructiveMigration(dropAllTables = true)
 			.build()
+
+	@Provides
+	@Singleton
+	fun provideTransaction(impl: TransactionImpl): Transaction = impl
 
 	@Provides
 	fun provideCategoryDao(db: LadeDatabase): CategoryDao = db.categoryDao()

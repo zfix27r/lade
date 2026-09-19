@@ -16,7 +16,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import app.lade.chat.domain.ChatBubble
 import app.lade.chat.domain.ChatBubbleKind
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import app.lade.resources.R
 
 @Composable

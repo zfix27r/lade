@@ -1,6 +1,7 @@
 package app.lade.temporal.api
 
 enum class RecurrencePreset {
+    None,
     Daily,
     Weekdays,
     Weekly,

@@ -27,8 +27,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.lade.entrykind.EntryKind
 import app.lade.resources.R
-import app.lade.agenda.api.entry.EntryKind
 import app.lade.ui.components.inputs.TitleTextField
 import app.lade.ui.components.layout.EditSectionCard
 

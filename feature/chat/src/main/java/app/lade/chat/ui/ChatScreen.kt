@@ -35,6 +35,7 @@ import app.lade.resources.R
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ChatScreen(
+	onOpenProfile: () -> Unit,
 	onOpenTemplates: () -> Unit,
 	onCreateEntry: (kind: String, title: String) -> Unit = { _, _ -> },
 	bottomNavHeight: Dp = 0.dp,

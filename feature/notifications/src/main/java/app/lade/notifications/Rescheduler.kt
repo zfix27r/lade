@@ -2,7 +2,7 @@ package app.lade.notifications
 
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.agenda.api.entry.EntryKind
+import app.lade.entrykind.EntryKind
 import app.lade.notifications.data.ReminderAlarmScheduler
 import app.lade.notifications.data.ReminderChannels
 import app.lade.notifications.domain.ReminderFireMode
