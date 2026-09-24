@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "app.lade.temporal"
+    namespace = "app.lade.recurrence"
     compileSdk = 37
 
     defaultConfig {

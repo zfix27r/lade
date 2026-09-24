@@ -11,7 +11,6 @@ import app.lade.calendar.ui.component.week.CalendarWeekLayout
 import app.lade.calendar.ui.component.year.CalendarYearGrid
 import java.time.YearMonth
 
-
 @Composable
 fun CalendarModeContent(
     state: CalendarStateModel,
@@ -23,7 +22,8 @@ fun CalendarModeContent(
             state = state,
             onSwipe = actions.onSwipe,
             onDateSelected = actions.onDateSelected,
-            onEditEntry = actions.onEditEntry,
+            onOpenAgenda = actions.onOpenAgenda,
+            onEntryLongPress = actions.onEntryLongPress,
             onMarkDone = actions.onMarkDone,
             onMarkSkip = actions.onMarkSkip,
             modifier = modifier.fillMaxSize(),

@@ -4,9 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.lade.resources.R
-import app.lade.temporal.api.DaysOfWeekFlags
-import app.lade.temporal.api.RecurrenceDraft
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.DaysOfWeekFlags
+import app.lade.recurrence.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrencePreset
 
 @Composable
 fun RecurrencePreset.label(): String = stringResource(labelRes())

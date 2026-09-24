@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.calendar.domain.CalendarDateMode
 import app.lade.calendar.domain.CalendarStateModel
 import app.lade.calendar.ui.component.list.collapse.CalendarCollapseConnection
@@ -39,7 +40,8 @@ fun CalendarListLayout(
     state: CalendarStateModel,
     onSwipe: (CalendarDateMode) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    onEditEntry: (entryId: Long) -> Unit,
+    onOpenAgenda: (AgendaModel) -> Unit,
+    onEntryLongPress: (AgendaModel) -> Unit,
     onMarkDone: (entryId: Long, date: LocalDate) -> Unit,
     onMarkSkip: (entryId: Long, date: LocalDate) -> Unit,
     modifier: Modifier = Modifier,
@@ -138,13 +140,10 @@ fun CalendarListLayout(
                             ) {
                                 AgendaRow(
                                     agenda = agenda,
-                                    onEditEntry = onEditEntry,
-                                    onMarkDone = {
-                                        onMarkDone(agenda.entry.id, agenda.date)
-                                    },
-                                    onMarkSkip = {
-                                        onMarkSkip(agenda.entry.id, agenda.date)
-                                    },
+                                    onOpenAgenda = { onOpenAgenda(agenda) },
+                                    onMarkDone = { onMarkDone(agenda.entry.id, agenda.date) },
+                                    onMarkSkip = { onMarkSkip(agenda.entry.id, agenda.date) },
+                                    onLongPress = { onEntryLongPress(agenda) },
                                     enableMarkHaptics = config.enableMarkHaptics,
                                 )
                             }

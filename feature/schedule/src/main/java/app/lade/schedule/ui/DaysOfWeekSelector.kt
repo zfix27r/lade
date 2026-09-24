@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import app.lade.resources.R
-import app.lade.temporal.api.DaysOfWeekFlags
+import app.lade.recurrence.api.DaysOfWeekFlags
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

@@ -1,7 +1,7 @@
 package app.lade.entrydetailsscreen.domain.resolver
 
 import app.lade.schedule.data.TemporalOptions
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.RecurrencePreset
 
 data class EntryKindInput(
     val temporal: TemporalOptions,

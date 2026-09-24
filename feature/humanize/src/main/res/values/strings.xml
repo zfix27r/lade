@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <string name="humanize_date_yesterday_short">вчера</string>
+    <string name="humanize_date_yesterday_long">вчера</string>
+    <string name="humanize_date_today_short">сегодня</string>
+    <string name="humanize_date_today_long">сегодня</string>
+    <string name="humanize_date_tomorrow_short">завтра</string>
+    <string name="humanize_date_tomorrow_long">завтра</string>
+
+
+    <string name="humanize_reminder_moment_short">в момент</string>
+    <string name="humanize_reminder_moment_long">в момент события</string>
+
+
+    <string name="humanize_alarm_short">будильник в %1$s</string>
+    <string name="humanize_alarm_short_with_mode">будильник в %1$s (%2$s)</string>
+    <string name="humanize_alarm_long">будильник в %1$s</string>
+    <string name="humanize_alarm_long_with_mode">будильник в %1$s, режим: %2$s</string>
+
+    <string name="humanize_alarm_mode_sound_short">звук</string>
+    <string name="humanize_alarm_mode_sound_long">со звуком</string>
+    <string name="humanize_alarm_mode_vibrate_short">вибро</string>
+    <string name="humanize_alarm_mode_vibrate_long">с вибрацией</string>
+    <string name="humanize_alarm_mode_silent_short">тихо</string>
+    <string name="humanize_alarm_mode_silent_long">без звука</string>
+
+
+    <string name="humanize_goal_weight">вес %1$s</string>
+
+
+    <string name="humanize_rrule_daily_short">ежедневно</string>
+    <string name="humanize_rrule_daily_long">каждый день</string>
+
+    <string name="humanize_rrule_weekdays_short">по будням</string>
+    <string name="humanize_rrule_weekdays_long">по будням</string>
+
+    <string name="humanize_rrule_weekly_one_short">каждый %1$s</string>
+    <string name="humanize_rrule_weekly_one_long">каждую %1$s</string>
+
+    <string name="humanize_rrule_weekly_many_short">по %1$s</string>
+    <string name="humanize_rrule_weekly_many_long">по %1$s</string>
+
+    <string name="humanize_rrule_monthly_short">ежемесячно</string>
+    <string name="humanize_rrule_monthly_long">каждый месяц</string>
+
+    <string name="humanize_rrule_yearly_short">ежегодно</string>
+    <string name="humanize_rrule_yearly_long">каждый год</string>
+
+    <string name="humanize_day_mon_short">пн</string>
+    <string name="humanize_day_mon_long">понедельникам</string>
+    <string name="humanize_day_tue_short">вт</string>
+    <string name="humanize_day_tue_long">вторникам</string>
+    <string name="humanize_day_wed_short">ср</string>
+    <string name="humanize_day_wed_long">средам</string>
+    <string name="humanize_day_thu_short">чт</string>
+    <string name="humanize_day_thu_long">четвергам</string>
+    <string name="humanize_day_fri_short">пт</string>
+    <string name="humanize_day_fri_long">пятницам</string>
+    <string name="humanize_day_sat_short">сб</string>
+    <string name="humanize_day_sat_long">субботам</string>
+    <string name="humanize_day_sun_short">вс</string>
+    <string name="humanize_day_sun_long">воскресеньям</string>
+
+</resources>

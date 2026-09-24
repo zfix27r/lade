@@ -87,6 +87,12 @@ class CalendarViewModel @Inject constructor(
         _state.update { it.copy(selectedSources = emptySet()) }
     }
 
+    fun archiveEntry(entryId: Long) {
+        viewModelScope.launch {
+            agendaApi.archiveEntry(entryId)
+        }
+    }
+
     fun markDone(entryId: Long, date: LocalDate) = mark(entryId, date, done = true)
 
     fun markSkip(entryId: Long, date: LocalDate) = mark(entryId, date, done = false)

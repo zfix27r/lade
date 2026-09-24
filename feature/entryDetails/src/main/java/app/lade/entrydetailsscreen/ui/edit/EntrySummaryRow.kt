@@ -14,7 +14,7 @@ import app.lade.entrydetailsscreen.R
 import app.lade.resources.R as resources
 import app.lade.schedule.ui.AlarmModeOption
 import app.lade.schedule.ui.label
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.RecurrencePreset
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

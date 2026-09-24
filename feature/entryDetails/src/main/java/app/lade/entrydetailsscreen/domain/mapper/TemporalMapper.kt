@@ -4,7 +4,7 @@ import app.lade.agenda.api.entry.EntryModel
 import app.lade.entrydetailsscreen.domain.model.EntryEditUiState
 import app.lade.schedule.data.TemporalOptions
 import app.lade.schedule.ui.AlarmModeOption
-import app.lade.temporal.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrenceDraft
 
 object TemporalMapper {
 

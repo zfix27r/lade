@@ -2,7 +2,7 @@ package app.lade.agenda.data.agenda
 
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.entrykind.EntryKind
-import app.lade.temporal.api.RecurrenceEngine
+import app.lade.recurrence.api.RecurrenceEngine
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton

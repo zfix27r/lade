@@ -29,12 +29,16 @@ dependencies {
 
     implementation(project(":db:agenda"))
     implementation(project(":db:chat-store"))
+    implementation(project(":feature:entry-kind"))
+
 
     implementation(project(":feature:categories"))
     implementation(project(":feature:reminders"))
     implementation(project(":feature:scenarios"))
     implementation(project(":feature:recurrence"))
     implementation(project(":feature:daypart"))
+
+    implementation(project(":feature:draft-data"))
 
     implementation(libs.androidx.core.ktx)
 
@@ -47,4 +51,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    testImplementation(libs.junit)
+    testImplementation("org.json:json:20240303")
 }

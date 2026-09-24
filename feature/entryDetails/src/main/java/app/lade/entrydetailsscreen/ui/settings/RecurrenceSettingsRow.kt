@@ -10,8 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import app.lade.entrydetailsscreen.R
 import app.lade.schedule.ui.components.CollapsedRecurrenceRow
-import app.lade.temporal.api.RecurrenceDraft
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrencePreset
 import app.lade.schedule.ui.label
 
 @Composable

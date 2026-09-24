@@ -17,8 +17,8 @@ import app.lade.entrydetailsscreen.domain.model.EntryEditUiState
 import app.lade.entrydetailsscreen.domain.model.GoalDraft
 import app.lade.entrykind.EntryKind
 import app.lade.schedule.ui.AlarmModeOption
-import app.lade.temporal.api.RecurrenceDraft
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrencePreset
 import java.time.LocalDate
 import java.time.LocalTime
 import app.lade.resources.R as resources

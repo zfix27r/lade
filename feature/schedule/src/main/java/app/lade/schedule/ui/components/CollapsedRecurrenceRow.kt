@@ -27,8 +27,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import app.lade.resources.R
 import app.lade.schedule.ui.label
-import app.lade.temporal.api.RecurrenceDraft
-import app.lade.temporal.api.RecurrencePreset
+import app.lade.recurrence.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrencePreset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

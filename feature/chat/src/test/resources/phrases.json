@@ -1,0 +1,767 @@
+[
+  {
+    "input": "завтра встреча",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча",
+    "dateFrom": "tomorrow"
+  },
+  {
+    "input": "послезавтра встреча",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча",
+    "dateFrom": "afterTomorrow"
+  },
+  {
+    "input": "сегодня в 10 встреча",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча",
+    "dateFrom": "today",
+    "timeFrom": "10:00"
+  },
+  {
+    "input": "сегодня в 10:30 встреча",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча",
+    "dateFrom": "today",
+    "timeFrom": "10:30"
+  },
+  {
+    "input": "в пятницу встреча",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча",
+    "dateFrom": "friday"
+  },
+  {
+    "input": "бег каждый день",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Бег",
+    "rrule": "FREQ=DAILY"
+  },
+  {
+    "input": "бег по будням",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Бег",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+  },
+  {
+    "input": "бег по выходным",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Бег",
+    "rrule": "FREQ=WEEKLY;BYDAY=SA,SU"
+  },
+  {
+    "input": "купить хлеб",
+    "result": "Draft",
+    "kind": "TASK",
+    "title": "Купить хлеб"
+  },
+  {
+    "input": "купить хлеб сегодня",
+    "result": "Draft",
+    "kind": "TASK",
+    "title": "Купить хлеб",
+    "dateFrom": "today"
+  },
+  {
+    "input": "встреча с врачом",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча с врачом"
+  },
+  {
+    "input": "тренировка завтра в 10",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Тренировка",
+    "dateFrom": "tomorrow",
+    "timeFrom": "10:00"
+  },
+  {
+    "input": "привычка бег",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Бег"
+  },
+  {
+    "input": "задача купить хлеб",
+    "result": "Draft",
+    "kind": "TASK",
+    "title": "Купить хлеб"
+  },
+  {
+    "input": "событие встреча с врачом",
+    "result": "Draft",
+    "kind": "EVENT",
+    "title": "Встреча с врачом"
+  },
+  {
+    "input": "расписание работа по будням",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "title": "Работа",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+  },
+  {
+    "input": "завтра в 10 встреча с врачом",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "10:00",
+    "remaining": "встреча с врачом"
+  },
+  {
+    "input": "послезавтра в 14:30 созвон",
+    "result": "Draft",
+    "dateFrom": "afterTomorrow",
+    "timeFrom": "14:30",
+    "remaining": "созвон"
+  },
+  {
+    "input": "в понедельник в 9 утра зал",
+    "result": "Draft",
+    "dateFrom": "monday",
+    "timeFrom": "09:00",
+    "remaining": "зал"
+  },
+  {
+    "input": "каждую пятницу в 19:00 ужин",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=FR",
+    "timeFrom": "19:00",
+    "remaining": "ужин"
+  },
+  {
+    "input": "22.09 в 10:00 встреча",
+    "result": "Draft",
+    "dateFrom": "2026-09-22",
+    "timeFrom": "10:00",
+    "remaining": "встреча"
+  },
+  {
+    "input": "с 22 по 25 сентября отпуск",
+    "result": "Draft",
+    "dateFrom": "2026-09-22",
+    "dateTo": "2026-09-25",
+    "remaining": "отпуск"
+  },
+  {
+    "input": "завтра в 8 утра зарядка",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "08:00",
+    "remaining": "зарядка"
+  },
+  {
+    "input": "сегодня вечером ужин",
+    "result": "Draft",
+    "dateFrom": "today",
+    "timeFrom": "18:00",
+    "remaining": "ужин"
+  },
+  {
+    "input": "завтра утром совещание",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "09:00",
+    "remaining": "совещание"
+  },
+  {
+    "input": "послезавтра днём обед",
+    "result": "Draft",
+    "dateFrom": "afterTomorrow",
+    "timeFrom": "12:00",
+    "remaining": "обед"
+  },
+  {
+    "input": "в среду в 15:30 встреча",
+    "result": "Draft",
+    "dateFrom": "wednesday",
+    "timeFrom": "15:30",
+    "remaining": "встреча"
+  },
+  {
+    "input": "в четверг в полдень обед",
+    "result": "Draft",
+    "dateFrom": "thursday",
+    "timeFrom": "12:00",
+    "remaining": "обед"
+  },
+  {
+    "input": "в следующий понедельник планёрка",
+    "result": "Draft",
+    "dateFrom": "monday",
+    "remaining": "планёрка"
+  },
+  {
+    "input": "до конца недели сдать проект",
+    "result": "Draft",
+    "dateFrom": "today",
+    "dateTo": "sunday",
+    "remaining": "сдать проект"
+  },
+  {
+    "input": "до 30 сентября отчёт",
+    "result": "Draft",
+    "dateFrom": "today",
+    "dateTo": "2026-09-30",
+    "remaining": "отчёт"
+  },
+  {
+    "input": "22.09.2026 день рождения",
+    "result": "Draft",
+    "dateFrom": "2026-09-22",
+    "remaining": "день рождения"
+  },
+  {
+    "input": "в понедельник тренировка",
+    "result": "Draft",
+    "dateFrom": "monday",
+    "remaining": "тренировка"
+  },
+  {
+    "input": "во вторник в 7 вечера бассейн",
+    "result": "Draft",
+    "dateFrom": "tuesday",
+    "timeFrom": "19:00",
+    "remaining": "бассейн"
+  },
+  {
+    "input": "каждый день пить воду",
+    "result": "Draft",
+    "rrule": "FREQ=DAILY",
+    "remaining": "пить воду"
+  },
+  {
+    "input": "ежедневно читать",
+    "result": "Draft",
+    "rrule": "FREQ=DAILY",
+    "remaining": "читать"
+  },
+  {
+    "input": "по выходным гулять",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=SA,SU",
+    "remaining": "гулять"
+  },
+  {
+    "input": "еженедельно уборка",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY",
+    "remaining": "уборка"
+  },
+  {
+    "input": "ежемесячно отчёт",
+    "result": "Draft",
+    "rrule": "FREQ=MONTHLY",
+    "remaining": "отчёт"
+  },
+  {
+    "input": "ежегодно день рождения мамы",
+    "result": "Draft",
+    "rrule": "FREQ=YEARLY",
+    "remaining": "день рождения мамы"
+  },
+  {
+    "input": "каждый месяц платить за квартиру",
+    "result": "Draft",
+    "rrule": "FREQ=MONTHLY",
+    "remaining": "платить за квартиру"
+  },
+  {
+    "input": "каждый год в отпуск",
+    "result": "Draft",
+    "rrule": "FREQ=YEARLY",
+    "remaining": "в отпуск"
+  },
+  {
+    "input": "позвонить маме завтра",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "remaining": "позвонить маме"
+  },
+  {
+    "input": "оплатить счёт в пятницу",
+    "result": "Draft",
+    "dateFrom": "friday",
+    "remaining": "оплатить счёт"
+  },
+  {
+    "input": "забрать посылку послезавтра",
+    "result": "Draft",
+    "dateFrom": "afterTomorrow",
+    "remaining": "забрать посылку"
+  },
+  {
+    "input": "встреча в 15:00",
+    "result": "Draft",
+    "timeFrom": "15:00",
+    "remaining": "встреча"
+  },
+  {
+    "input": "созвон в 10:30 завтра",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "10:30",
+    "remaining": "созвон"
+  },
+  {
+    "input": "тренировка в 7 вечера",
+    "result": "Draft",
+    "timeFrom": "19:00",
+    "remaining": "тренировка"
+  },
+  {
+    "input": "завтра в 6 утра пробежка",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "06:00",
+    "remaining": "пробежка"
+  },
+  {
+    "input": "в субботу в 12:00 обед с друзьями",
+    "result": "Draft",
+    "dateFrom": "saturday",
+    "timeFrom": "12:00",
+    "remaining": "обед с друзьями"
+  },
+  {
+    "input": "каждую пятницу в 19:00 ужин с семьёй",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=FR",
+    "timeFrom": "19:00",
+    "remaining": "ужин с семьёй"
+  },
+  {
+    "input": "каждый вторник и четверг йога",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=TU,TH",
+    "remaining": "йога"
+  },
+  {
+    "input": "раз в 3 недели уборка",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;INTERVAL=3",
+    "remaining": "уборка"
+  },
+  {
+    "input": "раз в месяц отчёт",
+    "result": "Draft",
+    "rrule": "FREQ=MONTHLY",
+    "remaining": "отчёт"
+  },
+  {
+    "input": "22.09 и 25.09 встречи",
+    "result": "Draft",
+    "dateFrom": "2026-09-22",
+    "dateTo": "2026-09-25",
+    "remaining": "встречи"
+  },
+  {
+    "input": "каждый второй вторник планёрка",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;INTERVAL=2;BYDAY=TU",
+    "remaining": "планёрка"
+  },
+  {
+    "input": "следующая пятница в 10",
+    "result": "Draft",
+    "dateFrom": "friday",
+    "timeFrom": "10:00",
+    "remaining": ""
+  },
+  {
+    "input": "раз в 2 дня витамины",
+    "result": "Draft",
+    "rrule": "FREQ=DAILY;INTERVAL=2",
+    "remaining": "витамины"
+  },
+  {
+    "input": "пробежал 10 км",
+    "result": "MarkDone"
+  },
+  {
+    "input": "выпил воду",
+    "result": "MarkDone"
+  },
+  {
+    "input": "отжался 30 раз",
+    "result": "MarkDone"
+  },
+  {
+    "input": "подтянулся 3 раза по 10",
+    "result": "MarkDone"
+  },
+  {
+    "input": "пробежал 10 км за 50 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "пробежал 5 км за 25 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "отжался 3 раза по 20",
+    "result": "MarkDone"
+  },
+  {
+    "input": "подтянулся 5 раз по 3",
+    "result": "MarkDone"
+  },
+  {
+    "input": "выпил 2 литра воды",
+    "result": "MarkDone"
+  },
+  {
+    "input": "выпил 500 мл воды",
+    "result": "MarkDone"
+  },
+  {
+    "input": "сделал 10000 шагов",
+    "result": "MarkDone"
+  },
+  {
+    "input": "почитал 30 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "помедитировал 10 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "поспал 8 часов",
+    "result": "MarkDone"
+  },
+  {
+    "input": "привычка медитация каждый день",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Медитация",
+    "rrule": "FREQ=DAILY"
+  },
+  {
+    "input": "привычка читать по вечерам",
+    "result": "Draft",
+    "kind": "HABIT",
+    "title": "Читать по вечерам"
+  },
+  { "input": "привычка пить воду каждый день 8 раз", "result": "Draft", "kind": "HABIT", "rrule": "FREQ=DAILY", "remaining": "пить воду 8 раз" },
+  {
+    "input": "привычка зарядка по будням в 7 утра",
+    "result": "Draft",
+    "kind": "HABIT",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+    "timeFrom": "07:00",
+    "remaining": "зарядка"
+  },
+  {
+    "input": "привычка английский каждый вторник и четверг",
+    "result": "Draft",
+    "kind": "HABIT",
+    "rrule": "FREQ=WEEKLY;BYDAY=TU,TH",
+    "remaining": "английский"
+  },
+  {
+    "input": "привычка йога по утрам",
+    "result": "Draft",
+    "kind": "HABIT",
+    "timeFrom": "09:00",
+    "remaining": "йога"
+  },
+  {
+    "input": "задача купить молоко завтра",
+    "result": "Draft",
+    "kind": "TASK",
+    "dateFrom": "tomorrow",
+    "remaining": "купить молоко"
+  },
+  {
+    "input": "задача позвонить в банк в пятницу в 15:00",
+    "result": "Draft",
+    "kind": "TASK",
+    "dateFrom": "friday",
+    "timeFrom": "15:00",
+    "remaining": "позвонить в банк"
+  },
+  {
+    "input": "задача отправить отчёт до конца недели",
+    "result": "Draft",
+    "kind": "TASK",
+    "dateFrom": "today",
+    "dateTo": "sunday",
+    "remaining": "отправить отчёт"
+  },
+  {
+    "input": "задача записаться к стоматологу",
+    "result": "Draft",
+    "kind": "TASK",
+    "remaining": "записаться к стоматологу"
+  },
+  {
+    "input": "задача починить кран послезавтра",
+    "result": "Draft",
+    "kind": "TASK",
+    "dateFrom": "afterTomorrow",
+    "remaining": "починить кран"
+  },
+  {
+    "input": "задача оплатить счета до 30 сентября",
+    "result": "Draft",
+    "kind": "TASK",
+    "dateFrom": "today",
+    "dateTo": "2026-09-30",
+    "remaining": "оплатить счета"
+  },
+  {
+    "input": "событие день рождения у маши",
+    "result": "Draft",
+    "kind": "EVENT",
+    "remaining": "день рождения у маши"
+  },
+  {
+    "input": "событие концерт в субботу в 19:00",
+    "result": "Draft",
+    "kind": "EVENT",
+    "dateFrom": "saturday",
+    "timeFrom": "19:00",
+    "remaining": "концерт"
+  },
+  {
+    "input": "событие собеседование завтра в 11:00",
+    "result": "Draft",
+    "kind": "EVENT",
+    "dateFrom": "tomorrow",
+    "timeFrom": "11:00",
+    "remaining": "собеседование"
+  },
+  {
+    "input": "событие поездка 22.09",
+    "result": "Draft",
+    "kind": "EVENT",
+    "dateFrom": "2026-09-22",
+    "remaining": "поездка"
+  },
+  {
+    "input": "событие матч в следующий вторник",
+    "result": "Draft",
+    "kind": "EVENT",
+    "dateFrom": "tuesday",
+    "remaining": "матч"
+  },
+  {
+    "input": "событие встреча с командой в 10:00",
+    "result": "Draft",
+    "kind": "EVENT",
+    "timeFrom": "10:00",
+    "remaining": "встреча с командой"
+  },
+  {
+    "input": "расписание работа по будням с 9 до 18",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+  },
+  {
+    "input": "расписание сон каждый день в 23:00",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "rrule": "FREQ=DAILY",
+    "timeFrom": "23:00",
+    "remaining": "сон"
+  },
+  {
+    "input": "расписание обед по будням в 13:00",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+    "timeFrom": "13:00",
+    "remaining": "обед"
+  },
+  {
+    "input": "расписание учёба по будням",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+    "remaining": "учёба"
+  },
+  {
+    "input": "расписание зал по вторникам и четвергам",
+    "result": "Draft",
+    "kind": "SCHEDULE",
+    "rrule": "FREQ=WEEKLY;BYDAY=TU,TH",
+    "remaining": "зал"
+  },
+  {
+    "input": "цель 5 км",
+    "result": "Draft",
+    "remaining": "цель 5 км"
+  },
+  {
+    "input": "цель пробежать 10 км",
+    "result": "Draft",
+    "remaining": "цель пробежать 10 км"
+  },
+  {
+    "input": "цель 3 раза по 20",
+    "result": "Draft",
+    "remaining": "цель"
+  },
+  {
+    "input": "привычка бег каждый день цель 5 км",
+    "result": "Draft",
+    "kind": "HABIT",
+    "rrule": "FREQ=DAILY",
+    "remaining": "бег цель 5 км"
+  },
+  {
+    "input": "привычка отжимания 3 раза по 20 каждый день",
+    "result": "Draft",
+    "kind": "HABIT",
+    "rrule": "FREQ=DAILY",
+    "remaining": "отжимания"
+  },
+  {
+    "input": "привычка вода 8 стаканов в день",
+    "result": "Draft",
+    "kind": "HABIT",
+    "remaining": "вода в день"
+  },
+  {
+    "input": "логирование пробежал 10 км",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование выпил воду",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование отжался 30 раз",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование подтянулся 5 раз по 3",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование почитал 30 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование помедитировал 10 минут",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование поспал 7 часов",
+    "result": "MarkDone"
+  },
+  {
+    "input": "логирование сделал 8000 шагов",
+    "result": "MarkDone"
+  },
+  {
+    "input": "завтра встреча в 10 утра",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "10:00",
+    "remaining": "встреча"
+  },
+  {
+    "input": "завтра встреча в 7 вечера",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "timeFrom": "19:00",
+    "remaining": "встреча"
+  },
+  {
+    "input": "послезавтра обед в 12:00",
+    "result": "Draft",
+    "dateFrom": "afterTomorrow",
+    "timeFrom": "12:00",
+    "remaining": "обед"
+  },
+  {
+    "input": "тренировка в понедельник в 19:00",
+    "result": "Draft",
+    "dateFrom": "monday",
+    "timeFrom": "19:00",
+    "remaining": "тренировка"
+  },
+  {
+    "input": "зал по будням в 19:00",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+    "timeFrom": "19:00",
+    "remaining": "зал"
+  },
+  {
+    "input": "бег по вторникам и субботам в 7 утра",
+    "result": "Draft",
+    "rrule": "FREQ=WEEKLY;BYDAY=TU,SA",
+    "timeFrom": "07:00",
+    "remaining": "бег"
+  },
+  {
+    "input": "встреча с врачом в четверг в 9:30",
+    "result": "Draft",
+    "dateFrom": "thursday",
+    "timeFrom": "09:30",
+    "remaining": "встреча с врачом"
+  },
+  {
+    "input": "созвон по проекту во вторник",
+    "result": "Draft",
+    "dateFrom": "tuesday",
+    "remaining": "созвон по проекту"
+  },
+  {
+    "input": "купить хлеб и молоко",
+    "result": "Draft",
+    "remaining": "купить хлеб и молоко"
+  },
+  { "input": "привычка", "result": "Draft", "kind": "HABIT", "remaining": "" },
+  { "input": "задача", "result": "Draft", "kind": "TASK", "remaining": "" },
+  { "input": "событие", "result": "Draft", "kind": "EVENT", "remaining": "" },
+  { "input": "расписание", "result": "Draft", "kind": "SCHEDULE", "remaining": "" },
+  {
+    "input": "цель",
+    "result": "Draft",
+    "remaining": "цель"
+  },
+  {
+    "input": "сегодня",
+    "result": "Draft",
+    "dateFrom": "today",
+    "remaining": ""
+  },
+  {
+    "input": "завтра",
+    "result": "Draft",
+    "dateFrom": "tomorrow",
+    "remaining": ""
+  },
+  {
+    "input": "в 10:30",
+    "result": "Draft",
+    "timeFrom": "10:30",
+    "remaining": ""
+  },
+  {
+    "input": "каждый день",
+    "result": "Draft",
+    "rrule": "FREQ=DAILY",
+    "remaining": ""
+  },
+  {
+    "input": "тренировка каждые 2 дня",
+    "result": "Draft",
+    "kind": "HABIT",
+    "rrule": "FREQ=DAILY;INTERVAL=2",
+    "remaining": "тренировка"
+  }
+]

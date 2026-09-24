@@ -21,7 +21,7 @@ import app.lade.entrydetailsscreen.domain.resolver.EntryKindResolver
 import app.lade.entrykind.EntryKind
 import app.lade.schedule.data.TemporalOptions
 import app.lade.schedule.ui.AlarmModeOption
-import app.lade.temporal.api.RecurrenceDraft
+import app.lade.recurrence.api.RecurrenceDraft
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

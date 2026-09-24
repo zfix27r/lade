@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="humanize_duration_min_short">
+        <item quantity="one">%d мин</item>
+        <item quantity="few">%d мин</item>
+        <item quantity="many">%d мин</item>
+        <item quantity="other">%d мин</item>
+    </plurals>
+
+    <plurals name="humanize_duration_min_long">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+
+    <plurals name="humanize_duration_hour_short">
+        <item quantity="one">%d ч</item>
+        <item quantity="few">%d ч</item>
+        <item quantity="many">%d ч</item>
+        <item quantity="other">%d ч</item>
+    </plurals>
+
+    <plurals name="humanize_duration_hour_long">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часов</item>
+    </plurals>
+
+
+    <plurals name="humanize_reminder_min_short">
+        <item quantity="one">за %d мин</item>
+        <item quantity="few">за %d мин</item>
+        <item quantity="many">за %d мин</item>
+        <item quantity="other">за %d мин</item>
+    </plurals>
+
+    <plurals name="humanize_reminder_min_long">
+        <item quantity="one">за %d минуту</item>
+        <item quantity="few">за %d минуты</item>
+        <item quantity="many">за %d минут</item>
+        <item quantity="other">за %d минут</item>
+    </plurals>
+
+    <plurals name="humanize_reminder_hour_short">
+        <item quantity="one">за %d ч</item>
+        <item quantity="few">за %d ч</item>
+        <item quantity="many">за %d ч</item>
+        <item quantity="other">за %d ч</item>
+    </plurals>
+
+    <plurals name="humanize_reminder_hour_long">
+        <item quantity="one">за %d час</item>
+        <item quantity="few">за %d часа</item>
+        <item quantity="many">за %d часов</item>
+        <item quantity="other">за %d часов</item>
+    </plurals>
+
+
+    <plurals name="humanize_rrule_every_n_days_long">
+        <item quantity="one">раз в %d день</item>
+        <item quantity="few">раз в %d дня</item>
+        <item quantity="many">раз в %d дней</item>
+        <item quantity="other">раз в %d дней</item>
+    </plurals>
+
+    <plurals name="humanize_rrule_every_n_weeks_long">
+        <item quantity="one">раз в %1$d неделю по %2$s</item>
+        <item quantity="few">раз в %1$d недели по %2$s</item>
+        <item quantity="many">раз в %1$d недель по %2$s</item>
+        <item quantity="other">раз в %1$d недель по %2$s</item>
+    </plurals>
+
+    <plurals name="humanize_rrule_every_n_months_long">
+        <item quantity="one">раз в %d месяц</item>
+        <item quantity="few">раз в %d месяца</item>
+        <item quantity="many">раз в %d месяцев</item>
+        <item quantity="other">раз в %d месяцев</item>
+    </plurals>
+
+    <plurals name="humanize_rrule_every_n_years_long">
+        <item quantity="one">раз в %d год</item>
+        <item quantity="few">раз в %d года</item>
+        <item quantity="many">раз в %d лет</item>
+        <item quantity="other">раз в %d лет</item>
+    </plurals>
+</resources>

@@ -8,6 +8,13 @@ enum class GoalUnit(val storage: String) {
     MIN("min"),
     HOUR("hour"),
     SET("set"),
+    LITER("liter"),
+    ML("ml"),
+    STEP("step"),
+    GLASS("glass"),
+    REP("rep"),
+    APPROACH("approach"),
+    CAL("cal"),
     UNKNOWN("unknown"),
     ;
 

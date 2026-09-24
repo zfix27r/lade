@@ -13,15 +13,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import app.lade.draft.DraftApi
 import app.lade.navigation.AppNavGraph
 import app.lade.navigation.Routes
 import app.lade.ui.profile.ProfileSheet
 
 @Composable
 fun LadeApp(
+    draftApi: DraftApi,
     deepLink: String? = null,
 ) {
     val navController = rememberNavController()
+
 
     LaunchedEffect(deepLink) {
         if (deepLink != null) {
@@ -34,11 +37,10 @@ fun LadeApp(
     var showProfileSheet by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { padding ->
+        Scaffold(contentWindowInsets = WindowInsets(0, 0, 0, 0)) { padding ->
             AppNavGraph(
                 navController = navController,
+                draftApi = draftApi,
                 onOpenProfile = { showProfileSheet = true },
                 modifier = Modifier
                     .fillMaxSize()

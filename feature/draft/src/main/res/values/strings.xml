@@ -5,4 +5,52 @@
     <string name="input_send">Отправить</string>
     <string name="input_placeholder">Что запланировать?</string>
     <string name="input_settings">Настройки</string>
+
+    <string name="draft_placeholder">Новая запись…</string>
+    <string name="draft_action_expand">Развернуть</string>
+    <string name="draft_action_tune">Настройки</string>
+    <string name="draft_action_send">Сохранить</string>
+    <string name="draft_action_goal">Цели</string>
+
+
+    <!-- BarStatus notifications -->
+    <string name="draft_status_notifications_none">Нет</string>
+
+    <!-- BarMenu labels (не задано) -->
+    <string name="draft_menu_kind">Тип</string>
+    <string name="draft_menu_date">Дата</string>
+    <string name="draft_menu_time">Время</string>
+    <string name="draft_menu_recurrence">Повтор</string>
+    <string name="draft_menu_notifications">Напоминания</string>
+    <string name="draft_menu_goals">Цели</string>
+
+
+    <string name="draft_menu_recurrence_none">Не повторять</string>
+    <string name="draft_menu_recurrence_daily">Ежедневно</string>
+    <string name="draft_menu_recurrence_weekdays">По будням</string>
+    <string name="draft_menu_recurrence_weekends">По выходным</string>
+    <string name="draft_menu_recurrence_weekly">Еженедельно</string>
+    <string name="draft_menu_recurrence_monthly">Ежемесячно</string>
+    <string name="draft_menu_recurrence_yearly">Ежегодно</string>
+
+    <!-- BarStatus recurrence -->
+    <string name="draft_status_recurrence_daily">Ежедневно</string>
+    <string name="draft_status_recurrence_weekly">Еженедельно</string>
+    <string name="draft_status_recurrence_monthly">Ежемесячно</string>
+    <string name="draft_status_recurrence_yearly">Ежегодно</string>
+    <string name="draft_status_recurrence_weekdays">По будням</string>
+    <string name="draft_status_recurrence_weekends">По выходным</string>
+
+    <!-- BarStatus date -->
+    <string name="draft_status_date_today">Сегодня</string>
+    <string name="draft_status_date_tomorrow">Завтра</string>
+    <string name="draft_status_date_yesterday">Вчера</string>
+
+    <string name="draft_chip_today">Сегодня</string>
+    <string name="draft_chip_tomorrow">Завтра</string>
+    <string name="draft_chip_morning">Утро</string>
+    <string name="draft_chip_evening">Вечер</string>
+    <string name="draft_chip_daily">Ежедневно</string>
+    <string name="draft_chip_weekdays">По будням</string>
+    <string name="draft_chip_weekends">По выходным</string>
 </resources>

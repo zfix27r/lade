@@ -4,8 +4,8 @@ import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.agenda.api.goal.GoalModel
 import app.lade.agenda.api.goal.GoalUnit
-import app.lade.draft.DraftGoal
-import app.lade.draft.DraftModel
+import app.lade.draftdata.DraftGoal
+import app.lade.draftdata.DraftModel
 import app.lade.entrykind.EntryKind
 
 internal fun AgendaModel.toDraft(): DraftModel = DraftModel(

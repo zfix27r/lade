@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="draft_status_goals">
+        <item quantity="one">%d цель</item>
+        <item quantity="few">%d цели</item>
+        <item quantity="many">%d целей</item>
+        <item quantity="other">%d целей</item>
+    </plurals>
+
+    <plurals name="draft_status_notifications">
+        <item quantity="one">%d напоминание</item>
+        <item quantity="few">%d напоминания</item>
+        <item quantity="many">%d напоминаний</item>
+        <item quantity="other">%d напоминаний</item>
+    </plurals>
+</resources>

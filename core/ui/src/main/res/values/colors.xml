@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- ============ BRAND ============ -->
+	<color name="lade_navy">#FF00687A</color>          <!-- Primary light -->
+	<color name="lade_mist">#FFF5FAFC</color>          <!-- Background light -->
+	<color name="lade_accent">#FF84D2E7</color>        <!-- Accent (светлый cyan) -->
+	<color name="lade_white">#FFFFFFFF</color>         <!-- Surface / onPrimary -->
+	<color name="lade_dark_background">#FF0F1416</color>
+	<color name="lade_dark_surface">#FF161B1D</color>
+
+	<!-- ============ LIGHT ============ -->
+	<!-- Primary -->
+	<color name="lade_primary_light">#FF00687A</color>
+	<color name="lade_on_primary_light">#FFFFFFFF</color>
+	<color name="lade_primary_container_light">#FFACEDFF</color>
+	<color name="lade_on_primary_container_light">#FF004E5C</color>
+
+	<!-- Secondary -->
+	<color name="lade_secondary_light">#FF4B6269</color>
+	<color name="lade_on_secondary_light">#FFFFFFFF</color>
+	<color name="lade_secondary_container_light">#FFCEE7EF</color>
+	<color name="lade_on_secondary_container_light">#FF334A51</color>
+
+	<!-- Tertiary — сдвинут в пурпур -->
+	<color name="lade_tertiary_light">#FF6B5B8F</color>
+	<color name="lade_on_tertiary_light">#FFFFFFFF</color>
+	<color name="lade_tertiary_container_light">#FFE8DDFF</color>
+	<color name="lade_on_tertiary_container_light">#FF3F2E60</color>
+
+	<!-- Error -->
+	<color name="lade_error_light">#FFBA1A1A</color>
+	<color name="lade_on_error_light">#FFFFFFFF</color>
+	<color name="lade_error_container_light">#FFFFDAD6</color>
+	<color name="lade_on_error_container_light">#FF93000A</color>
+
+	<!-- Background / Surface -->
+	<color name="lade_background_light">#FFF5FAFC</color>
+	<color name="lade_on_background_light">#FF171C1E</color>
+	<color name="lade_surface_light">#FFFFFFFF</color>
+	<color name="lade_on_surface_light">#FF171C1E</color>
+	<color name="lade_surface_variant_light">#FFE8EEF1</color>
+	<color name="lade_on_surface_variant_light">#FF3F484B</color>
+
+	<!-- Outline -->
+	<color name="lade_outline_light">#FFBFC8CB</color>
+	<color name="lade_outline_variant_light">#FFDDE4E7</color>
+
+	<!-- Surface containers — иерархия без теней -->
+	<color name="lade_surface_dim_light">#FFD5DBDD</color>
+	<color name="lade_surface_bright_light">#FFFFFFFF</color>
+	<color name="lade_surface_container_lowest_light">#FFFFFFFF</color>
+	<color name="lade_surface_container_low_light">#FFF8FBFC</color>
+	<color name="lade_surface_container_light">#FFF1F5F7</color>
+	<color name="lade_surface_container_high_light">#FFEBF0F2</color>
+	<color name="lade_surface_container_highest_light">#FFE5EAEC</color>
+
+	<!-- Inverse -->
+	<color name="lade_inverse_surface_light">#FF2C3133</color>
+	<color name="lade_inverse_on_surface_light">#FFECF2F4</color>
+	<color name="lade_inverse_primary_light">#FF84D2E7</color>
+
+	<!-- ============ DARK ============ -->
+	<color name="lade_primary_dark">#FF84D2E7</color>
+	<color name="lade_on_primary_dark">#FF003640</color>
+	<color name="lade_primary_container_dark">#FF004E5C</color>
+	<color name="lade_on_primary_container_dark">#FFACEDFF</color>
+
+	<color name="lade_secondary_dark">#FFB2CBD2</color>
+	<color name="lade_on_secondary_dark">#FF1D343A</color>
+	<color name="lade_secondary_container_dark">#FF334A51</color>
+	<color name="lade_on_secondary_container_dark">#FFCEE7EF</color>
+
+	<color name="lade_tertiary_dark">#FFCFC0F0</color>
+	<color name="lade_on_tertiary_dark">#FF3A2A5C</color>
+	<color name="lade_tertiary_container_dark">#FF524375</color>
+	<color name="lade_on_tertiary_container_dark">#FFE8DDFF</color>
+
+	<color name="lade_error_dark">#FFFFB4AB</color>
+	<color name="lade_on_error_dark">#FF690005</color>
+	<color name="lade_error_container_dark">#FF93000A</color>
+	<color name="lade_on_error_container_dark">#FFFFDAD6</color>
+
+	<color name="lade_background_dark">#FF0F1416</color>
+	<color name="lade_on_background_dark">#FFDEE3E5</color>
+	<color name="lade_surface_dark">#FF161B1D</color>
+	<color name="lade_on_surface_dark">#FFDEE3E5</color>
+	<color name="lade_surface_variant_dark">#FF3F484B</color>
+	<color name="lade_on_surface_variant_dark">#FFBFC8CB</color>
+
+	<color name="lade_outline_dark">#FF899295</color>
+	<color name="lade_outline_variant_dark">#FF3F484B</color>
+
+	<color name="lade_surface_dim_dark">#FF0A0F11</color>
+	<color name="lade_surface_bright_dark">#FF343A3C</color>
+	<color name="lade_surface_container_lowest_dark">#FF0A0F11</color>
+	<color name="lade_surface_container_low_dark">#FF161B1D</color>
+	<color name="lade_surface_container_dark">#FF1B2022</color>
+	<color name="lade_surface_container_high_dark">#FF252B2D</color>
+	<color name="lade_surface_container_highest_dark">#FF303638</color>
+
+	<color name="lade_inverse_surface_dark">#FFDEE3E5</color>
+	<color name="lade_inverse_on_surface_dark">#FF2C3133</color>
+	<color name="lade_inverse_primary_dark">#FF00687A</color>
+
+	<color name="lade_scrim">#FF000000</color>
+
+	<!-- ============ CATEGORY COLORS (LIGHT) ============ -->
+	<!-- Пастельные, единая светлота, не конфликтуют с primary -->
+
+	<color name="category_slate_light">#FF7B8794</color>
+	<color name="category_stone_light">#FF8A8478</color>
+	<color name="category_brown_light">#FF9B7B6B</color>
+	<color name="category_red_light">#FFC97B7B</color>
+	<color name="category_rose_light">#FFC98397</color>
+	<color name="category_orange_light">#FFD19570</color>
+	<color name="category_amber_light">#FFD4A56C</color>
+	<color name="category_yellow_light">#FFCFBC70</color>
+	<color name="category_lime_light">#FFA8BC70</color>
+	<color name="category_green_light">#FF7BB584</color>
+	<color name="category_emerald_light">#FF6BB89C</color>
+	<color name="category_teal_light">#FF6BB8B8</color>
+	<color name="category_cyan_light">#FF6BAEC4</color>
+	<color name="category_sky_light">#FF7BA8D4</color>
+	<color name="category_blue_light">#FF7B8FC9</color>
+	<color name="category_indigo_light">#FF8880C4</color>
+	<color name="category_violet_light">#FF9C7BC4</color>
+	<color name="category_purple_light">#FFB07BC4</color>
+	<color name="category_fuchsia_light">#FFC47BB8</color>
+	<color name="category_pink_light">#FFC983A8</color>
+
+	<!-- Fallback — если пользователь задал неверный ключ -->
+	<color name="category_slate">#FF7B8794</color>
+</resources>

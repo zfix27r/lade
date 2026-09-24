@@ -1,6 +1,7 @@
 package app.lade.calendar.ui.component.list.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -17,13 +18,15 @@ import app.lade.calendar.R
 import app.lade.calendar.ui.component.EntryDayMarkActions
 import app.lade.entrykind.EntryKind
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AgendaRow(
     agenda: AgendaModel,
-    onEditEntry: (entryId: Long) -> Unit,
+    onOpenAgenda: () -> Unit,
     onMarkDone: () -> Unit,
     onMarkSkip: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongPress: (() -> Unit)? = null,
     enableMarkHaptics: Boolean = true,
 ) {
     val entry = agenda.entry
@@ -45,9 +48,20 @@ fun AgendaRow(
         }
         onMarkSkip()
     }
+    val handleLongPress: (() -> Unit)? = onLongPress?.let {
+        {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            it()
+        }
+    }
 
     ListItem(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onOpenAgenda,
+                onLongClick = handleLongPress,
+            ),
         leadingContent = null,
         trailingContent = if (entry.kind == EntryKind.HABIT) {
             {
@@ -65,7 +79,6 @@ fun AgendaRow(
                     text = timeRange,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.clickable { onEditEntry(entry.id) },
                 )
             }
         } else null,
@@ -75,7 +88,6 @@ fun AgendaRow(
             Text(
                 text = entry.title.ifBlank { stringResource(R.string.calendar_time_block_untitled) },
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.clickable { onEditEntry(entry.id) },
             )
         },
     )

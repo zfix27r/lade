@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":db:agenda"))
     implementation(project(":feature:draft"))
     implementation(project(":feature:categories"))
+    implementation(project(":feature:agenda-ui"))
 
     implementation(libs.androidx.core.ktx)
 

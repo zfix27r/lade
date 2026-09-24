@@ -11,12 +11,7 @@ import androidx.navigation.navArgument
 import app.lade.calendar.ui.CalendarScreen
 import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
-import app.lade.chat.ui.ChatScreen
-import app.lade.chat.ui.templates.ChatDictEditScreen
-import app.lade.chat.ui.templates.ChatTemplatesListScreen
 import app.lade.draft.DraftApi
-import app.lade.draft.DraftEditorScreen
-import app.lade.entrydetailsscreen.ui.list.EntryListScreen
 import app.lade.more.ui.MoreScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
 import app.lade.synccalendar.ui.CalendarsStubScreen
@@ -25,6 +20,7 @@ import app.lade.syncdevices.ui.DevicesStubScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    draftApi: DraftApi,
     onOpenProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -47,56 +43,22 @@ fun AppNavGraph(
     ) {
         composable(Routes.Calendar) {
             CalendarScreen(
-                onEntryClick = { entryId ->
-                    TODO()
-                },
                 onOpenProfile = onOpenProfile,
-            )
-        }
-
-        composable(Routes.Chat) {
-            ChatScreen(
-                onOpenProfile = onOpenProfile,
-                onOpenTemplates = { navController.navigate(Routes.ChatDicts) },
-                onCreateEntry = { _, title ->
-                    // TODO: ChatScreen тоже создаёт запись через draftApi
-                    // пока — заглушка
-                },
-            )
-        }
-
-        composable(Routes.ChatDicts) {
-            ChatTemplatesListScreen(
-                onBack = { navController.popBackStack() },
-                onAddDict = { navController.navigate(Routes.chatDictEdit()) },
-                onEditDict = { id -> navController.navigate(Routes.chatDictEdit(id)) },
-            )
-        }
-
-        composable(
-            route = Routes.ChatDictEdit,
-            arguments = listOf(navArgument("dictId") { type = NavType.LongType }),
-        ) {
-            ChatDictEditScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Routes.Entries) {
-            EntryListScreen(
-                onAdd = { TODO() },
-                onEdit = { id, _ -> TODO()   },
+                onOpenEditor = { navController.navigate(Routes.DraftEditor) },
+                draftApi = draftApi,
             )
         }
 
         composable(Routes.Settings) {
             MoreScreen(
                 onOpenProfile = onOpenProfile,
-                onEntries = { navController.navigate(Routes.Entries) },
+                onEntries = { },
                 onCategories = { navController.navigate(Routes.Categories) },
                 onDevices = { navController.navigate(Routes.Devices) },
                 onCalendars = { navController.navigate(Routes.Calsync) },
                 onDayPartSettings = { navController.navigate(Routes.DayPartSettings) },
                 onKindPrioritySettings = { navController.navigate(Routes.KindPrioritySettings) },
-                onOpenCalendar = TODO(),
+                onOpenCalendar = { navController.navigate(Routes.Calendar) },
                 viewModel = TODO(),
             )
         }
@@ -122,12 +84,6 @@ fun AppNavGraph(
             arguments = listOf(navArgument("categoryId") { type = NavType.LongType }),
         ) {
             CategoryEditScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Routes.DraftEditor) {
-            DraftEditorScreen(
-                onBack = { navController.popBackStack() },
-            )
         }
     }
 }

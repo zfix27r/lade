@@ -14,7 +14,5 @@ internal abstract class EntryKindModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindEntryKindResolver(
-        impl: EntryKindResolverImpl,
-    ): EntryKindResolver
+    internal abstract fun bindEntryKindResolver(impl: EntryKindResolverImpl): EntryKindResolver
 }
