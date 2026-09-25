@@ -1,4 +1,4 @@
-package app.lade.draft.internal.bar
+package app.lade.draft.internal.ui.bar
 
 import app.lade.draft.internal.chat.chip.BarChipKind
 
@@ -7,7 +7,6 @@ internal sealed interface DraftBarEvent {
     data object Submit : DraftBarEvent
     data object Cancel : DraftBarEvent
     data object KindClick : DraftBarEvent
-    data object BarTapped : DraftBarEvent
     data object Resume : DraftBarEvent
     data object DismissResume : DraftBarEvent
     data class ChipClick(val kind: BarChipKind, val index: Int) : DraftBarEvent

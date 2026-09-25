@@ -1,5 +1,6 @@
-package app.lade.draft.internal
+package app.lade.draft.internal.ui
 
+import app.lade.draft.api.DraftPhase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,20 +11,17 @@ import kotlinx.coroutines.flow.stateIn
 
 internal class DraftBarLifecycle(
     scope: CoroutineScope,
-    private val hasChanges: StateFlow<Boolean>,
-    isFocused: Flow<Boolean>,
+    phase: Flow<DraftPhase>,
 ) {
 
     private val prompt = MutableStateFlow(false)
 
     val state: StateFlow<DraftBarLifecycleState> = combine(
-        hasChanges,
-        isFocused,
+        phase,
         prompt,
-    ) { changes, focused, promptVisible ->
+    ) { currentPhase, promptVisible ->
         DraftBarLifecycleState(
-            expanded = focused,
-            hasChanges = changes,
+            phase = currentPhase,
             promptVisible = promptVisible,
         )
     }.stateIn(
@@ -32,10 +30,12 @@ internal class DraftBarLifecycle(
         initialValue = DraftBarLifecycleState(),
     )
 
-    fun onBarTapped() {
-        if (hasChanges.value) {
-            prompt.value = true
-        }
+    fun showPrompt() {
+        prompt.value = true
+    }
+
+    fun hidePrompt() {
+        prompt.value = false
     }
 
     fun onResume() {

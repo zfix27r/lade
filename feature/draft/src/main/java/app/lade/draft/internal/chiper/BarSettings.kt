@@ -14,9 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import app.lade.draft.internal.bar.BarMenu
-import app.lade.draft.internal.bar.icon
-import app.lade.draft.internal.bar.status
+import app.lade.draft.internal.ui.bar.BarMenu
+import app.lade.draft.internal.ui.bar.icon
+import app.lade.draft.internal.ui.bar.status
 import app.lade.draftdata.DraftModel
 import app.lade.ui.theme.LadeMotion
 import app.lade.ui.theme.Spacing

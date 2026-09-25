@@ -18,16 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import app.lade.draft.R
-import app.lade.draft.internal.bar.BarState
+import app.lade.draft.api.DraftPhase
+import app.lade.draft.internal.ui.bar.BarState
 import app.lade.ui.theme.FieldSizes
 import app.lade.ui.theme.LadeMotion
 import app.lade.ui.theme.Spacing
 
 @Composable
 internal fun BarInput(
+    phase: DraftPhase,
     barState: BarState,
     placeholder: String,
     onRawInputChange: (String) -> Unit,
@@ -38,14 +39,14 @@ internal fun BarInput(
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
-    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(barState.focusRequestGeneration) {
         if (barState.focusRequestGeneration > 0) {
             focusRequester.requestFocus()
-            keyboard?.show()
         }
     }
+
+    val isEditing = phase == DraftPhase.EDIT
 
     Row(
         modifier = modifier
@@ -75,7 +76,7 @@ internal fun BarInput(
         )
 
         AnimatedVisibility(
-            visible = barState.isFocused,
+            visible = isEditing,
             enter = fadeIn(animationSpec = LadeMotion.enter()),
             exit = fadeOut(animationSpec = LadeMotion.exit()),
         ) {

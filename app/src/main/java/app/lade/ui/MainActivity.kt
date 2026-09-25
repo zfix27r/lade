@@ -8,7 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import app.lade.draft.DraftApi
+import app.lade.draft.api.DraftApi
 import app.lade.navigation.Routes
 import app.lade.ui.theme.LadeTheme
 import dagger.hilt.android.AndroidEntryPoint

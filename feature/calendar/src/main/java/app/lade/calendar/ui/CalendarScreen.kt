@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,8 +27,10 @@ import app.lade.calendar.ui.appbar.CalendarAppBar
 import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
 import app.lade.calendar.ui.mode.CalendarModeActions
 import app.lade.calendar.ui.mode.CalendarModeContent
-import app.lade.draft.DraftApi
-import app.lade.draft.DraftHost
+import app.lade.draft.api.DraftApi
+import app.lade.draft.api.DraftHost
+import app.lade.draft.api.DraftPhase
+import app.lade.ui.scrim.ScrimHost
 import app.lade.ui.share.captureScreen
 import app.lade.ui.share.shareBitmap
 
@@ -35,7 +38,6 @@ import app.lade.ui.share.shareBitmap
 @Composable
 fun CalendarScreen(
     onOpenProfile: () -> Unit,
-    onOpenEditor: () -> Unit,
     draftApi: DraftApi,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -47,12 +49,13 @@ fun CalendarScreen(
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
 
+    val draftPhase by draftApi.phase.collectAsStateWithLifecycle()
+    val draftIsEditing = draftPhase == DraftPhase.EDIT
+
     val actions = CalendarModeActions(
         onSwipe = viewModel::onSwipe,
         onDateSelected = viewModel::onDateSelected,
-        onEditEntry = { entryId ->
-            draftApi.open(entryId)
-        },
+        onEditEntry = { entryId -> draftApi.open(entryId) },
         onOpenAgenda = { agenda -> openedAgenda = agenda },
         onEntryLongPress = { agenda -> selectedEntry = agenda },
         onMarkDone = viewModel::markDone,
@@ -67,88 +70,95 @@ fun CalendarScreen(
         },
     )
 
-    DraftHost(
-        defaultDate = state.currentDate,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        val opened = openedAgenda
-        if (opened != null) {
-            BackHandler { openedAgenda = null }
-            AgendaDetailScreen(
-                entryId = opened.entry.id,
-                date = opened.date,
-                onBack = { openedAgenda = null },
-                onEdit = {
-                    openedAgenda = null
-                    draftApi.open(opened.entry.id)
-                },
-                onDelete = {
-                    openedAgenda = null
-                    viewModel.archiveEntry(opened.entry.id)
-                },
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            Scaffold(
-                topBar = {
-                    CalendarAppBar(
-                        mode = state.mode,
-                        currentDate = state.currentDate,
-                        onModeChange = viewModel::onModeChange,
-                        view = state.view,
-                        onViewChange = viewModel::onViewChange,
-                        onTitleClick = viewModel::goToday,
-                        onShare = {
-                            val bitmap = captureScreen(view)
-                            shareBitmap(context, bitmap)
-                        },
-                        onOpenProfile = onOpenProfile,
-                    )
-                },
-            ) { padding ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                ) {
-                    CalendarDateSwipe(
-                        onSwipe = viewModel::onSwipe,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        CalendarModeContent(
-                            state = state,
-                            actions = actions,
-                            modifier = Modifier.fillMaxSize(),
+    Box(Modifier.fillMaxSize()) {
+        ScrimHost(
+            isVisible = (selectedEntry != null) || draftIsEditing,
+        ) {
+            val opened = openedAgenda
+            if (opened != null) {
+                BackHandler { openedAgenda = null }
+                AgendaDetailScreen(
+                    entryId = opened.entry.id,
+                    date = opened.date,
+                    onBack = { openedAgenda = null },
+                    onEdit = {
+                        openedAgenda = null
+                        draftApi.open(opened.entry.id)
+                    },
+                    onDelete = {
+                        openedAgenda = null
+                        viewModel.archiveEntry(opened.entry.id)
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                Scaffold(
+                    topBar = {
+                        CalendarAppBar(
+                            mode = state.mode,
+                            currentDate = state.currentDate,
+                            onModeChange = viewModel::onModeChange,
+                            view = state.view,
+                            onViewChange = viewModel::onViewChange,
+                            onTitleClick = viewModel::goToday,
+                            onShare = {
+                                val bitmap = captureScreen(view)
+                                shareBitmap(context, bitmap)
+                            },
+                            onOpenProfile = onOpenProfile,
                         )
+                    },
+                ) { padding ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                    ) {
+                        CalendarDateSwipe(
+                            onSwipe = viewModel::onSwipe,
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            CalendarModeContent(
+                                state = state,
+                                actions = actions,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 
-    CalendarDatePickerDialog(
-        visible = pickingDate,
-        initialDate = state.currentDate,
-        onDateSelected = { date -> viewModel.onDateSelected(date) },
-        onDismiss = { pickingDate = false },
-    )
+        CalendarDatePickerDialog(
+            visible = pickingDate,
+            initialDate = state.currentDate,
+            onDateSelected = { date -> viewModel.onDateSelected(date) },
+            onDismiss = { pickingDate = false },
+        )
 
-    selectedEntry?.let { agenda ->
-        ModalBottomSheet(
-            onDismissRequest = { selectedEntry = null },
-            sheetState = sheetState,
-        ) {
-            EntryActionsSheet(
-                agenda = agenda,
-                onEdit = {
-                    selectedEntry = null
-                    draftApi.open(agenda.entry.id)
-                },
-                onDelete = {
-                    selectedEntry = null
-                    viewModel.archiveEntry(agenda.entry.id)
-                },
-            )
+        selectedEntry?.let { agenda ->
+            ModalBottomSheet(
+                onDismissRequest = { selectedEntry = null },
+                sheetState = sheetState,
+                scrimColor = Color.Transparent,
+            ) {
+                EntryActionsSheet(
+                    agenda = agenda,
+                    onEdit = {
+                        selectedEntry = null
+                        draftApi.open(agenda.entry.id)
+                    },
+                    onDelete = {
+                        selectedEntry = null
+                        viewModel.archiveEntry(agenda.entry.id)
+                    },
+                )
+            }
         }
     }
+
+    DraftHost(
+        defaultDate = state.currentDate,
+        modifier = Modifier.fillMaxSize(),
+    )
 }

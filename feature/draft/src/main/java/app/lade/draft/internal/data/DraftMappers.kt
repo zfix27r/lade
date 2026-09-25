@@ -1,4 +1,4 @@
-package app.lade.draft.internal
+package app.lade.draft.internal.data
 
 import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.agenda.api.entry.EntryModel

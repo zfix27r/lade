@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import app.lade.draft.internal.bar.BarMenu
+import app.lade.draft.internal.ui.bar.BarMenu
 import app.lade.draftdata.DraftModel
 import app.lade.ui.theme.LadeMotion
 import app.lade.ui.theme.Spacing

@@ -3,10 +3,10 @@ package app.lade.draft.internal.store
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.Result
 import app.lade.agenda.api.agenda.AgendaSaveModel
-import app.lade.draft.internal.bar.BarStateHolder
-import app.lade.draft.internal.toDraft
-import app.lade.draft.internal.toEntryModel
-import app.lade.draft.internal.toGoalModel
+import app.lade.draft.internal.data.toDraft
+import app.lade.draft.internal.data.toEntryModel
+import app.lade.draft.internal.data.toGoalModel
+import app.lade.draft.internal.ui.bar.BarStateHolder
 import app.lade.draftdata.DraftAlarm
 import app.lade.draftdata.DraftEvent
 import app.lade.draftdata.DraftGoal

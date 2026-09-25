@@ -5,7 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import app.lade.draft.internal.bar.icon
+import app.lade.draft.internal.ui.bar.icon
 import app.lade.entrykind.EntryKind
 import app.lade.ui.theme.IconSizes
 

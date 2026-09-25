@@ -1,4 +1,4 @@
-package app.lade.draft.internal.bar
+package app.lade.draft.internal.ui.bar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -29,6 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import app.lade.draft.api.DraftPhase
 import app.lade.draft.internal.chat.BarChatSheet
 import app.lade.draft.internal.chiper.BarChiperSheet
 import app.lade.draft.internal.editor.BarEditorSheet
@@ -40,6 +41,7 @@ import app.lade.ui.theme.Spacing
 
 @Composable
 internal fun BarView(
+    phase: DraftPhase,
     barState: BarState,
     draft: DraftModel,
     placeholder: String,
@@ -54,20 +56,28 @@ internal fun BarView(
     val keyboard = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    val isEditing = phase == DraftPhase.EDIT
+
     LaunchedEffect(barState.resetGeneration) {
         if (barState.resetGeneration > 0) focusManager.clearFocus()
     }
 
-    LaunchedEffect(barState.isFocused) {
-        if (!barState.isFocused) keyboard?.hide()
+    LaunchedEffect(barState.keyboardRequestGeneration) {
+        if (barState.keyboardRequestGeneration > 0) {
+            keyboard?.show()
+        }
     }
 
-    val sheetState = remember { MutableTransitionState(barState.isFocused) }
-    var barExpanded by remember { mutableStateOf(barState.isFocused) }
+    LaunchedEffect(isEditing) {
+        if (!isEditing) keyboard?.hide()
+    }
 
-    LaunchedEffect(barState.isFocused) {
-        barExpanded = barState.isFocused
-        sheetState.targetState = barState.isFocused
+    val sheetState = remember { MutableTransitionState(isEditing) }
+    var barExpanded by remember { mutableStateOf(isEditing) }
+
+    LaunchedEffect(isEditing) {
+        barExpanded = isEditing
+        sheetState.targetState = isEditing
     }
 
     val horizontalPadding by animateDpAsState(
@@ -120,6 +130,7 @@ internal fun BarView(
             }
 
             BarInput(
+                phase = phase,
                 barState = barState,
                 placeholder = placeholder,
                 onRawInputChange = onRawInputChange,

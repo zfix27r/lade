@@ -13,7 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import app.lade.draft.DraftApi
+import app.lade.draft.api.DraftApi
 import app.lade.navigation.AppNavGraph
 import app.lade.navigation.Routes
 import app.lade.ui.profile.ProfileSheet

@@ -14,7 +14,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import app.lade.draft.internal.bar.barFocus
+import app.lade.draft.internal.ui.bar.barFocus
 
 @Composable
 internal fun BarInputField(

@@ -1,4 +1,4 @@
-package app.lade.draft.internal
+package app.lade.draft.internal.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -22,9 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.draft.R
-import app.lade.draft.internal.bar.BarView
-import app.lade.draft.internal.bar.DraftBarEvent
+import app.lade.draft.api.DraftPhase
 import app.lade.draft.internal.chat.DraftBarChatViewModel
+import app.lade.draft.internal.input.ResumePrompt
+import app.lade.draft.internal.ui.bar.BarView
+import app.lade.draft.internal.ui.bar.DraftBarEvent
 import java.time.LocalDate
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -35,33 +37,32 @@ internal fun DraftBar(
     viewModel: DraftBarViewModel = hiltViewModel(),
     chatViewModel: DraftBarChatViewModel = hiltViewModel(),
 ) {
+    val bar by viewModel.bar.collectAsStateWithLifecycle()
     val draft by viewModel.draft.collectAsStateWithLifecycle()
-    val hasChanges by viewModel.hasChanges.collectAsStateWithLifecycle()
     val lifecycle by viewModel.lifecycleState.collectAsStateWithLifecycle()
-    val barState by viewModel.barState.state.collectAsStateWithLifecycle()
 
     val isImeVisible = WindowInsets.isImeVisible
+    val isEditing = lifecycle.phase == DraftPhase.EDIT
 
     LaunchedEffect(defaultDate) {
         viewModel.setDefaultDate(defaultDate)
     }
 
     LaunchedEffect(isImeVisible) {
-        if (!isImeVisible && barState.isFocused) {
+        if (!isImeVisible && isEditing) {
             viewModel.onEvent(DraftBarEvent.Cancel)
         }
     }
 
-    BackHandler(enabled = barState.isFocused && !isImeVisible) {
+    BackHandler(enabled = isEditing && !isImeVisible) {
         viewModel.onEvent(DraftBarEvent.Cancel)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (barState.isFocused) {
+        if (isEditing) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
@@ -75,7 +76,7 @@ internal fun DraftBar(
                 .fillMaxWidth(),
         ) {
             Column {
-                if (lifecycle.promptVisible && barState.isFocused) {
+                if (lifecycle.promptVisible) {
                     ResumePrompt(
                         onResume = { viewModel.onEvent(DraftBarEvent.Resume) },
                         onDismiss = { viewModel.onEvent(DraftBarEvent.DismissResume) },
@@ -83,27 +84,16 @@ internal fun DraftBar(
                 }
 
                 BarView(
-                    barState = barState,
+                    phase = lifecycle.phase,
+                    barState = bar,
                     draft = draft,
                     placeholder = stringResource(R.string.draft_placeholder),
                     onKindClick = { viewModel.onEvent(DraftBarEvent.KindClick) },
-                    onRawInputChange = { text -> viewModel.barState.updateRawInput(text) },
+                    onRawInputChange = viewModel::onRawInputChange,
                     onTextChange = chatViewModel::onTextChange,
-                    onFocusChange = viewModel.barState::onFocusChange,
+                    onFocusChange = viewModel::onBarFocusChange,
                     onSubmit = chatViewModel::onSubmit,
                     onModeSwitch = { viewModel.onEvent(DraftBarEvent.ModeSwitch) },
-                )
-            }
-
-            if (hasChanges && !lifecycle.promptVisible && !barState.isFocused) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = { viewModel.onEvent(DraftBarEvent.BarTapped) },
-                        ),
                 )
             }
         }

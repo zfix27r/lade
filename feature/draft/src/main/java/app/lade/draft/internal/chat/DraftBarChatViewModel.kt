@@ -5,8 +5,9 @@ import androidx.lifecycle.viewModelScope
 import app.lade.chat.api.ChatApi
 import app.lade.chat.api.ParseResult
 import app.lade.draft.internal.chat.chip.BarChipKind
+import app.lade.draft.internal.domain.DraftIntent
+import app.lade.draft.internal.domain.DraftStore
 import app.lade.draft.internal.parse.toDraftModel
-import app.lade.draft.internal.store.DraftStore
 import app.lade.humanize.api.Humanize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -30,7 +31,8 @@ internal class DraftBarChatViewModel @Inject constructor(
 
     private val chipsBuilder = DraftChipsBuilder(humanize)
 
-    val chips: StateFlow<DraftChips> = store.draft
+    val chips: StateFlow<DraftChips> = store.state
+        .map { it.draft }
         .map { draft ->
             chipsBuilder.build(
                 model = draft,
@@ -57,16 +59,16 @@ internal class DraftBarChatViewModel @Inject constructor(
         }
         parseJob = viewModelScope.launch {
             delay(DEBOUNCE_MS.milliseconds)
-            val current = store.draft.value
+            val current = store.state.value.draft
             val result = chatApi.parse(text, current)
             _parseResult.value = result
-            store.update { result.toDraftModel(it) }
+            store.dispatch(DraftIntent.Update { result.toDraftModel(it) })
         }
     }
 
     fun onSubmit() {
         parseJob?.cancel()
-        store.save()
+        store.dispatch(DraftIntent.Save)
         _parseResult.value = ParseResult(emptyList(), emptyList(), "")
     }
 
@@ -85,7 +87,7 @@ internal class DraftBarChatViewModel @Inject constructor(
     }
 
     fun onChipRemove(kind: BarChipKind, index: Int) {
-        store.update { model ->
+        store.dispatch(DraftIntent.Update { model ->
             when (kind) {
                 BarChipKind.DATE_FROM -> model.copy(dateFrom = null, dateTo = null)
                 BarChipKind.DATE_TO -> model.copy(dateTo = null)
@@ -96,7 +98,7 @@ internal class DraftBarChatViewModel @Inject constructor(
                     goals = model.goals.filterIndexed { i, _ -> i != index },
                 )
             }
-        }
+        })
     }
 
     private companion object {

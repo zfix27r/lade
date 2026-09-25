@@ -11,7 +11,7 @@ import androidx.navigation.navArgument
 import app.lade.calendar.ui.CalendarScreen
 import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
-import app.lade.draft.DraftApi
+import app.lade.draft.api.DraftApi
 import app.lade.more.ui.MoreScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
 import app.lade.synccalendar.ui.CalendarsStubScreen
@@ -44,7 +44,6 @@ fun AppNavGraph(
         composable(Routes.Calendar) {
             CalendarScreen(
                 onOpenProfile = onOpenProfile,
-                onOpenEditor = { navController.navigate(Routes.DraftEditor) },
                 draftApi = draftApi,
             )
         }

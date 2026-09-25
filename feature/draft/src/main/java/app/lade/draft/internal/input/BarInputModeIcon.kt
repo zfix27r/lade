@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlin.math.abs
-import app.lade.draft.internal.bar.BarMode
+import app.lade.draft.internal.ui.bar.BarMode
 import app.lade.ui.theme.ButtonSizes
 import app.lade.ui.theme.IconSizes
 

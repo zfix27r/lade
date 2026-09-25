@@ -1,4 +1,4 @@
-package app.lade.draft.internal.bar
+package app.lade.draft.internal.ui.bar
 
 internal enum class BarMode {
     Chat,
