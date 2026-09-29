@@ -24,10 +24,10 @@ class EntryEditMapper(
             temporal = temporal,
             goals = goals,
             goalsExplicitlyEnabled = goals.isNotEmpty(),
-            resolvedKind = resolver.resolve(
+            resolvedEntryKind = resolver.resolve(
                 EntryKindInput(temporal, goals.any { !it.isEmpty }, goals.isNotEmpty()),
             ),
-            kindOverride = null,
+            entryKindOverride = null,
             createdAtEpochMs = entry.createdAtEpochMs,
             templateId = entry.templateId,
         )

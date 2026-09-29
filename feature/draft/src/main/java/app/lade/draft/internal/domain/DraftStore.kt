@@ -6,8 +6,8 @@ import app.lade.draftdata.DraftAlarm
 import app.lade.draftdata.DraftGoal
 import app.lade.draftdata.DraftModel
 import app.lade.draftdata.DraftReminder
-import app.lade.entrykind.EntryKindInput
-import app.lade.entrykind.EntryKindResolver
+import app.lade.entry.EntryModel
+import app.lade.entry.EntryKindResolver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -195,15 +195,15 @@ internal class DraftStore @Inject constructor(
 
     private fun recomputeKind(draft: DraftModel): DraftModel {
         val kind = kindResolver.resolve(
-            EntryKindInput(
+            EntryModel(
                 dateFrom = draft.dateFrom,
                 dateTo = draft.dateTo,
                 timeFrom = draft.timeFrom,
-                timeEnd = draft.timeEnd,
+                timeTo = draft.timeEnd,
                 rrule = draft.rrule,
                 hasGoals = draft.goals.isNotEmpty(),
             ),
         )
-        return draft.copy(kind = kind)
+        return draft.copy(entryKind = kind)
     }
 }

@@ -2,13 +2,13 @@ package app.lade.agenda.data.entry
 
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.agendastore.entry.EntryEntity
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 
 fun EntryEntity.toApi(): EntryModel = EntryModel(
     id = id,
-    kind = EntryKind.entries.find { it.storage == kind } ?: EntryKind.UNKNOWN,
+    entryKind = EntryKind.entries.find { it.storage == kind } ?: EntryKind.NOTE,
     title = title,
     templateId = templateId,
     dateFrom = dateFromEpochDay?.let(LocalDate::ofEpochDay),
@@ -26,7 +26,7 @@ fun EntryEntity.toApi(): EntryModel = EntryModel(
 
 fun EntryModel.toEntity(): EntryEntity = EntryEntity(
     id = id,
-    kind = kind.storage,
+    kind = entryKind.storage,
     title = title,
     templateId = templateId,
     dateFromEpochDay = dateFrom?.toEpochDay(),

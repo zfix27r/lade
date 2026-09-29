@@ -2,7 +2,7 @@ package app.lade.agendaui.internal
 
 import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.agenda.api.goal.GoalModel
-import app.lade.agenda.api.goal.GoalUnit
+import app.lade.goal.GoalUnit
 import app.lade.agenda.api.log.LogModel
 import app.lade.humanize.api.Humanize
 

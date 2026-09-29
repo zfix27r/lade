@@ -46,7 +46,7 @@ internal class DraftBarViewModel @Inject constructor(
                     is DraftEffect.OpenRequested -> {
                         lifecycle.onDismiss()
                         barState.selectMode(BarMode.Chat)
-                        barState.updateRawInput(effect.draft.title)
+                        store.dispatch(DraftIntent.Update { effect.draft })
                         barState.enterEdit()
                     }
 
@@ -58,10 +58,6 @@ internal class DraftBarViewModel @Inject constructor(
 
     fun setDefaultDate(date: LocalDate?) {
         store.dispatch(DraftIntent.SetDefaultDate(date))
-    }
-
-    fun onRawInputChange(text: String) {
-        barState.updateRawInput(text)
     }
 
     fun onBarFocusChange(focusState: FocusState) {

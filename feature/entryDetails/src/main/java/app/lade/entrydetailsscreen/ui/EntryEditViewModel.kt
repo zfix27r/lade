@@ -18,7 +18,7 @@ import app.lade.entrydetailsscreen.domain.model.EntryEditEvent
 import app.lade.entrydetailsscreen.domain.model.EntryEditUiState
 import app.lade.entrydetailsscreen.domain.model.GoalDraft
 import app.lade.entrydetailsscreen.domain.resolver.EntryKindResolver
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.schedule.data.TemporalOptions
 import app.lade.schedule.ui.AlarmModeOption
 import app.lade.recurrence.api.RecurrenceDraft
@@ -114,7 +114,7 @@ class EntryEditViewModel @Inject constructor(
 
 	// === Kind override ===
 
-	fun onKindOverrideChange(kind: EntryKind?) = updateState { it.copy(kindOverride = kind) }
+	fun onKindOverrideChange(entryKind: EntryKind?) = updateState { it.copy(entryKindOverride = entryKind) }
 
 	// === Сохранение ===
 
@@ -241,9 +241,9 @@ class EntryEditViewModel @Inject constructor(
 			val next = block(current)
 			val resolved = resolver.resolve(
 				input = mapper.resolveKind(next),
-				override = next.kindOverride,
+				override = next.entryKindOverride,
 			)
-			val withResolved = next.copy(resolvedKind = resolved)
+			val withResolved = next.copy(resolvedEntryKind = resolved)
 			withResolved.copy(isDirty = !isSameContent(withResolved, original))
 		}
 	}
@@ -253,8 +253,8 @@ class EntryEditViewModel @Inject constructor(
 				a.temporal == b.temporal &&
 				a.goals == b.goals &&
 				a.goalsExplicitlyEnabled == b.goalsExplicitlyEnabled &&
-				a.kindOverride == b.kindOverride &&
-				a.effectiveKind == b.effectiveKind
+				a.entryKindOverride == b.entryKindOverride &&
+				a.effectiveEntryKind == b.effectiveEntryKind
 
 	private fun initialState(): EntryEditUiState {
 		val date = if (dateEpochDay >= 0) LocalDate.ofEpochDay(dateEpochDay) else LocalDate.now()
@@ -263,8 +263,8 @@ class EntryEditViewModel @Inject constructor(
 			temporal = TemporalOptions(dateFrom = date),
 			dayPartClock = dayPartPreferences.clock(),
 			isNew = entryId <= 0L,
-			resolvedKind = EntryKind.TASK,
-			kindOverride = null,
+			resolvedEntryKind = EntryKind.TASK,
+			entryKindOverride = null,
 		)
 	}
 }

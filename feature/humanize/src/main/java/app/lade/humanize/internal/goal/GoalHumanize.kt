@@ -1,8 +1,9 @@
 package app.lade.humanize.internal.goal
 
 import android.content.Context
-import app.lade.agenda.api.goal.GoalUnit
-import app.lade.agenda.api.goal.labelRes
+import app.lade.goal.GoalUnit
+import app.lade.goal.labelRes
+import app.lade.goal.shortLabelRes
 import app.lade.humanize.api.Humanized
 import kotlin.math.abs
 
@@ -16,13 +17,19 @@ internal class GoalHumanize(
         repeat: Int?,
         weight: Double?,
     ): Humanized {
-        val body = when {
+        val bodyShort = when {
             unit == GoalUnit.REP && amount != null && repeat != null -> "${amount}х$repeat"
             amount != null && amount > 0 && unit != GoalUnit.UNKNOWN ->
-                "$amount ${unitLabel(unit)}"
+                "$amount ${shortUnitLabel(unit)}"
             else -> ""
         }
-        if (body.isEmpty()) return Humanized("", "")
+        val bodyLong = when {
+            unit == GoalUnit.REP && amount != null && repeat != null -> "${amount}х$repeat"
+            amount != null && amount > 0 && unit != GoalUnit.UNKNOWN ->
+                "$amount ${longUnitLabel(unit)}"
+            else -> ""
+        }
+        if (bodyShort.isEmpty() && bodyLong.isEmpty()) return Humanized("", "")
 
         val weightText = weight?.takeIf { it != 0.0 }?.let {
             val sign = if (it < 0) "-" else "+"
@@ -32,10 +39,14 @@ internal class GoalHumanize(
         }.orEmpty()
 
         val prefix = title.takeIf { it.isNotBlank() }?.let { "$it: " }.orEmpty()
-        val text = "$prefix$body$weightText"
-        return Humanized(short = text, long = text)
+        val short = "$prefix$bodyShort$weightText"
+        val long = "$prefix$bodyLong$weightText"
+        return Humanized(short = short, long = long)
     }
 
-    private fun unitLabel(unit: GoalUnit): String =
+    private fun shortUnitLabel(unit: GoalUnit): String =
+        context.getString(unit.shortLabelRes())
+
+    private fun longUnitLabel(unit: GoalUnit): String =
         context.getString(unit.labelRes())
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.resources.R
 import java.time.LocalDate
 import java.time.LocalTime
@@ -91,7 +91,7 @@ fun CalendarWeekTimeline(
                 days.forEach { date ->
                     val covering = entriesByDate[date].orEmpty().filter { agenda ->
                         val entry = agenda.entry
-                        if (entry.kind != EntryKind.SCHEDULE && entry.kind != EntryKind.EVENT) {
+                        if (entry.entryKind != EntryKind.SCHEDULE && entry.entryKind != EntryKind.EVENT) {
                             return@filter false
                         }
                         val start = entry.startTime ?: return@filter false

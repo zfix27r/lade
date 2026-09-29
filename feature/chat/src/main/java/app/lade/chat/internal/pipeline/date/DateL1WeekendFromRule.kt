@@ -1,11 +1,10 @@
 package app.lade.chat.internal.pipeline.date
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
-import app.lade.chat.api.RuleMatch
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -16,28 +15,28 @@ internal class DateL1WeekendRule(
 
     override val priority: Int = Priority.L1
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+        val findFrom = ParserContract.isFind(entry.dateFrom)
+        val findTo = ParserContract.isFind(entry.dateTo)
+        if (!findFrom && !findTo) return RuleResult(model, remaining)
+
         for (word in WORDS) {
-            val index = raw.indexOf(word)
+            val index = remaining.indexOf(word)
             if (index < 0) continue
+
             val saturday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
             val sunday = saturday.plusDays(1)
-            return listOf(
-                RuleMatch(
-                    key = FieldKey.DATE_FROM,
-                    value = FieldValue.Date(saturday),
-                    match = word,
-                    span = index until index + word.length,
-                ),
-                RuleMatch(
-                    key = FieldKey.DATE_TO,
-                    value = FieldValue.Date(sunday),
-                    match = word,
-                    span = index until index + word.length,
+
+            val updated = model.copy(
+                entry = entry.copy(
+                    dateFrom = if (findFrom) ParserContract.found(saturday.toString()) else entry.dateFrom,
+                    dateTo = if (findTo) ParserContract.found(sunday.toString()) else entry.dateTo,
                 ),
             )
+            return RuleResult(updated, remaining.removeRange(index, index + word.length))
         }
-        return emptyList()
+        return RuleResult(model, remaining)
     }
 
     companion object {

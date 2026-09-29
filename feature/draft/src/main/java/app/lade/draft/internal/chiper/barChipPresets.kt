@@ -5,7 +5,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Schedule
 import app.lade.draft.R
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 

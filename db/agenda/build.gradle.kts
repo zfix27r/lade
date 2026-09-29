@@ -19,10 +19,14 @@ android {
 }
 
 dependencies {
+    api(project(":core:entry"))
+    api(project(":core:goal"))
+    api(project(":core:log"))
+    api(project(":core:note"))
+
     implementation(project(":core:database"))
     implementation(project(":core:resources"))
     implementation(project(":db:agenda-store"))
-    api(project(":feature:entry-kind"))
     implementation(project(":feature:recurrence"))
 
     implementation(libs.hilt.android)

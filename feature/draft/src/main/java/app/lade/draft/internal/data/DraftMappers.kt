@@ -3,15 +3,15 @@ package app.lade.draft.internal.data
 import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.agenda.api.goal.GoalModel
-import app.lade.agenda.api.goal.GoalUnit
+import app.lade.goal.GoalUnit
 import app.lade.draftdata.DraftGoal
 import app.lade.draftdata.DraftModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 
 internal fun AgendaModel.toDraft(): DraftModel = DraftModel(
     entryId = entry.id,
     title = entry.title,
-    kind = entry.kind,
+    entryKind = entry.entryKind,
     dateFrom = entry.dateFrom,
     dateTo = entry.dateTo,
     timeFrom = entry.startTime,
@@ -47,7 +47,7 @@ internal fun DraftModel.toEntryModel(existing: EntryModel?): EntryModel {
     val now = System.currentTimeMillis()
     return EntryModel(
         id = entryId ?: 0L,
-        kind = kind ?: EntryKind.TASK,
+        entryKind = entryKind ?: EntryKind.TASK,
         title = title,
         templateId = existing?.templateId,
         dateFrom = dateFrom,

@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,9 @@ import app.lade.draft.api.DraftPhase
 import app.lade.ui.scrim.ScrimHost
 import app.lade.ui.share.captureScreen
 import app.lade.ui.share.shareBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,41 +49,52 @@ fun CalendarScreen(
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var pickingDate by rememberSaveable { mutableStateOf(false) }
     var selectedEntry by remember { mutableStateOf<AgendaModel?>(null) }
     var openedAgenda by remember { mutableStateOf<AgendaModel?>(null) }
     val view = LocalView.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val sheetState = rememberModalBottomSheetState()
 
     val draftPhase by draftApi.phase.collectAsStateWithLifecycle()
     val draftIsEditing = draftPhase == DraftPhase.EDIT
 
-    val actions = CalendarModeActions(
-        onSwipe = viewModel::onSwipe,
-        onDateSelected = viewModel::onDateSelected,
-        onEditEntry = { entryId -> draftApi.open(entryId) },
-        onOpenAgenda = { agenda -> openedAgenda = agenda },
-        onEntryLongPress = { agenda -> selectedEntry = agenda },
-        onMarkDone = viewModel::markDone,
-        onMarkSkip = viewModel::markSkip,
-        onOpenDay = { date ->
-            viewModel.onDateSelected(date)
-            viewModel.onModeChange(CalendarMode.DAY)
-        },
-        onOpenMonth = { yearMonth ->
-            viewModel.onDateSelected(yearMonth.atDay(1))
-            viewModel.onModeChange(CalendarMode.MONTH)
-        },
-    )
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is CalendarUiEvent.Error -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
+
+    val actions = remember(viewModel) {
+        CalendarModeActions(
+            onSwipe = viewModel::onSwipe,
+            onDateSelected = viewModel::onDateSelected,
+            onEditEntry = { entryId -> draftApi.open(entryId) },
+            onOpenAgenda = { agenda -> openedAgenda = agenda },
+            onEntryLongPress = { agenda -> selectedEntry = agenda },
+            onToggleDone = viewModel::toggleDone,
+            onOpenDay = { date ->
+                viewModel.onDateSelected(date)
+                viewModel.onModeChange(CalendarMode.DAY)
+            },
+            onOpenMonth = { yearMonth ->
+                viewModel.onDateSelected(yearMonth.atDay(1))
+                viewModel.onModeChange(CalendarMode.MONTH)
+            },
+        )
+    }
+
+    BackHandler(enabled = openedAgenda != null) { openedAgenda = null }
 
     Box(Modifier.fillMaxSize()) {
         ScrimHost(
-            isVisible = (selectedEntry != null) || draftIsEditing,
+            isVisible = selectedEntry != null || draftIsEditing,
         ) {
             val opened = openedAgenda
             if (opened != null) {
-                BackHandler { openedAgenda = null }
                 AgendaDetailScreen(
                     entryId = opened.entry.id,
                     date = opened.date,
@@ -93,6 +111,7 @@ fun CalendarScreen(
                 )
             } else {
                 Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
                     topBar = {
                         CalendarAppBar(
                             mode = state.mode,
@@ -102,8 +121,12 @@ fun CalendarScreen(
                             onViewChange = viewModel::onViewChange,
                             onTitleClick = viewModel::goToday,
                             onShare = {
-                                val bitmap = captureScreen(view)
-                                shareBitmap(context, bitmap)
+                                scope.launch {
+                                    val bitmap = withContext(Dispatchers.Default) {
+                                        captureScreen(view)
+                                    }
+                                    shareBitmap(context, bitmap)
+                                }
                             },
                             onOpenProfile = onOpenProfile,
                         )
@@ -129,30 +152,25 @@ fun CalendarScreen(
             }
         }
 
-        CalendarDatePickerDialog(
-            visible = pickingDate,
-            initialDate = state.currentDate,
-            onDateSelected = { date -> viewModel.onDateSelected(date) },
-            onDismiss = { pickingDate = false },
-        )
-
         selectedEntry?.let { agenda ->
-            ModalBottomSheet(
-                onDismissRequest = { selectedEntry = null },
-                sheetState = sheetState,
-                scrimColor = Color.Transparent,
-            ) {
-                EntryActionsSheet(
-                    agenda = agenda,
-                    onEdit = {
-                        selectedEntry = null
-                        draftApi.open(agenda.entry.id)
-                    },
-                    onDelete = {
-                        selectedEntry = null
-                        viewModel.archiveEntry(agenda.entry.id)
-                    },
-                )
+            key(agenda.entry.id) {
+                ModalBottomSheet(
+                    onDismissRequest = { selectedEntry = null },
+                    sheetState = sheetState,
+                    scrimColor = Color.Transparent,
+                ) {
+                    EntryActionsSheet(
+                        agenda = agenda,
+                        onEdit = {
+                            selectedEntry = null
+                            draftApi.open(agenda.entry.id)
+                        },
+                        onDelete = {
+                            selectedEntry = null
+                            viewModel.archiveEntry(agenda.entry.id)
+                        },
+                    )
+                }
             }
         }
     }

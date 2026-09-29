@@ -1,7 +1,7 @@
 package app.lade.entrydetailsscreen.domain.model
 
 import app.lade.daypart.domain.DayPartClock
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.schedule.data.TemporalOptions
 
 data class EntryEditUiState(
@@ -14,12 +14,12 @@ data class EntryEditUiState(
     val temporal: TemporalOptions = TemporalOptions(),
     val goals: List<GoalDraft> = emptyList(),
     val goalsExplicitlyEnabled: Boolean = false,
-    val resolvedKind: EntryKind = EntryKind.TASK,
-    val kindOverride: EntryKind? = null,
+    val resolvedEntryKind: EntryKind = EntryKind.TASK,
+    val entryKindOverride: EntryKind? = null,
     val createdAtEpochMs: Long = 0,
     val templateId: Long? = null,
     val dayPartClock: DayPartClock = DayPartClock.DEFAULT,
     val isDirty: Boolean = false,
 ) {
-    val effectiveKind: EntryKind get() = kindOverride ?: resolvedKind
+    val effectiveEntryKind: EntryKind get() = entryKindOverride ?: resolvedEntryKind
 }

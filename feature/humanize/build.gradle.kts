@@ -20,7 +20,6 @@ android {
 
 dependencies {
     implementation(project(":db:agenda"))
-    implementation(project(":feature:entry-kind"))
     implementation(project(":feature:recurrence"))
 
     implementation(libs.androidx.core.ktx)

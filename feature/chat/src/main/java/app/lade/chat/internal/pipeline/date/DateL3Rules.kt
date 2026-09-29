@@ -1,11 +1,10 @@
 package app.lade.chat.internal.pipeline.date
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.api.RuleMatch
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -16,46 +15,35 @@ internal class DateL3Rules(
 
     override val priority: Int = Priority.L3
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+        if (!ParserContract.isFind(entry.dateFrom)) return RuleResult(model, remaining)
+
         for (rule in RULES) {
-            val match = rule.regex.find(raw) ?: continue
-            val resolved = rule.resolve(match, today) ?: continue
-            val filtered = resolved.filterNot { state.contains(it.first) }
-            if (filtered.isEmpty()) continue
-            return filtered.map { (key, date) ->
-                RuleMatch(
-                    key = key,
-                    value = FieldValue.Date(date),
-                    match = match.value,
-                    span = match.range,
-                )
-            }
+            val match = rule.regex.find(remaining) ?: continue
+            val date = rule.resolve(match, today) ?: continue
+            return RuleResult(
+                model.copy(entry = entry.copy(dateFrom = ParserContract.found(date.toString()))),
+                remaining.removeRange(match.range),
+            )
         }
 
-        if (!state.contains(FieldKey.DATE_FROM)) {
-            val words = Regex("""[а-яё]+""", RegexOption.IGNORE_CASE).findAll(raw)
-            for (word in words) {
-                val day = day(word.value) ?: continue
-                val covered = state.fields.any { it.match.contains(word.value, ignoreCase = true) }
-                if (covered) continue
-                val date = today.with(TemporalAdjusters.nextOrSame(day))
-                return listOf(
-                    RuleMatch(
-                        key = FieldKey.DATE_FROM,
-                        value = FieldValue.Date(date),
-                        match = word.value,
-                        span = word.range,
-                    ),
-                )
-            }
+        val words = Regex("""[а-яё]+""", RegexOption.IGNORE_CASE).findAll(remaining)
+        for (word in words) {
+            val day = day(word.value) ?: continue
+            val date = today.with(TemporalAdjusters.nextOrSame(day))
+            return RuleResult(
+                model.copy(entry = entry.copy(dateFrom = ParserContract.found(date.toString()))),
+                remaining.removeRange(word.range),
+            )
         }
 
-        return emptyList()
+        return RuleResult(model, remaining)
     }
 
     private data class Rule(
         val regex: Regex,
-        val resolve: (MatchResult, LocalDate) -> List<Pair<FieldKey, LocalDate>>?,
+        val resolve: (MatchResult, LocalDate) -> LocalDate?,
     )
 
     companion object {
@@ -84,39 +72,33 @@ internal class DateL3Rules(
                 regex = Regex("""следующ\p{L}*\s+([а-яё]+)""", RegexOption.IGNORE_CASE),
             ) { match, today ->
                 val day = day(match.groupValues[1]) ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today.with(TemporalAdjusters.next(day)))
+                today.with(TemporalAdjusters.next(day))
             },
 
             Rule(
                 regex = Regex("""(\d{1,2})/(\d{1,2})"""),
             ) { match, today ->
-                val date = safeDate(today.year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
-                    ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to date)
+                safeDate(today.year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
             },
 
             Rule(
                 regex = Regex("""(\d{1,2})-(\d{1,2})"""),
             ) { match, today ->
-                val date = safeDate(today.year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
-                    ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to date)
+                safeDate(today.year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
             },
 
             Rule(
                 regex = Regex("""(\d{1,2})\.(\d{1,2})\.(\d{2})"""),
             ) { match, _ ->
                 val year = 2000 + match.groupValues[3].toInt()
-                val date = safeDate(year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
-                    ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to date)
+                safeDate(year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
             },
 
             Rule(
                 regex = Regex("""в\s+прошл\p{L}*\s+([а-яё]+)""", RegexOption.IGNORE_CASE),
             ) { match, today ->
                 val day = day(match.groupValues[1]) ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today.with(TemporalAdjusters.previousOrSame(day)))
+                today.with(TemporalAdjusters.previousOrSame(day))
             },
         )
     }

@@ -1,5 +1,6 @@
 package app.lade.calendar.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.lade.agenda.api.AgendaApi
@@ -13,10 +14,17 @@ import app.lade.calendar.domain.CalendarStateModel
 import app.lade.calendar.domain.CalendarView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -28,15 +36,39 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val agendaApi: AgendaApi,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CalendarStateModel())
+    private val keyDate = "calendar.currentDate"
+    private val keyMode = "calendar.mode"
+    private val keyView = "calendar.view"
+    private val keyStrip = "calendar.stripMode"
+
+    private val _state = MutableStateFlow(
+        CalendarStateModel(
+            currentDate = savedStateHandle.get<String>(keyDate)?.let(LocalDate::parse)
+                ?: LocalDate.now(),
+            mode = savedStateHandle.get<String>(keyMode)
+                ?.let { runCatching { CalendarMode.valueOf(it) }.getOrNull() }
+                ?: CalendarMode.LIST,
+            view = savedStateHandle.get<String>(keyView)
+                ?.let { runCatching { CalendarView.valueOf(it) }.getOrNull() }
+                ?: CalendarView.TIMELINE,
+            stripMode = savedStateHandle.get<String>(keyStrip)
+                ?.let { runCatching { CalendarListStripMode.valueOf(it) }.getOrNull() }
+                ?: CalendarListStripMode.WEEK,
+        )
+    )
     val state: StateFlow<CalendarStateModel> = _state.asStateFlow()
 
-    private val weekFields = WeekFields.of(Locale.getDefault())
+    private val _events = MutableSharedFlow<CalendarUiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<CalendarUiEvent> = _events.asSharedFlow()
+
+    private val weekFields: WeekFields = WeekFields.of(Locale.getDefault())
 
     init {
         observeEntries()
+        persistState()
     }
 
     fun onModeChange(mode: CalendarMode) {
@@ -52,86 +84,122 @@ class CalendarViewModel @Inject constructor(
             CalendarDateMode.FORWARD -> 1L
             CalendarDateMode.BACKWARD -> -1L
         }
-        val mode = _state.value.mode
-        val newDate = when (mode) {
-            CalendarMode.DAY -> _state.value.currentDate.plusDays(delta)
-            CalendarMode.DAY_3 -> _state.value.currentDate.plusDays(delta * 3)
-            CalendarMode.WEEK -> _state.value.currentDate.plusWeeks(delta)
-            CalendarMode.MONTH -> _state.value.currentDate.plusMonths(delta)
-            CalendarMode.YEAR -> _state.value.currentDate.plusYears(delta)
-            CalendarMode.LIST -> _state.value.currentDate.plusDays(delta)
+        _state.update { s ->
+            val newDate = when (s.mode) {
+                CalendarMode.DAY, CalendarMode.LIST -> s.currentDate.plusDays(delta)
+                CalendarMode.DAY_3 -> s.currentDate.plusDays(delta * 3)
+                CalendarMode.WEEK -> s.currentDate.plusWeeks(delta)
+                CalendarMode.MONTH -> {
+                    val target = s.currentDate.withDayOfMonth(1).plusMonths(delta)
+                    target.withDayOfMonth(
+                        s.currentDate.dayOfMonth.coerceAtMost(target.lengthOfMonth())
+                    )
+                }
+                CalendarMode.YEAR -> {
+                    val target = s.currentDate.withDayOfYear(1).plusYears(delta)
+                    target.withDayOfYear(
+                        s.currentDate.dayOfYear.coerceAtMost(target.lengthOfYear())
+                    )
+                }
+            }
+            s.copy(currentDate = newDate)
         }
-        _state.update { it.copy(currentDate = newDate) }
-    }
-
-    fun onStripSwipe(mode: CalendarListStripMode) {
-        _state.update { it.copy(stripMode = mode) }
     }
 
     fun onDateSelected(date: LocalDate) {
         _state.update { it.copy(currentDate = date) }
     }
 
-    fun onToggleSource(source: String) {
-        _state.update { state ->
-            val next = if (source in state.selectedSources) {
-                state.selectedSources - source
-            } else {
-                state.selectedSources + source
-            }
-            state.copy(selectedSources = next)
-        }
-    }
-
-    fun onClearFilters() {
-        _state.update { it.copy(selectedSources = emptySet()) }
+    fun goToday() {
+        _state.update { it.copy(currentDate = LocalDate.now()) }
     }
 
     fun archiveEntry(entryId: Long) {
         viewModelScope.launch {
-            agendaApi.archiveEntry(entryId)
+            runCatching { agendaApi.archiveEntry(entryId) }
+                .onFailure { _events.tryEmit(CalendarUiEvent.Error("Archive failed")) }
         }
     }
 
-    fun markDone(entryId: Long, date: LocalDate) = mark(entryId, date, done = true)
+    fun toggleDone(entryId: Long, date: LocalDate) {
+        viewModelScope.launch {
+            runCatching {
+                val agenda = agendaApi.get(entryId, date) ?: return@runCatching
+                val currentlyDone = agenda.logs.any { (it.actualAmount ?: 0) > 0 }
+                val goals = agenda.goals.map { goal ->
+                    LogSaveGoalModel(
+                        goalId = goal.id,
+                        amount = if (currentlyDone) 0 else goal.amount,
+                        repeat = if (currentlyDone) 0 else goal.repeat,
+                        weight = goal.weight,
+                    )
+                }
+                agendaApi.saveLogs(
+                    LogSaveModel(
+                        date = date,
+                        goals = goals,
+                        origin = LogOrigin.CALENDAR,
+                    )
+                )
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to save log"))
+            }
+        }
+    }
 
     fun markSkip(entryId: Long, date: LocalDate) = mark(entryId, date, done = false)
 
     private fun mark(entryId: Long, date: LocalDate, done: Boolean) {
         viewModelScope.launch {
-            val agenda = agendaApi.get(entryId, date) ?: return@launch
-            val goals = agenda.goals.map { goal ->
-                LogSaveGoalModel(
-                    goalId = goal.id,
-                    amount = if (done) goal.amount else 0,
-                    repeat = if (done) goal.repeat else 0,
-                    weight = goal.weight,
+            runCatching {
+                val agenda = agendaApi.get(entryId, date) ?: return@runCatching
+                val goals = agenda.goals.map { goal ->
+                    LogSaveGoalModel(
+                        goalId = goal.id,
+                        amount = if (done) goal.amount else 0,
+                        repeat = if (done) goal.repeat else 0,
+                        weight = goal.weight,
+                    )
+                }
+                agendaApi.saveLogs(
+                    LogSaveModel(
+                        date = date,
+                        goals = goals,
+                        origin = LogOrigin.CALENDAR,
+                    )
                 )
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to save log"))
             }
-            val saveModel = LogSaveModel(
-                date = date,
-                goals = goals,
-                origin = LogOrigin.CALENDAR,
-            )
-            agendaApi.saveLogs(saveModel)
         }
     }
 
     private fun observeEntries() {
         viewModelScope.launch {
             _state
-                .flatMapLatest { state -> observeRange(state.currentDate, state.mode) }
+                .map { it.currentDate to it.mode }
+                .distinctUntilChanged()
+                .flatMapLatest { (date, mode) ->
+                    observeRange(date, mode)
+                        .onStart { _state.update { it.copy(isLoading = true, error = null) } }
+                        .catch { t ->
+                            _state.update {
+                                it.copy(isLoading = false, error = t.message ?: "Load error")
+                            }
+                            emit(emptyList())
+                        }
+                }
                 .collect { agendas ->
-                    _state.update { it.copy(entries = agendas) }
+                    _state.update { it.copy(entries = agendas, isLoading = false) }
                 }
         }
     }
 
-    private fun observeRange(anchor: LocalDate, mode: CalendarMode) = when (mode) {
-        CalendarMode.LIST -> {
-            agendaApi.observeList(anchor)
-        }
-        CalendarMode.DAY -> agendaApi.observeList(anchor)
+    private fun observeRange(
+        anchor: LocalDate,
+        mode: CalendarMode,
+    ) = when (mode) {
+        CalendarMode.LIST, CalendarMode.DAY -> agendaApi.observeList(anchor)
         CalendarMode.DAY_3 -> agendaApi.observeRange(anchor, anchor.plusDays(2))
         CalendarMode.WEEK -> {
             val weekStart = anchor.with(weekFields.dayOfWeek(), 1L)
@@ -149,7 +217,26 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    fun goToday() {
-        _state.update { it.copy(currentDate = LocalDate.now()) }
+    private fun persistState() {
+        viewModelScope.launch {
+            _state.map { it.currentDate }.distinctUntilChanged()
+                .collect { savedStateHandle[keyDate] = it.toString() }
+        }
+        viewModelScope.launch {
+            _state.map { it.mode }.distinctUntilChanged()
+                .collect { savedStateHandle[keyMode] = it.name }
+        }
+        viewModelScope.launch {
+            _state.map { it.view }.distinctUntilChanged()
+                .collect { savedStateHandle[keyView] = it.name }
+        }
+        viewModelScope.launch {
+            _state.map { it.stripMode }.distinctUntilChanged()
+                .collect { savedStateHandle[keyStrip] = it.name }
+        }
     }
+}
+
+sealed interface CalendarUiEvent {
+    data class Error(val message: String) : CalendarUiEvent
 }

@@ -29,18 +29,12 @@ internal class BarStateHolder {
     }
 
     fun enterIdle() {
-        if (_phase.value == DraftPhase.IDLE) return
         _phase.value = DraftPhase.IDLE
         _state.update {
             it.copy(
-                rawInput = "",
                 resetGeneration = it.resetGeneration + 1,
             )
         }
-    }
-
-    fun updateRawInput(value: String) {
-        _state.update { it.copy(rawInput = value) }
     }
 
     fun selectMode(newMode: BarMode) {
@@ -56,10 +50,6 @@ internal class BarStateHolder {
             }
             it.copy(mode = next)
         }
-    }
-
-    fun clearInput() {
-        _state.update { it.copy(rawInput = "") }
     }
 
     fun requestFocus() {

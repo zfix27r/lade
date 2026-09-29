@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import app.lade.draftdata.DraftModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.ui.theme.LadeMotion
 import app.lade.ui.theme.Spacing
 
@@ -26,12 +26,12 @@ internal fun BarChips(
     onChipApply: ((DraftModel) -> DraftModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val kind = draft.kind?.takeIf { it != EntryKind.UNKNOWN } ?: return
+    val entryKind = draft.entryKind?.takeIf { it != EntryKind.NOTE } ?: return
     val inEditing = !draft.isEmpty || isFocused
     if (!inEditing) return
 
     val actual = barChipPresets.filter { preset ->
-        kind in preset.visibleFor && !preset.isActual(draft)
+        entryKind in preset.visibleFor && !preset.isActual(draft)
     }
 
     AnimatedVisibility(
@@ -48,7 +48,7 @@ internal fun BarChips(
             horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            BarChipKindIcon(kind = kind)
+            BarChipKindIcon(entryKind = entryKind)
 
             actual.forEach { preset ->
                 BarChipItem(

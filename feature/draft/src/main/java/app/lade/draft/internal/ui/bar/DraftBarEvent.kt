@@ -1,6 +1,6 @@
 package app.lade.draft.internal.ui.bar
 
-import app.lade.draft.internal.chat.chip.BarChipKind
+import app.lade.draft.internal.chat.chip.ChipKind
 
 internal sealed interface DraftBarEvent {
     data class TextChange(val text: String) : DraftBarEvent
@@ -9,7 +9,7 @@ internal sealed interface DraftBarEvent {
     data object KindClick : DraftBarEvent
     data object Resume : DraftBarEvent
     data object DismissResume : DraftBarEvent
-    data class ChipClick(val kind: BarChipKind, val index: Int) : DraftBarEvent
-    data class ChipRemove(val kind: BarChipKind, val index: Int) : DraftBarEvent
+    data class ChipClick(val kind: ChipKind, val index: Int) : DraftBarEvent
+    data class ChipRemove(val kind: ChipKind, val index: Int) : DraftBarEvent
     data object ModeSwitch : DraftBarEvent
 }

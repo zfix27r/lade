@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- GoalUnit long -->
+    <string name="goal_unit_lap">Круг</string>
+    <string name="goal_unit_m">Метр</string>
+    <string name="goal_unit_km">Километр</string>
+    <string name="goal_unit_kg">Килограмм</string>
+    <string name="goal_unit_min">Минут</string>
+    <string name="goal_unit_hour">Час</string>
+    <string name="goal_unit_set">Подход</string>
+    <string name="goal_unit_liter">Литр</string>
+    <string name="goal_unit_ml">Миллилитр</string>
+    <string name="goal_unit_step">Шаг</string>
+    <string name="goal_unit_glass">Стакан</string>
+    <string name="goal_unit_rep">Повтор</string>
+    <string name="goal_unit_approach">Подход</string>
+    <string name="goal_unit_cal">Килокалория</string>
+    <string name="goal_unit_unknown">Не найдено</string>
+
+    <!-- GoalUnit short -->
+    <string name="goal_unit_lap_short">круг</string>
+    <string name="goal_unit_m_short">м</string>
+    <string name="goal_unit_km_short">км</string>
+    <string name="goal_unit_kg_short">кг</string>
+    <string name="goal_unit_min_short">мин</string>
+    <string name="goal_unit_hour_short">ч</string>
+    <string name="goal_unit_set_short">подх</string>
+    <string name="goal_unit_liter_short">л</string>
+    <string name="goal_unit_ml_short">мл</string>
+    <string name="goal_unit_step_short">шаг</string>
+    <string name="goal_unit_glass_short">ст</string>
+    <string name="goal_unit_rep_short">раз</string>
+    <string name="goal_unit_approach_short">подх</string>
+    <string name="goal_unit_cal_short">ккал</string>
+    <string name="goal_unit_unknown_short">—</string>
+</resources>

@@ -1,12 +1,12 @@
 package app.lade.agenda.api.entry
 
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 
 data class EntryModel(
     val id: Long = 0,
-    val kind: EntryKind,
+    val entryKind: EntryKind,
     val title: String,
     val templateId: Long? = null,
     val dateFrom: LocalDate? = null,

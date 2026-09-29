@@ -2,7 +2,7 @@ package app.lade.notifications
 
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.notifications.data.ReminderAlarmScheduler
 import app.lade.notifications.data.ReminderChannels
 import app.lade.notifications.domain.ReminderFireMode
@@ -30,7 +30,8 @@ class Rescheduler @Inject constructor(
 
         for (agenda in agendas) {
             val entry = agenda.entry
-            when (entry.kind) {
+            when (entry.entryKind) {
+                EntryKind.NOTE -> TODO()
                 EntryKind.HABIT -> scheduleHabit(agenda, zone)
                 EntryKind.SCHEDULE, EntryKind.EVENT -> scheduleTimed(
                     agenda = agenda,
@@ -48,7 +49,6 @@ class Rescheduler @Inject constructor(
                         )
                     }
                 }
-                EntryKind.UNKNOWN -> Unit
             }
         }
     }

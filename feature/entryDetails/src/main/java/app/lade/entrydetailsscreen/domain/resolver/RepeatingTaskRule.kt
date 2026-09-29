@@ -1,6 +1,6 @@
 package app.lade.entrydetailsscreen.domain.resolver
 
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 
 
 /** Повтор без goal → TASK (повторяющаяся задача). */

@@ -89,7 +89,7 @@ class ReminderReceiver : BroadcastReceiver() {
 		const val EXTRA_KIND = "kind"
 		const val EXTRA_ENTITY_ID = "entityId"
 		const val EXTRA_EPOCH_DAY = "epochDay"
-		const val EXTRA_TITLE = "title"
+		const val EXTRA_TITLE = "label"
 		const val EXTRA_MODE = "mode"
 	}
 }

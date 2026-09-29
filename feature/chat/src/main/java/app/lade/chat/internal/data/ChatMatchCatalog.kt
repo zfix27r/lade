@@ -1,7 +1,7 @@
 package app.lade.chat.internal.data
 
 import android.content.Context
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -20,7 +20,7 @@ internal class ChatMatchCatalog @Inject constructor(
         loadFile(file, kind)
     }
 
-    private fun loadFile(assetPath: String, kind: EntryKind): List<CorpusEntry> {
+    private fun loadFile(assetPath: String, entryKind: EntryKind): List<CorpusEntry> {
         val json = context.assets.open(assetPath).bufferedReader().use { it.readText() }
         val entries = JSONObject(json).getJSONArray("entries")
         return buildList {
@@ -29,8 +29,9 @@ internal class ChatMatchCatalog @Inject constructor(
                 add(
                     CorpusEntry(
                         systemKey = obj.getString("systemKey"),
-                        kind = kind,
-                        title = obj.getString("title"),
+                        entryKind = entryKind,
+                        title = obj.optString("title").takeIf { it.isNotBlank() }
+                            ?: obj.getString("systemKey"),
                         needles = parseNeedles(obj.getJSONArray("needles")),
                     ),
                 )

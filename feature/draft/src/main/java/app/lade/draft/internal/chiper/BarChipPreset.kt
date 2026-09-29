@@ -3,7 +3,7 @@ package app.lade.draft.internal.chiper
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import app.lade.draftdata.DraftModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 
 internal data class BarChipPreset(
     @StringRes val labelRes: Int,

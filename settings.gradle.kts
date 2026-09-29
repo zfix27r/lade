@@ -17,9 +17,13 @@ dependencyResolutionManagement {
 rootProject.name = "lade"
 include(":app")
 
-include(":core:database")
 include(":core:resources")
 include(":core:ui")
+include(":core:database")
+include(":core:entry")
+include(":core:goal")
+include(":core:log")
+include(":core:note")
 
 include(":db:agenda")
 include(":db:agenda-store")
@@ -48,7 +52,6 @@ include(":feature:planer")
 include(":feature:settings")
 include(":feature:more")
 include(":feature:entryDetails")
-include(":feature:entry-kind")
 include(":feature:daypart")
 include(":feature:notifications")
 include(":feature:schedule")

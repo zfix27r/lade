@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import app.lade.agenda.api.goal.GoalUnit
-import app.lade.agenda.api.goal.labelRes
+import app.lade.goal.GoalUnit
+import app.lade.goal.labelRes
 import app.lade.entrydetailsscreen.domain.model.GoalDraft
 import app.lade.resources.R
 

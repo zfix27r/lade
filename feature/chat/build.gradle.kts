@@ -29,7 +29,6 @@ dependencies {
 
     implementation(project(":db:agenda"))
     implementation(project(":db:chat-store"))
-    implementation(project(":feature:entry-kind"))
 
 
     implementation(project(":feature:categories"))

@@ -14,13 +14,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import app.lade.entrykind.EntryKind
-import app.lade.entrykind.labelRes
+import app.lade.entry.EntryKind
+import app.lade.entry.ui.label
 import app.lade.resources.R
 
 @Composable
 fun KindBadge(
-    kind: EntryKind,
+    entryKind: EntryKind,
     isOverridden: Boolean,
     onSelect: (EntryKind?) -> Unit,
 ) {
@@ -28,7 +28,7 @@ fun KindBadge(
     Box {
         AssistChip(
             onClick = { expanded = true },
-            label = { Text(stringResource(kind.labelRes())) },
+            label = { Text(stringResource(entryKind.label())) },
             trailingIcon = {
                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
             },
@@ -45,10 +45,10 @@ fun KindBadge(
                 },
             )
             EntryKind.entries
-                .filter { it != EntryKind.UNKNOWN }
+                .filter { it != EntryKind.NOTE }
                 .forEach { k ->
                     DropdownMenuItem(
-                        text = { Text(stringResource(k.labelRes())) },
+                        text = { Text(stringResource(k.label())) },
                         onClick = {
                             expanded = false
                             onSelect(k)

@@ -13,7 +13,7 @@ object PhraseLoader {
                         input = obj.getString("input"),
                         result = obj.getString("result"),
                         kind = obj.optString("kind").takeIf { it.isNotBlank() },
-                        title = obj.optString("title").takeIf { it.isNotBlank() },
+                        title = obj.optString("label").takeIf { it.isNotBlank() },
                         rrule = obj.optString("rrule").takeIf { it.isNotBlank() },
                         dateFrom = obj.optString("dateFrom").takeIf { it.isNotBlank() },
                         dateTo = obj.optString("dateTo").takeIf { it.isNotBlank() },

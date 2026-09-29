@@ -2,7 +2,7 @@ package app.lade.agenda.data.entry
 
 import app.lade.agenda.api.entry.EntryError
 import app.lade.agenda.api.entry.EntryModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,7 +10,8 @@ import javax.inject.Singleton
 class EntryValidator @Inject constructor() {
     fun validate(entry: EntryModel): EntryError? {
         if (entry.title.isBlank()) return EntryError.TitleMissing
-        return when (entry.kind) {
+        return when (entry.entryKind) {
+            EntryKind.NOTE -> TODO()
             EntryKind.TASK -> {
                 if (entry.dateFrom == null) EntryError.DateMissing else null
             }
@@ -29,7 +30,6 @@ class EntryValidator @Inject constructor() {
                 entry.rrule.isNullOrBlank() -> EntryError.RecurrenceMissing
                 else -> null
             }
-            EntryKind.UNKNOWN -> null
         }
     }
 }

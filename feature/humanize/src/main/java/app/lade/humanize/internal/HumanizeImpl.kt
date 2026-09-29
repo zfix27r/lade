@@ -1,8 +1,8 @@
 package app.lade.humanize.internal
 
 import android.content.Context
-import app.lade.agenda.api.goal.GoalUnit
-import app.lade.entrykind.EntryKind
+import app.lade.goal.GoalUnit
+import app.lade.entry.EntryKind
 import app.lade.humanize.api.Humanize
 import app.lade.humanize.api.Humanized
 import app.lade.humanize.internal.alarm.AlarmHumanize
@@ -43,6 +43,6 @@ internal class HumanizeImpl @Inject constructor(
         alarmHumanize.format(time, mode)
     override fun reminder(minutesBefore: Int): Humanized =
         reminderHumanize.format(minutesBefore)
-    override fun entryKind(kind: EntryKind): Humanized =
-        entryKindHumanize.format(kind)
+    override fun entryKind(entryKind: EntryKind): Humanized =
+        entryKindHumanize.format(entryKind)
 }

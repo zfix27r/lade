@@ -1,11 +1,10 @@
 package app.lade.chat.internal.pipeline.date
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.api.RuleMatch
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -17,27 +16,42 @@ internal class DateL2Rules(
 
     override val priority: Int = Priority.L2
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+
         for (rule in RULES) {
-            val match = rule.regex.find(raw) ?: continue
+            val match = rule.regex.find(remaining) ?: continue
             val resolved = rule.resolve(match, today) ?: continue
-            val filtered = resolved.filterNot { state.contains(it.first) }
-            if (filtered.isEmpty()) continue
-            return filtered.map { (key, date) ->
-                RuleMatch(
-                    key = key,
-                    value = FieldValue.Date(date),
-                    match = match.value,
-                    span = match.range,
-                )
+
+            val applicable = resolved.filter { (field) ->
+                when (field) {
+                    Field.DATE_FROM -> ParserContract.isFind(entry.dateFrom)
+                    Field.DATE_TO -> ParserContract.isFind(entry.dateTo)
+                }
             }
+            if (applicable.isEmpty()) continue
+
+            var updated = entry
+            applicable.forEach { (field, date) ->
+                updated = when (field) {
+                    Field.DATE_FROM -> updated.copy(dateFrom = ParserContract.found(date.toString()))
+                    Field.DATE_TO -> updated.copy(dateTo = ParserContract.found(date.toString()))
+                }
+            }
+
+            return RuleResult(
+                model.copy(entry = updated),
+                remaining.removeRange(match.range),
+            )
         }
-        return emptyList()
+        return RuleResult(model, remaining)
     }
+
+    private enum class Field { DATE_FROM, DATE_TO }
 
     private data class Rule(
         val regex: Regex,
-        val resolve: (MatchResult, LocalDate) -> List<Pair<FieldKey, LocalDate>>?,
+        val resolve: (MatchResult, LocalDate) -> List<Pair<Field, LocalDate>>?,
     )
 
     companion object {
@@ -89,7 +103,7 @@ internal class DateL2Rules(
                     ?: return@Rule null
                 val to = safeDate(today.year, match.groupValues[4].toInt(), match.groupValues[3].toInt())
                     ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to from, FieldKey.DATE_TO to to)
+                listOf(Field.DATE_FROM to from, Field.DATE_TO to to)
             },
 
             Rule(
@@ -97,7 +111,7 @@ internal class DateL2Rules(
             ) { match, _ ->
                 val parts = match.value.split(".")
                 safeDate(parts[2].toInt(), parts[1].toInt(), parts[0].toInt())
-                    ?.let { listOf(FieldKey.DATE_FROM to it) }
+                    ?.let { listOf(Field.DATE_FROM to it) }
             },
 
             Rule(
@@ -105,7 +119,7 @@ internal class DateL2Rules(
             ) { match, today ->
                 val parts = match.value.split(".")
                 safeDate(today.year, parts[1].toInt(), parts[0].toInt())
-                    ?.let { listOf(FieldKey.DATE_FROM to it) }
+                    ?.let { listOf(Field.DATE_FROM to it) }
             },
 
             Rule(
@@ -114,7 +128,7 @@ internal class DateL2Rules(
                 val date =
                     safeDate(today.year, match.groupValues[2].toInt(), match.groupValues[1].toInt())
                         ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today, FieldKey.DATE_TO to date)
+                listOf(Field.DATE_FROM to today, Field.DATE_TO to date)
             },
 
             Rule(
@@ -123,7 +137,7 @@ internal class DateL2Rules(
                 val day = match.groupValues[1].toInt()
                 val month = month(match.groupValues[2]) ?: return@Rule null
                 val date = safeDate(today.year, month.value, day) ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today, FieldKey.DATE_TO to date)
+                listOf(Field.DATE_FROM to today, Field.DATE_TO to date)
             },
 
             Rule(
@@ -137,7 +151,7 @@ internal class DateL2Rules(
                     ?: return@Rule null
                 val to = safeDate(today.year, month.value, match.groupValues[2].toInt())
                     ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to from, FieldKey.DATE_TO to to)
+                listOf(Field.DATE_FROM to from, Field.DATE_TO to to)
             },
 
             Rule(
@@ -151,7 +165,7 @@ internal class DateL2Rules(
                     ?: return@Rule null
                 val to = safeDate(today.year, month.value, match.groupValues[2].toInt())
                     ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to from, FieldKey.DATE_TO to to)
+                listOf(Field.DATE_FROM to from, Field.DATE_TO to to)
             },
 
             Rule(
@@ -160,35 +174,35 @@ internal class DateL2Rules(
                 val day = match.groupValues[1].toInt()
                 val month = month(match.groupValues[2]) ?: return@Rule null
                 safeDate(today.year, month.value, day)
-                    ?.let { listOf(FieldKey.DATE_FROM to it) }
+                    ?.let { listOf(Field.DATE_FROM to it) }
             },
 
             Rule(
                 regex = Regex("""до\s+конца\s+недели""", RegexOption.IGNORE_CASE),
             ) { _, today ->
                 val sunday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
-                listOf(FieldKey.DATE_FROM to today, FieldKey.DATE_TO to sunday)
+                listOf(Field.DATE_FROM to today, Field.DATE_TO to sunday)
             },
 
             Rule(
                 regex = Regex("""до\s+конца\s+месяца""", RegexOption.IGNORE_CASE),
             ) { _, today ->
                 val last = today.with(TemporalAdjusters.lastDayOfMonth())
-                listOf(FieldKey.DATE_FROM to today, FieldKey.DATE_TO to last)
+                listOf(Field.DATE_FROM to today, Field.DATE_TO to last)
             },
 
             Rule(
                 regex = Regex("""до\s+конца\s+года""", RegexOption.IGNORE_CASE),
             ) { _, today ->
                 val last = LocalDate.of(today.year, 12, 31)
-                listOf(FieldKey.DATE_FROM to today, FieldKey.DATE_TO to last)
+                listOf(Field.DATE_FROM to today, Field.DATE_TO to last)
             },
 
             Rule(
                 regex = Regex("""в[оа]?\s+следующий\s+([а-яё]+)""", RegexOption.IGNORE_CASE),
             ) { match, today ->
                 val day = day(match.groupValues[1]) ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today.with(TemporalAdjusters.next(day)))
+                listOf(Field.DATE_FROM to today.with(TemporalAdjusters.next(day)))
             },
 
             Rule(
@@ -198,7 +212,7 @@ internal class DateL2Rules(
                 ),
             ) { match, today ->
                 val day = day(match.groupValues[1]) ?: return@Rule null
-                listOf(FieldKey.DATE_FROM to today.with(TemporalAdjusters.nextOrSame(day)))
+                listOf(Field.DATE_FROM to today.with(TemporalAdjusters.nextOrSame(day)))
             },
         )
     }

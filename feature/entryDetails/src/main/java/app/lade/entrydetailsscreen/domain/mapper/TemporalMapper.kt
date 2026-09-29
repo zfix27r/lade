@@ -22,7 +22,7 @@ object TemporalMapper {
         val t = state.temporal
         return EntryModel(
             id = state.id,
-            kind = state.effectiveKind,
+            entryKind = state.effectiveEntryKind,
             title = state.title.trim(),
             templateId = state.templateId,
             dateFrom = t.dateFrom,

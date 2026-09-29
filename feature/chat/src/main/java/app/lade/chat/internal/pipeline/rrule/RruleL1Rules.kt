@@ -1,31 +1,28 @@
 package app.lade.chat.internal.pipeline.rrule
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.api.RuleMatch
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 
 internal class RruleL1Rules : ParseRule {
 
     override val priority: Int = Priority.L1
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+        if (!ParserContract.isFind(entry.rrule)) return RuleResult(model, remaining)
+
         for ((word, rrule) in WORDS) {
-            val index = raw.indexOf(word)
+            val index = remaining.indexOf(word)
             if (index < 0) continue
-            if (state.contains(FieldKey.RRULE)) continue
-            return listOf(
-                RuleMatch(
-                    key = FieldKey.RRULE,
-                    value = FieldValue.Text(rrule),
-                    match = word,
-                    span = index until index + word.length,
-                ),
+            return RuleResult(
+                model.copy(entry = entry.copy(rrule = ParserContract.found(rrule))),
+                remaining.removeRange(index, index + word.length),
             )
         }
-        return emptyList()
+        return RuleResult(model, remaining)
     }
 
     companion object {

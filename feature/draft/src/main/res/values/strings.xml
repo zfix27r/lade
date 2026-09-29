@@ -53,4 +53,7 @@
     <string name="draft_chip_daily">Ежедневно</string>
     <string name="draft_chip_weekdays">По будням</string>
     <string name="draft_chip_weekends">По выходным</string>
+
+    <string name="draft_action_commit">Утвердить</string>
+    <string name="draft_action_save">Сохранить</string>
 </resources>

@@ -1,11 +1,10 @@
 package app.lade.chat.internal.pipeline.date
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
-import app.lade.chat.api.RuleMatch
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 import java.time.LocalDate
 
 internal class DateL1Rules(
@@ -14,19 +13,18 @@ internal class DateL1Rules(
 
     override val priority: Int = Priority.L1
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+        if (!ParserContract.isFind(entry.dateFrom)) return RuleResult(model, remaining)
+
         for ((word, resolver) in WORDS) {
-            val index = findWord(raw, word) ?: continue
-            return listOf(
-                RuleMatch(
-                    key = FieldKey.DATE_FROM,
-                    value = FieldValue.Date(resolver(today)),
-                    match = word,
-                    span = index until index + word.length,
-                ),
+            val index = findWord(remaining, word) ?: continue
+            val updated = model.copy(
+                entry = entry.copy(dateFrom = ParserContract.found(resolver(today).toString())),
             )
+            return RuleResult(updated, remaining.removeRange(index, index + word.length))
         }
-        return emptyList()
+        return RuleResult(model, remaining)
     }
 
     private fun findWord(raw: String, word: String): Int? {

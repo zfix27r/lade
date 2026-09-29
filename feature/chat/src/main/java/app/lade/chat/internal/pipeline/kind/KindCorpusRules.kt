@@ -1,12 +1,11 @@
 package app.lade.chat.internal.pipeline.kind
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.api.RuleMatch
+import app.lade.chat.api.ParserContract
+import app.lade.chat.api.ParserModel
 import app.lade.chat.internal.data.CorpusEntry
-import app.lade.chat.internal.state.ParseRule
-import app.lade.chat.internal.state.ParseState
-import app.lade.chat.internal.state.Priority
+import app.lade.chat.internal.pipeline.ParseRule
+import app.lade.chat.internal.pipeline.Priority
+import app.lade.chat.internal.pipeline.RuleResult
 
 internal class KindCorpusRules(
     private val entries: List<CorpusEntry>,
@@ -14,26 +13,21 @@ internal class KindCorpusRules(
 
     override val priority: Int = Priority.L2
 
-    override fun match(raw: String, state: ParseState): List<RuleMatch> {
-        if (state.contains(FieldKey.KIND)) return emptyList()
+    override fun apply(model: ParserModel, remaining: String): RuleResult {
+        val entry = model.entry ?: return RuleResult(model, remaining)
+        if (!ParserContract.isFind(entry.kind)) return RuleResult(model, remaining)
 
-        for (entry in entries) {
-            for (needle in entry.needles) {
+        for (corpus in entries) {
+            for (needle in corpus.needles) {
                 val stem = needle.stem
                 if (stem.length < 3) continue
-                val index = raw.indexOf(stem)
-                if (index < 0) continue
-                return listOf(
-                    RuleMatch(
-                        key = FieldKey.KIND,
-                        value = FieldValue.Kind(entry.kind, entry.systemKey),
-                        match = "",
-                        span = index until index + stem.length,
-                    ),
+                if (remaining.indexOf(stem) < 0) continue
+                return RuleResult(
+                    model.copy(entry = entry.copy(kind = ParserContract.found(corpus.entryKind.storage))),
+                    remaining,
                 )
             }
         }
-
-        return emptyList()
+        return RuleResult(model, remaining)
     }
 }

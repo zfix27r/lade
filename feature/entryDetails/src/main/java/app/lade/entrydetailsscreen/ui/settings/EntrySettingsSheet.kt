@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import app.lade.entrydetailsscreen.R
 import app.lade.entrydetailsscreen.domain.model.EntryEditUiState
 import app.lade.entrydetailsscreen.domain.model.GoalDraft
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.schedule.ui.AlarmModeOption
 import app.lade.recurrence.api.RecurrenceDraft
 import app.lade.recurrence.api.RecurrencePreset
@@ -100,7 +100,7 @@ fun EntrySettingsSheet(
             }
 
             // ── Цели (только для HABIT) ──
-            if (state.effectiveKind == EntryKind.HABIT) {
+            if (state.effectiveEntryKind == EntryKind.HABIT) {
                 item {
                     SettingsSection(title = stringResource(R.string.entry_settings_section_goals)) {
                         GoalsSettingsSection(

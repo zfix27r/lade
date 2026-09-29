@@ -1,19 +1,17 @@
 package app.lade.draft.internal.ui.bar
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -26,18 +24,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.lade.draft.api.DraftPhase
 import app.lade.draft.internal.chat.BarChatSheet
 import app.lade.draft.internal.chiper.BarChiperSheet
 import app.lade.draft.internal.editor.BarEditorSheet
-import app.lade.draft.internal.input.BarInput
+import app.lade.draft.internal.input.ui.BarInput
 import app.lade.draftdata.DraftModel
-import app.lade.entrykind.EntryKind
 import app.lade.ui.theme.LadeMotion
 import app.lade.ui.theme.Spacing
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+
+private val TopAppBarHeight = 64.dp
 
 @Composable
 internal fun BarView(
@@ -45,85 +49,90 @@ internal fun BarView(
     barState: BarState,
     draft: DraftModel,
     placeholder: String,
-    onKindClick: () -> Unit,
-    onRawInputChange: (String) -> Unit,
-    onTextChange: (String) -> Unit,
     onFocusChange: (FocusState) -> Unit,
-    onSubmit: () -> Unit,
     onModeSwitch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val density = LocalDensity.current
+    val view = LocalView.current
+
+    var inputHeight by remember { mutableStateOf(56.dp) }
+    var keyboardReady by remember { mutableStateOf(false) }
 
     val isEditing = phase == DraftPhase.EDIT
 
-    LaunchedEffect(barState.resetGeneration) {
-        if (barState.resetGeneration > 0) focusManager.clearFocus()
-    }
+    val statusBarHeight = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val navBarHeight = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val imeHeight = with(density) { WindowInsets.ime.getBottom(density).toDp() }
+    val screenHeight = with(density) { view.rootView.height.toDp() }
 
-    LaunchedEffect(barState.keyboardRequestGeneration) {
-        if (barState.keyboardRequestGeneration > 0) {
-            keyboard?.show()
+    LaunchedEffect(phase) {
+        if (phase == DraftPhase.IDLE) {
+            focusManager.clearFocus()
+            keyboard?.hide()
         }
     }
 
-    LaunchedEffect(isEditing) {
-        if (!isEditing) keyboard?.hide()
+    LaunchedEffect(barState.keyboardRequestGeneration) {
+        if (barState.keyboardRequestGeneration > 0) keyboard?.show()
     }
 
-    val sheetState = remember { MutableTransitionState(isEditing) }
-    var barExpanded by remember { mutableStateOf(isEditing) }
-
     LaunchedEffect(isEditing) {
-        barExpanded = isEditing
-        sheetState.targetState = isEditing
+        if (isEditing) {
+            keyboard?.show()
+            delay(350.milliseconds)
+            keyboardReady = true
+        } else {
+            keyboardReady = false
+            keyboard?.hide()
+        }
     }
 
     val horizontalPadding by animateDpAsState(
-        targetValue = if (barExpanded) 0.dp else Spacing.lg,
-        animationSpec = if (barExpanded) LadeMotion.enter() else LadeMotion.exit(),
+        targetValue = if (isEditing) 0.dp else Spacing.lg,
+        animationSpec = if (isEditing) LadeMotion.enter() else LadeMotion.exit(),
     )
     val bottomPadding by animateDpAsState(
-        targetValue = if (barExpanded) 0.dp else Spacing.md,
-        animationSpec = if (barExpanded) LadeMotion.enter() else LadeMotion.exit(),
+        targetValue = if (isEditing) 0.dp else Spacing.md,
+        animationSpec = if (isEditing) LadeMotion.enter() else LadeMotion.exit(),
     )
     val cornerRadius by animateDpAsState(
-        targetValue = if (barExpanded) 0.dp else 24.dp,
-        animationSpec = if (barExpanded) LadeMotion.enter() else LadeMotion.exit(),
+        targetValue = if (isEditing) 0.dp else 24.dp,
+        animationSpec = if (isEditing) LadeMotion.enter() else LadeMotion.exit(),
+    )
+    val sheetHeight by animateDpAsState(
+        targetValue = if (isEditing && keyboardReady) {
+            (screenHeight - statusBarHeight - TopAppBarHeight - navBarHeight - imeHeight - inputHeight)
+                .coerceAtLeast(0.dp)
+        } else 0.dp,
+        animationSpec = if (isEditing) LadeMotion.enter() else LadeMotion.exit(),
     )
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.ime)
             .padding(
                 start = horizontalPadding,
                 end = horizontalPadding,
-                bottom = bottomPadding,
+                bottom = bottomPadding + imeHeight,
             )
-            .pointerInput(Unit) {
-                detectTapGestures { }
-            },
+            .pointerInput(Unit) { detectTapGestures { } },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(cornerRadius))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .animateContentSize(animationSpec = LadeMotion.exit())
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         ) {
-            AnimatedVisibility(
-                visibleState = sheetState,
-                enter = fadeIn(animationSpec = LadeMotion.enter()),
-                exit = fadeOut(animationSpec = LadeMotion.exit()),
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = sheetHeight),
             ) {
                 when (barState.mode) {
-                    BarMode.Chat -> BarChatSheet(
-                        kind = draft.kind ?: EntryKind.TASK,
-                        title = draft.title,
-                        onKindClick = onKindClick,
-                    )
+                    BarMode.Chat -> BarChatSheet()
                     BarMode.Chip -> BarChiperSheet(draft = draft)
                     BarMode.Editor -> BarEditorSheet(draft = draft)
                 }
@@ -133,12 +142,11 @@ internal fun BarView(
                 phase = phase,
                 barState = barState,
                 placeholder = placeholder,
-                onRawInputChange = onRawInputChange,
-                onTextChange = onTextChange,
                 onFocusChange = onFocusChange,
-                onSubmit = onSubmit,
                 onModeSwitch = onModeSwitch,
-                modifier = Modifier.padding(vertical = Spacing.xs),
+                modifier = Modifier
+                    .padding(vertical = Spacing.xs)
+                    .onSizeChanged { size -> inputHeight = with(density) { size.height.toDp() } },
             )
         }
     }

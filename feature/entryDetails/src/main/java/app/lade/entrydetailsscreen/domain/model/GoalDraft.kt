@@ -1,7 +1,7 @@
 package app.lade.entrydetailsscreen.domain.model
 
 import app.lade.agenda.api.goal.GoalModel
-import app.lade.agenda.api.goal.GoalUnit
+import app.lade.goal.GoalUnit
 
 data class GoalDraft(
     val id: Long = 0,

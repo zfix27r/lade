@@ -10,4 +10,6 @@ data class CalendarStateModel(
     val entries: List<AgendaModel> = emptyList(),
     val stripMode: CalendarListStripMode = CalendarListStripMode.WEEK,
     val selectedSources: Set<String> = emptySet(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
 )

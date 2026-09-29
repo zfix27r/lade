@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.calendar.domain.CalendarDateMode
 import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.resources.R
 import java.time.LocalDate
 import java.time.YearMonth
@@ -52,7 +52,7 @@ fun CalendarMonthGrid(
 	}
 	val datesWithEntries = entries.map { it.date }.toSet()
 	val habitDates = entries
-		.filter { it.entry.kind == EntryKind.HABIT }
+		.filter { it.entry.entryKind == EntryKind.HABIT }
 		.map { it.date }
 		.toSet()
 

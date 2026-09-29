@@ -31,7 +31,7 @@ import app.lade.calendar.ui.component.list.collapse.rememberCalendarCollapseMetr
 import app.lade.calendar.ui.component.list.components.AgendaCard
 import app.lade.calendar.ui.component.list.components.AgendaRow
 import app.lade.calendar.ui.component.list.components.CalendarListEmptyState
-import app.lade.calendar.ui.component.list.components.entryTypeColor
+import app.lade.entry.ui.color
 import app.lade.ui.gesture.rememberSnapToEdge
 import java.time.LocalDate
 
@@ -42,8 +42,7 @@ fun CalendarListLayout(
     onDateSelected: (LocalDate) -> Unit,
     onOpenAgenda: (AgendaModel) -> Unit,
     onEntryLongPress: (AgendaModel) -> Unit,
-    onMarkDone: (entryId: Long, date: LocalDate) -> Unit,
-    onMarkSkip: (entryId: Long, date: LocalDate) -> Unit,
+    onToggleDone: (entryId: Long, date: LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarListConfig = DefaultCalendarListConfig,
 ) {
@@ -129,7 +128,7 @@ fun CalendarListLayout(
                             )
                             AgendaCard(
                                 cornerRadius = config.listEntryCornerRadius,
-                                stripeColor = entryTypeColor(agenda.entry.kind),
+                                stripeColor = agenda.entry.entryKind.color(),
                                 stripeWidth = config.listEntryTypeStripeWidth,
                                 containerColor = containerColor,
                                 modifier = if (config.enableEntryAnimations) {
@@ -141,8 +140,7 @@ fun CalendarListLayout(
                                 AgendaRow(
                                     agenda = agenda,
                                     onOpenAgenda = { onOpenAgenda(agenda) },
-                                    onMarkDone = { onMarkDone(agenda.entry.id, agenda.date) },
-                                    onMarkSkip = { onMarkSkip(agenda.entry.id, agenda.date) },
+                                    onToggleDone = { onToggleDone(agenda.entry.id, agenda.date) },
                                     onLongPress = { onEntryLongPress(agenda) },
                                     enableMarkHaptics = config.enableMarkHaptics,
                                 )

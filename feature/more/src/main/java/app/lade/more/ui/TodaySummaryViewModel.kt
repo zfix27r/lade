@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.lade.agenda.api.AgendaApi
 import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +31,7 @@ class TodaySummaryViewModel @Inject constructor(
 
 	private fun List<AgendaModel>.toUiState(): TodaySummaryUiState {
 		val open = filter { it.isOpen() }
-		val habits = filter { it.entry.kind == EntryKind.HABIT }
+		val habits = filter { it.entry.entryKind == EntryKind.HABIT }
 		val habitDone = habits.count { it.isDone() }
 		return TodaySummaryUiState(
 			openCount = open.size,
@@ -41,17 +41,18 @@ class TodaySummaryViewModel @Inject constructor(
 		)
 	}
 
-	private fun AgendaModel.isOpen(): Boolean = when (entry.kind) {
+	private fun AgendaModel.isOpen(): Boolean = when (entry.entryKind) {
+		EntryKind.NOTE -> TODO()
 		EntryKind.HABIT -> !isDone() && !isSkipped()
 		EntryKind.TASK -> !isDone() && !isCancelled()
-		EntryKind.EVENT, EntryKind.SCHEDULE, EntryKind.UNKNOWN -> true
+		EntryKind.EVENT, EntryKind.SCHEDULE -> true
 	}
 
 	private fun AgendaModel.isDone(): Boolean =
 		logs.any { (it.actualAmount ?: 0) > 0 }
 
 	private fun AgendaModel.isSkipped(): Boolean =
-		logs.isEmpty() && entry.kind == EntryKind.HABIT
+		logs.isEmpty() && entry.entryKind == EntryKind.HABIT
 
 	private fun AgendaModel.isCancelled(): Boolean = false
 }

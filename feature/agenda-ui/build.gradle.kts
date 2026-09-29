@@ -28,7 +28,6 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":db:agenda"))
     implementation(project(":feature:humanize"))
-    implementation(project(":feature:entry-kind"))
 
     implementation(libs.androidx.core.ktx)
 

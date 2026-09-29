@@ -34,8 +34,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.lade.entrykind.EntryKind
-import app.lade.entrykind.labelRes
+import app.lade.entry.EntryKind
+import app.lade.entry.ui.label
 import app.lade.resources.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -87,17 +87,17 @@ fun EntryListScreen(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm)),
 			) {
 				FilterChip(
-					selected = state.kindFilter == null,
+					selected = state.entryKindFilter == null,
 					onClick = { viewModel.setKindFilter(null) },
 					label = { Text(stringResource(R.string.entry_filter_all)) },
 				)
 				EntryKind.entries
-					.filter { it != EntryKind.UNKNOWN }
+					.filter { it != EntryKind.NOTE }
 					.forEach { kind ->
 						FilterChip(
-							selected = state.kindFilter == kind,
+							selected = state.entryKindFilter == kind,
 							onClick = { viewModel.setKindFilter(kind) },
-							label = { Text(stringResource(kind.labelRes())) },
+							label = { Text(stringResource(kind.label())) },
 						)
 					}
 				FilterChip(
@@ -115,7 +115,7 @@ fun EntryListScreen(
 					Text(
 						text = stringResource(
 							when {
-								state.kindFilter != null -> R.string.entries_empty_filtered
+								state.entryKindFilter != null -> R.string.entries_empty_filtered
 								state.showArchived -> R.string.entries_archived_empty
 								else -> R.string.entries_empty
 							},
@@ -129,7 +129,7 @@ fun EntryListScreen(
 					items(state.items, key = { it.id }) { entry ->
 						ListItem(
 							headlineContent = { Text(entry.title) },
-							supportingContent = { Text(stringResource(entry.kind.labelRes())) },
+							supportingContent = { Text(stringResource(entry.entryKind.label())) },
 							trailingContent = {
 								if (entry.isArchived) {
 									IconButton(onClick = { viewModel.restore(entry.id) }) {
@@ -149,7 +149,7 @@ fun EntryListScreen(
 							},
 							modifier = Modifier
 								.fillMaxWidth()
-								.clickable { onEdit(entry.id, entry.kind) },
+								.clickable { onEdit(entry.id, entry.entryKind) },
 						)
 					}
 				}

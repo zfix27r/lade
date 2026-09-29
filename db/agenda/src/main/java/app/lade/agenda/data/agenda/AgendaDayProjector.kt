@@ -1,7 +1,7 @@
 package app.lade.agenda.data.agenda
 
 import app.lade.agenda.api.entry.EntryModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import app.lade.recurrence.api.RecurrenceEngine
 import java.time.LocalDate
 import javax.inject.Inject
@@ -12,12 +12,12 @@ class AgendaDayProjector @Inject constructor(
     private val recurrenceEngine: RecurrenceEngine,
 ) {
     fun appliesTo(entry: EntryModel, date: LocalDate): Boolean {
-        return when (entry.kind) {
+        return when (entry.entryKind) {
+            EntryKind.NOTE -> TODO()
             EntryKind.SCHEDULE -> appliesSchedule(entry, date)
             EntryKind.HABIT -> appliesHabit(entry, date)
             EntryKind.TASK -> appliesTask(entry, date)
             EntryKind.EVENT -> appliesEvent(entry, date)
-            EntryKind.UNKNOWN -> false
         }
     }
 

@@ -2,14 +2,14 @@ package app.lade.calendar.domain
 
 import app.lade.agenda.api.goal.GoalModel
 import app.lade.agenda.api.log.LogModel
-import app.lade.entrykind.EntryKind
+import app.lade.entry.EntryKind
 import java.time.LocalDate
 import java.time.LocalTime
 
 data class EntryUiModel(
     val entryId: Long,
     val date: LocalDate,
-    val kind: EntryKind,
+    val entryKind: EntryKind,
     val title: String,
     val startTime: LocalTime?,
     val endTime: LocalTime?,

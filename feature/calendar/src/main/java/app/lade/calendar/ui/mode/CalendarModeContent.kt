@@ -24,8 +24,7 @@ fun CalendarModeContent(
             onDateSelected = actions.onDateSelected,
             onOpenAgenda = actions.onOpenAgenda,
             onEntryLongPress = actions.onEntryLongPress,
-            onMarkDone = actions.onMarkDone,
-            onMarkSkip = actions.onMarkSkip,
+            onToggleDone = actions.onToggleDone,
             modifier = modifier.fillMaxSize(),
         )
 

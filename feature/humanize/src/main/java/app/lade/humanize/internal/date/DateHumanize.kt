@@ -19,16 +19,19 @@ internal class DateHumanize(
                 short = context.getString(R.string.humanize_date_yesterday_short),
                 long = context.getString(R.string.humanize_date_yesterday_long),
             )
+
             0L -> Humanized(
                 short = context.getString(R.string.humanize_date_today_short),
                 long = context.getString(R.string.humanize_date_today_long),
             )
+
             1L -> Humanized(
                 short = context.getString(R.string.humanize_date_tomorrow_short),
                 long = context.getString(R.string.humanize_date_tomorrow_long),
             )
+
             else -> {
-                val shortText = date.format(MONTH_DAY_SHORT)
+                val shortText = date.format(MONTH_DAY_SHORT).removeSuffix(".")
                 val longText = date.format(MONTH_DAY_LONG)
                 Humanized(short = shortText, long = longText)
             }
@@ -38,7 +41,6 @@ internal class DateHumanize(
     companion object {
         private val MONTH_DAY_SHORT: DateTimeFormatter =
             DateTimeFormatter.ofPattern("d MMM")
-
         private val MONTH_DAY_LONG: DateTimeFormatter =
             DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
     }

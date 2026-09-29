@@ -1,13 +1,9 @@
 package app.lade.chat
 
-import app.lade.chat.api.FieldKey
-import app.lade.chat.api.FieldValue
-import app.lade.chat.api.ParseResult
 import app.lade.chat.internal.pipeline.ChatParseOrchestrator
-import app.lade.draftdata.DraftModel
-import app.lade.entrykind.EntryKind
-import app.lade.entrykind.EntryKindInput
-import app.lade.entrykind.EntryKindResolver
+import app.lade.entry.EntryKind
+import app.lade.entry.EntryModel
+import app.lade.entry.EntryKindResolver
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
 import org.junit.Test
@@ -90,7 +86,7 @@ class ChatParserTest {
         }
 
     private object FakeEntryKindResolver : EntryKindResolver {
-        override fun resolve(input: EntryKindInput): EntryKind {
+        override fun resolve(input: EntryModel): EntryKind {
             val dateFrom = input.dateFrom
             val dateTo = input.dateTo
             if (dateFrom != null && dateTo != null && dateTo.isAfter(dateFrom))

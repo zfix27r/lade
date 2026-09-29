@@ -1,7 +1,6 @@
 package app.lade.draft.internal.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,8 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.draft.R
 import app.lade.draft.api.DraftPhase
-import app.lade.draft.internal.chat.DraftBarChatViewModel
-import app.lade.draft.internal.input.ResumePrompt
+import app.lade.draft.internal.input.InputInPort
+import app.lade.draft.internal.input.InputOutPort
+import app.lade.draft.internal.input.ui.ResumePrompt
 import app.lade.draft.internal.ui.bar.BarView
 import app.lade.draft.internal.ui.bar.DraftBarEvent
 import java.time.LocalDate
@@ -35,7 +34,6 @@ internal fun DraftBar(
     defaultDate: LocalDate?,
     modifier: Modifier = Modifier,
     viewModel: DraftBarViewModel = hiltViewModel(),
-    chatViewModel: DraftBarChatViewModel = hiltViewModel(),
 ) {
     val bar by viewModel.bar.collectAsStateWithLifecycle()
     val draft by viewModel.draft.collectAsStateWithLifecycle()
@@ -88,11 +86,7 @@ internal fun DraftBar(
                     barState = bar,
                     draft = draft,
                     placeholder = stringResource(R.string.draft_placeholder),
-                    onKindClick = { viewModel.onEvent(DraftBarEvent.KindClick) },
-                    onRawInputChange = viewModel::onRawInputChange,
-                    onTextChange = chatViewModel::onTextChange,
                     onFocusChange = viewModel::onBarFocusChange,
-                    onSubmit = chatViewModel::onSubmit,
                     onModeSwitch = { viewModel.onEvent(DraftBarEvent.ModeSwitch) },
                 )
             }
