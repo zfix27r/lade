@@ -9,7 +9,7 @@ import app.lade.draft.internal.domain.DraftIntent
 import app.lade.draft.internal.domain.DraftStore
 import app.lade.draft.internal.ui.bar.BarMode
 import app.lade.draft.internal.ui.bar.BarState
-import app.lade.draft.internal.ui.bar.BarStateHolder
+import app.lade.draft.internal.ui.bar.DraftStateHolder
 import app.lade.draft.internal.ui.bar.DraftBarEvent
 import app.lade.draftdata.DraftModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class DraftBarViewModel @Inject constructor(
     private val store: DraftStore,
-    private val barState: BarStateHolder,
+    private val barState: DraftStateHolder,
 ) : ViewModel() {
 
     val bar: StateFlow<BarState> = barState.state

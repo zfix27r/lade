@@ -1,4 +1,4 @@
-package app.lade.draft.internal.chat.input
+package app.lade.draft.internal.chat.parse
 
 internal object InputClearRules {
     fun shouldClear(reason: InputClearReason): Boolean = when (reason) {

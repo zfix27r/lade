@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import app.lade.draft.internal.chat.chip.data.ChipEmphasis
-import app.lade.draft.internal.chat.chip.data.ChipModel
+import app.lade.draft.internal.chat.chip.domain.ChipEmphasis
+import app.lade.draft.internal.chat.chip.domain.ChipModel
 import app.lade.draft.internal.chat.chip.ui.ChipLeadingIcon
 import app.lade.draft.internal.chat.chip.ui.ChipText
 import app.lade.draft.internal.chat.chip.ui.ChipTrailingIcon

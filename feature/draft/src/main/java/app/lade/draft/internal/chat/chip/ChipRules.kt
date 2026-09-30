@@ -4,7 +4,7 @@ import app.lade.chat.api.ParserContract
 import app.lade.chat.api.ParserEntryModel
 import app.lade.chat.api.ParserGoalModel
 import app.lade.chat.api.ParserModel
-import app.lade.draft.internal.chat.chip.data.ChipKey
+import app.lade.draft.internal.chat.chip.domain.ChipKey
 import app.lade.draftdata.DraftGoal
 import app.lade.draftdata.DraftModel
 import app.lade.goal.GoalUnit

@@ -1,4 +1,4 @@
-package app.lade.draft.internal.chat.chip.data
+package app.lade.draft.internal.chat.chip.domain
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Alarm

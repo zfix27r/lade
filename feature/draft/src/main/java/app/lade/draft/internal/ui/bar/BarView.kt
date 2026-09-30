@@ -139,7 +139,6 @@ internal fun BarView(
             }
 
             BarInput(
-                phase = phase,
                 barState = barState,
                 placeholder = placeholder,
                 onFocusChange = onFocusChange,

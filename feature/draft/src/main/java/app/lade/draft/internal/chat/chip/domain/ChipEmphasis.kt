@@ -1,4 +1,4 @@
-package app.lade.draft.internal.chat.chip.data
+package app.lade.draft.internal.chat.chip.domain
 
 internal enum class ChipEmphasis {
     ACTIVE,

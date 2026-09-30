@@ -1,11 +1,11 @@
-package app.lade.draft.internal.chat.input
+package app.lade.draft.internal.chat.parse
 
 import app.lade.chat.api.ParserContract
 import app.lade.chat.api.ParserEntryModel
 import app.lade.chat.api.ParserModel
 import app.lade.draft.internal.chat.chip.ChipKind
-import app.lade.draft.internal.chat.chip.data.ChipKey
-import app.lade.draft.internal.chat.chip.data.ChipStates
+import app.lade.draft.internal.chat.chip.domain.ChipKey
+import app.lade.draft.internal.chat.chip.domain.ChipStates
 import app.lade.draftdata.DraftModel
 
 internal object ParserRequestFactory {

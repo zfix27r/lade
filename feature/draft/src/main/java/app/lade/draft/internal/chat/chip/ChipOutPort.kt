@@ -1,6 +1,6 @@
 package app.lade.draft.internal.chat.chip
 
-import app.lade.draft.internal.chat.chip.data.ChipKey
+import app.lade.draft.internal.chat.chip.domain.ChipKey
 
 internal interface ChipOutPort {
     val onEdit: (ChipKey) -> Unit

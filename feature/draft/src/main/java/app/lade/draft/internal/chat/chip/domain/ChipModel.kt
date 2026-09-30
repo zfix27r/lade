@@ -1,4 +1,4 @@
-package app.lade.draft.internal.chat.chip.data
+package app.lade.draft.internal.chat.chip.domain
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import app.lade.draft.internal.chat.chip.ChipKind

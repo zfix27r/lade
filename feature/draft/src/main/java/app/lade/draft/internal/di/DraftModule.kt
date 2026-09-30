@@ -4,7 +4,7 @@ import app.lade.draft.api.DraftApi
 import app.lade.draft.internal.DraftApiImpl
 import app.lade.draft.internal.data.DraftRepository
 import app.lade.draft.internal.domain.DraftStore
-import app.lade.draft.internal.ui.bar.BarStateHolder
+import app.lade.draft.internal.ui.bar.DraftStateHolder
 import app.lade.entry.EntryKindResolver
 import dagger.Binds
 import dagger.Module
@@ -26,7 +26,7 @@ internal object DraftProvidesModule {
 
     @Provides
     @Singleton
-    fun provideBarStateHolder(): BarStateHolder = BarStateHolder()
+    fun provideBarStateHolder(): DraftStateHolder = DraftStateHolder()
 
     @Provides
     @Singleton

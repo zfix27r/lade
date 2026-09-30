@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @Stable
-internal class BarStateHolder {
+internal class DraftStateHolder {
 
     private val _phase = MutableStateFlow(DraftPhase.IDLE)
     val phase: StateFlow<DraftPhase> = _phase.asStateFlow()

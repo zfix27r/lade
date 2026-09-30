@@ -2,7 +2,7 @@ package app.lade.draft.internal.chat.chip.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import app.lade.draft.internal.chat.chip.data.ChipEmphasis
+import app.lade.draft.internal.chat.chip.domain.ChipEmphasis
 
 @Composable
 internal fun chipColors(emphasis: ChipEmphasis): ChipColorsModel {

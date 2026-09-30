@@ -1,6 +1,6 @@
-package app.lade.draft.internal.chat.input
+package app.lade.draft.internal.chat.parse
 
-import app.lade.draft.internal.chat.chip.data.ChipKey
+import app.lade.draft.internal.chat.chip.domain.ChipKey
 
 internal sealed interface InputClearReason {
     data object Save : InputClearReason

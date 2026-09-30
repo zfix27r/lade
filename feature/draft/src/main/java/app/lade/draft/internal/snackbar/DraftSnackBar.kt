@@ -1,4 +1,4 @@
-package app.lade.draft.internal.input.ui
+package app.lade.draft.internal.snackbar
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val PROMPT_DURATION_MS = 6_000L
 
 @Composable
-internal fun ResumePrompt(
+internal fun DraftSnackBar(
     onResume: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,

@@ -1,8 +1,9 @@
-package app.lade.draft.internal.chat.chip
+package app.lade.draft.internal.chat.parse
 
 import app.lade.chat.api.ChatApi
 import app.lade.chat.api.ParserModel
-import app.lade.draft.internal.chat.chip.data.ChipKey
+import app.lade.draft.internal.chat.chip.ChipRules
+import app.lade.draft.internal.chat.chip.domain.ChipKey
 import app.lade.draftdata.DraftModel
 import javax.inject.Inject
 

@@ -21,9 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.draft.R
 import app.lade.draft.api.DraftPhase
-import app.lade.draft.internal.input.InputInPort
-import app.lade.draft.internal.input.InputOutPort
-import app.lade.draft.internal.input.ui.ResumePrompt
+import app.lade.draft.internal.snackbar.DraftSnackBar
 import app.lade.draft.internal.ui.bar.BarView
 import app.lade.draft.internal.ui.bar.DraftBarEvent
 import java.time.LocalDate
@@ -75,7 +73,7 @@ internal fun DraftBar(
         ) {
             Column {
                 if (lifecycle.promptVisible) {
-                    ResumePrompt(
+                    DraftSnackBar(
                         onResume = { viewModel.onEvent(DraftBarEvent.Resume) },
                         onDismiss = { viewModel.onEvent(DraftBarEvent.DismissResume) },
                     )
