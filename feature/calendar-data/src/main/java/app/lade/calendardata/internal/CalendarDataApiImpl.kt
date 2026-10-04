@@ -9,6 +9,7 @@ import app.lade.agendastore.log.LogEntity
 import app.lade.calendardata.api.CalendarCardModel
 import app.lade.calendardata.api.CalendarDataApi
 import app.lade.calendardata.api.CalendarGoalModel
+import app.lade.calendardata.api.DayProgress
 import app.lade.calendardata.internal.mapper.isAlarm
 import app.lade.calendardata.internal.mapper.isDone
 import app.lade.calendardata.internal.mapper.isSeries
@@ -19,7 +20,6 @@ import app.lade.goal.GoalUnit
 import app.lade.humanize.api.Humanize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -65,16 +65,39 @@ internal class CalendarDataApiImpl @Inject constructor(
     override fun observeMarkedDates(
         from: LocalDate,
         to: LocalDate,
-    ): Flow<Set<LocalDate>> {
-        return entryDao.observeActive().map { entries ->
-            val result = mutableSetOf<LocalDate>()
+    ): Flow<Map<LocalDate, DayProgress>> {
+        val fromEpoch = from.toEpochDay()
+        val toEpoch = to.toEpochDay()
+        return combine(
+            entryDao.observeActive(),
+            goalDao.observeAll(),
+            logDao.observeBetween(fromEpoch, toEpoch),
+        ) { entries, goals, logs ->
+            val goalsByEntry = goals.groupBy { it.entryId }
+            val logsByEntry = logs.groupBy { it.entryId }
+            val result = mutableMapOf<LocalDate, DayProgress>()
             var date = from
             while (!date.isAfter(to)) {
-                for (entry in entries) {
-                    if (projector.appliesTo(entry, date)) {
-                        result += date
-                        break
+                val epochDay = date.toEpochDay()
+                var total = 0
+                var done = 0
+                var hasEntry = false
+                entries.forEach { entry ->
+                    if (!projector.appliesTo(entry, date)) return@forEach
+                    hasEntry = true
+                    val entryGoals = goalsByEntry[entry.id].orEmpty()
+                    if (entryGoals.isEmpty()) return@forEach
+                    val entryLogs = logsByEntry[entry.id].orEmpty()
+                        .filter { it.epochDay == epochDay }
+                    val logsByGoal = entryLogs.filter { it.goalId != null }
+                        .associateBy { it.goalId }
+                    entryGoals.forEach { goal ->
+                        total++
+                        if (goal.isDone(logsByGoal[goal.id])) done++
                     }
+                }
+                if (hasEntry) {
+                    result[date] = DayProgress(total = total, done = done)
                 }
                 date = date.plusDays(1)
             }

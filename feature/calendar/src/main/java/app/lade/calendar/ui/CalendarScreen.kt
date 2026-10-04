@@ -70,7 +70,6 @@ fun CalendarScreen(
     val actions = remember(viewModel) {
         CalendarModeActions(
             onSwipe = viewModel::onSwipe,
-            onStripModeChange = viewModel::onStripModeChange,
             onDateSelected = viewModel::onDateSelected,
             onEditEntry = { entryId -> draftApi.open(entryId) },
             onOpenAgenda = { card -> openedEntry = card },

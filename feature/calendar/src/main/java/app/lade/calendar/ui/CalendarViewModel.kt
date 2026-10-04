@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.lade.calendar.data.MarkedDatesStore
 import app.lade.calendar.domain.CalendarDateMode
-import app.lade.calendar.domain.CalendarListStripMode
 import app.lade.calendar.domain.CalendarMode
 import app.lade.calendar.domain.CalendarStateModel
 import app.lade.calendar.domain.TimelineDay
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -36,12 +37,12 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val calendarData: CalendarDataApi,
+    private val markedDatesStore: MarkedDatesStore,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val keyDate = "calendar.currentDate"
     private val keyMode = "calendar.mode"
-    private val keyStrip = "calendar.stripMode"
 
     private val _state = MutableStateFlow(
         CalendarStateModel(
@@ -50,9 +51,6 @@ class CalendarViewModel @Inject constructor(
             mode = savedStateHandle.get<String>(keyMode)
                 ?.let { runCatching { CalendarMode.valueOf(it) }.getOrNull() }
                 ?: CalendarMode.LIST,
-            stripMode = savedStateHandle.get<String>(keyStrip)
-                ?.let { runCatching { CalendarListStripMode.valueOf(it) }.getOrNull() }
-                ?: CalendarListStripMode.WEEK,
         )
     )
     val state: StateFlow<CalendarStateModel> = _state.asStateFlow()
@@ -64,10 +62,6 @@ class CalendarViewModel @Inject constructor(
 
     private var entriesJob: Job? = null
     private var timelineJob: Job? = null
-    private var markedDatesJob: Job? = null
-
-    private var markedFrom: LocalDate? = null
-    private var markedTo: LocalDate? = null
 
     private var timelineWindow = TimelineWindow(
         anchor = _state.value.currentDate,
@@ -76,8 +70,8 @@ class CalendarViewModel @Inject constructor(
     )
 
     init {
-        Log.d(TAG, "init mode=${_state.value.mode}, date=${_state.value.currentDate}")
         observeModeAndDate()
+        observeMarkedDates()
         persistState()
     }
 
@@ -114,20 +108,20 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    fun onStripModeChange(mode: CalendarListStripMode) {
-        _state.update { it.copy(stripMode = mode) }
-    }
-
-    fun onSwipe(direction: CalendarDateMode) {
+    fun onSwipe(direction: CalendarDateMode, isMonth: Boolean) {
         val delta = when (direction) {
             CalendarDateMode.FORWARD -> 1L
             CalendarDateMode.BACKWARD -> -1L
         }
         _state.update { s ->
             val newDate = when (s.mode) {
-                CalendarMode.LIST -> when (s.stripMode) {
-                    CalendarListStripMode.WEEK -> s.currentDate.plusWeeks(delta)
-                    CalendarListStripMode.MONTH -> s.currentDate.plusMonths(delta)
+                CalendarMode.LIST -> if (isMonth) {
+                    val target = s.currentDate.withDayOfMonth(1).plusMonths(delta)
+                    target.withDayOfMonth(
+                        s.currentDate.dayOfMonth.coerceAtMost(target.lengthOfMonth())
+                    )
+                } else {
+                    s.currentDate.plusWeeks(delta)
                 }
                 CalendarMode.WEEK -> s.currentDate.plusWeeks(delta)
                 CalendarMode.MONTH -> {
@@ -179,7 +173,6 @@ class CalendarViewModel @Inject constructor(
                 .map { it.mode to it.currentDate }
                 .distinctUntilChanged()
                 .collect { (mode, date) ->
-                    Log.d(TAG, "mode=$mode, date=$date")
                     when (mode) {
                         CalendarMode.TIMELINE -> {
                             timelineWindow = TimelineWindow(
@@ -189,37 +182,28 @@ class CalendarViewModel @Inject constructor(
                             )
                             observeTimeline()
                         }
-                        CalendarMode.LIST -> {
-                            observeEntries(date, mode)
-                            maybeReloadMarkedDates(date)
-                        }
                         else -> observeEntries(date, mode)
                     }
                 }
         }
     }
 
-    private fun maybeReloadMarkedDates(date: LocalDate) {
-        val from = markedFrom
-        val to = markedTo
-        val need = from == null || to == null ||
-                date <= from.plusMonths(1) ||
-                date >= to.minusMonths(1)
-        if (need) observeMarkedDates(date)
-    }
-
-    private fun observeMarkedDates(anchor: LocalDate) {
-        val from = anchor.minusMonths(3)
-        val to = anchor.plusMonths(3)
-        markedFrom = from
-        markedTo = to
-        markedDatesJob?.cancel()
-        markedDatesJob = viewModelScope.launch {
-            calendarData.observeMarkedDates(from, to)
-                .catch { Log.e(TAG, "markedDates catch", it) }
-                .collect { dates ->
-                    _state.update { it.copy(markedDates = dates) }
+    private fun observeMarkedDates() {
+        viewModelScope.launch {
+            _state
+                .map { it.currentDate }
+                .distinctUntilChanged()
+                .collect { date ->
+                    markedDatesStore.ensureRange(
+                        from = date.minusMonths(1),
+                        to = date.plusMonths(1),
+                    )
                 }
+        }
+        viewModelScope.launch {
+            markedDatesStore.marked.collect { dates ->
+                _state.update { it.copy(markedDates = dates) }
+            }
         }
     }
 
@@ -227,10 +211,6 @@ class CalendarViewModel @Inject constructor(
         val s = _state.value
         when (s.mode) {
             CalendarMode.TIMELINE -> observeTimeline()
-            CalendarMode.LIST -> {
-                observeEntries(s.currentDate, s.mode)
-                maybeReloadMarkedDates(s.currentDate)
-            }
             else -> observeEntries(s.currentDate, s.mode)
         }
     }
@@ -260,7 +240,6 @@ class CalendarViewModel @Inject constructor(
                 }
                 flow
                     .catch { t ->
-                        Log.e(TAG, "entries catch", t)
                         _state.update {
                             it.copy(isLoading = false, error = t.message ?: "Load error")
                         }
@@ -269,7 +248,6 @@ class CalendarViewModel @Inject constructor(
                         _state.update { it.copy(entries = cards, isLoading = false) }
                     }
             } catch (t: Throwable) {
-                Log.e(TAG, "entries outer", t)
                 _state.update {
                     it.copy(isLoading = false, error = t.message ?: "Load error")
                 }
@@ -285,7 +263,6 @@ class CalendarViewModel @Inject constructor(
             try {
                 calendarData.observeRange(window.start, window.end)
                     .catch { t ->
-                        Log.e(TAG, "timeline catch", t)
                         _state.update {
                             it.copy(isLoading = false, error = t.message ?: "Load error")
                         }
@@ -303,7 +280,6 @@ class CalendarViewModel @Inject constructor(
                         }
                     }
             } catch (t: Throwable) {
-                Log.e(TAG, "timeline outer", t)
                 _state.update {
                     it.copy(isLoading = false, error = t.message ?: "Load error")
                 }
@@ -338,10 +314,6 @@ class CalendarViewModel @Inject constructor(
             _state.map { it.mode }.distinctUntilChanged()
                 .collect { savedStateHandle[keyMode] = it.name }
         }
-        viewModelScope.launch {
-            _state.map { it.stripMode }.distinctUntilChanged()
-                .collect { savedStateHandle[keyStrip] = it.name }
-        }
     }
 
     private data class TimelineWindow(
@@ -351,7 +323,6 @@ class CalendarViewModel @Inject constructor(
     )
 
     private companion object {
-        const val TAG = "CalendarVM"
         const val TIMELINE_PAST_DAYS = 30L
         const val TIMELINE_FUTURE_DAYS = 60L
         const val TIMELINE_PAGE_DAYS = 30L

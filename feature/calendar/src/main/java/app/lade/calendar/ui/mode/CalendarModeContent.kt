@@ -24,7 +24,6 @@ fun CalendarModeContent(
         CalendarMode.LIST -> CalendarListLayout(
             state = state,
             onSwipe = actions.onSwipe,
-            onStripModeChange = actions.onStripModeChange,
             onDateSelected = actions.onDateSelected,
             onOpenAgenda = actions.onOpenAgenda,
             onEntryLongPress = actions.onEntryLongPress,
@@ -45,7 +44,7 @@ fun CalendarModeContent(
         )
 
         CalendarMode.WEEK -> CalendarDateSwipe(
-            onSwipe = actions.onSwipe,
+            onSwipe = { direction -> actions.onSwipe(direction, false) },
             axis = SwipeAxis.HORIZONTAL,
             modifier = modifier.fillMaxSize(),
         ) {
@@ -58,7 +57,7 @@ fun CalendarModeContent(
         }
 
         CalendarMode.MONTH -> CalendarDateSwipe(
-            onSwipe = actions.onSwipe,
+            onSwipe = { direction -> actions.onSwipe(direction, true) },
             axis = SwipeAxis.VERTICAL,
             modifier = modifier.fillMaxSize(),
         ) {
@@ -72,7 +71,7 @@ fun CalendarModeContent(
         }
 
         CalendarMode.YEAR -> CalendarDateSwipe(
-            onSwipe = actions.onSwipe,
+            onSwipe = { direction -> actions.onSwipe(direction, true) },
             axis = SwipeAxis.VERTICAL,
             modifier = modifier.fillMaxSize(),
         ) {

@@ -6,7 +6,7 @@ import java.time.LocalDate
 interface CalendarDataApi {
     fun observeList(date: LocalDate): Flow<List<CalendarCardModel>>
     fun observeRange(from: LocalDate, to: LocalDate): Flow<List<CalendarCardModel>>
-    fun observeMarkedDates(from: LocalDate, to: LocalDate): Flow<Set<LocalDate>>
+    fun observeMarkedDates(from: LocalDate, to: LocalDate): Flow<Map<LocalDate, DayProgress>>
     suspend fun get(entryId: Long, date: LocalDate): CalendarCardModel?
 
     suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long)
