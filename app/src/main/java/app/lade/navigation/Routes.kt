@@ -14,6 +14,7 @@ object Routes {
 
 	const val DraftEditor = "draft/editor"
 
+	const val Backup = "backup"
 
 	fun categoryEdit(id: Long = -1L) = "categories/edit/$id"
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_title">Резервная копия</string>
+    <string name="backup_subtitle">Экспорт и восстановление базы</string>
+    <string name="backup_export">Экспорт</string>
+    <string name="backup_import">Восстановление</string>
+    <string name="backup_progress_preparing">Подготовка…</string>
+    <string name="backup_progress_copying">Копирование…</string>
+    <string name="backup_progress_finalizing">Завершение…</string>
+    <string name="backup_export_success">Резервная копия создана</string>
+    <string name="backup_import_success">Резервная копия восстановлена</string>
+    <string name="backup_restart_title">Восстановление завершено</string>
+    <string name="backup_restart_message">Приложение будет перезапущено, чтобы применить изменения.</string>
+    <string name="backup_restart_confirm">Перезапустить</string>
+</resources>

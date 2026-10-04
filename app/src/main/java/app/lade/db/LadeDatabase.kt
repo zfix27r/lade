@@ -15,7 +15,6 @@ import app.lade.agendastore.goal.GoalEntity
 import app.lade.agendastore.log.LogDao
 import app.lade.agendastore.log.LogEntity
 
-
 @Database(
 	entities = [
 		CategoryEntity::class,
@@ -35,4 +34,8 @@ abstract class LadeDatabase : RoomDatabase() {
 	abstract fun entryDao(): EntryDao
 	abstract fun goalDao(): GoalDao
 	abstract fun logDao(): LogDao
+
+	companion object {
+		const val NAME = "lade.db"
+	}
 }

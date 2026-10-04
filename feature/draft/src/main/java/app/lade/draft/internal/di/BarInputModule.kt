@@ -1,6 +1,6 @@
 package app.lade.draft.internal.di
 
-import app.lade.draft.internal.input.BarInputControlPort
+import app.lade.draft.internal.input.domain.BarInputControlPort
 import app.lade.draft.internal.input.BarInputPort
 import app.lade.draft.internal.input.BarInputPortImpl
 import dagger.Binds

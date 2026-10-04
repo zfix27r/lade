@@ -26,10 +26,6 @@ internal object DraftProvidesModule {
 
     @Provides
     @Singleton
-    fun provideBarStateHolder(): DraftStateHolder = DraftStateHolder()
-
-    @Provides
-    @Singleton
     fun provideDraftStore(
         repository: DraftRepository,
         kindResolver: EntryKindResolver,

@@ -6,4 +6,10 @@ enum class EntryKind(val storage: String) {
     EVENT("event"),
     HABIT("habit"),
     SCHEDULE("schedule"),
+    ;
+
+    companion object {
+        fun fromStorage(value: String?): EntryKind? =
+            entries.find { it.storage == value }
+    }
 }

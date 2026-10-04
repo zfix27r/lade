@@ -24,13 +24,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.agendaui.internal.AgendaDetailScreen
 import app.lade.calendar.domain.CalendarMode
 import app.lade.calendar.ui.appbar.CalendarAppBar
-import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
 import app.lade.calendar.ui.mode.CalendarModeActions
 import app.lade.calendar.ui.mode.CalendarModeContent
+import app.lade.calendardata.api.CalendarCardModel
 import app.lade.draft.api.DraftApi
 import app.lade.draft.api.DraftHost
 import app.lade.draft.api.DraftPhase
@@ -49,8 +48,8 @@ fun CalendarScreen(
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var selectedEntry by remember { mutableStateOf<AgendaModel?>(null) }
-    var openedAgenda by remember { mutableStateOf<AgendaModel?>(null) }
+    var selectedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
+    var openedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
     val view = LocalView.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -71,41 +70,43 @@ fun CalendarScreen(
     val actions = remember(viewModel) {
         CalendarModeActions(
             onSwipe = viewModel::onSwipe,
+            onStripModeChange = viewModel::onStripModeChange,
             onDateSelected = viewModel::onDateSelected,
             onEditEntry = { entryId -> draftApi.open(entryId) },
-            onOpenAgenda = { agenda -> openedAgenda = agenda },
-            onEntryLongPress = { agenda -> selectedEntry = agenda },
+            onOpenAgenda = { card -> openedEntry = card },
+            onEntryLongPress = { card -> selectedEntry = card },
             onToggleDone = viewModel::toggleDone,
+            onGoalToggle = viewModel::toggleGoal,
             onOpenDay = { date ->
                 viewModel.onDateSelected(date)
-                viewModel.onModeChange(CalendarMode.DAY)
+                viewModel.onModeChange(CalendarMode.WEEK)
             },
             onOpenMonth = { yearMonth ->
                 viewModel.onDateSelected(yearMonth.atDay(1))
                 viewModel.onModeChange(CalendarMode.MONTH)
             },
+            onVisibleMonthChange = viewModel::onVisibleMonthChange,
+            onTimelineScroll = viewModel::onTimelineScroll,
         )
     }
 
-    BackHandler(enabled = openedAgenda != null) { openedAgenda = null }
+    BackHandler(enabled = openedEntry != null) { openedEntry = null }
 
     Box(Modifier.fillMaxSize()) {
-        ScrimHost(
-            isVisible = selectedEntry != null || draftIsEditing,
-        ) {
-            val opened = openedAgenda
+        ScrimHost(isVisible = selectedEntry != null || draftIsEditing) {
+            val opened = openedEntry
             if (opened != null) {
                 AgendaDetailScreen(
-                    entryId = opened.entry.id,
+                    entryId = opened.entryId,
                     date = opened.date,
-                    onBack = { openedAgenda = null },
+                    onBack = { openedEntry = null },
                     onEdit = {
-                        openedAgenda = null
-                        draftApi.open(opened.entry.id)
+                        openedEntry = null
+                        draftApi.open(opened.entryId)
                     },
                     onDelete = {
-                        openedAgenda = null
-                        viewModel.archiveEntry(opened.entry.id)
+                        openedEntry = null
+                        viewModel.archiveEntry(opened.entryId)
                     },
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -116,9 +117,8 @@ fun CalendarScreen(
                         CalendarAppBar(
                             mode = state.mode,
                             currentDate = state.currentDate,
+                            visibleMonth = state.visibleMonth,
                             onModeChange = viewModel::onModeChange,
-                            view = state.view,
-                            onViewChange = viewModel::onViewChange,
                             onTitleClick = viewModel::goToday,
                             onShare = {
                                 scope.launch {
@@ -137,37 +137,32 @@ fun CalendarScreen(
                             .fillMaxSize()
                             .padding(padding),
                     ) {
-                        CalendarDateSwipe(
-                            onSwipe = viewModel::onSwipe,
+                        CalendarModeContent(
+                            state = state,
+                            actions = actions,
                             modifier = Modifier.fillMaxSize(),
-                        ) {
-                            CalendarModeContent(
-                                state = state,
-                                actions = actions,
-                                modifier = Modifier.fillMaxSize(),
-                            )
-                        }
+                        )
                     }
                 }
             }
         }
 
-        selectedEntry?.let { agenda ->
-            key(agenda.entry.id) {
+        selectedEntry?.let { card ->
+            key(card.entryId) {
                 ModalBottomSheet(
                     onDismissRequest = { selectedEntry = null },
                     sheetState = sheetState,
                     scrimColor = Color.Transparent,
                 ) {
                     EntryActionsSheet(
-                        agenda = agenda,
+                        title = card.title,
                         onEdit = {
                             selectedEntry = null
-                            draftApi.open(agenda.entry.id)
+                            draftApi.open(card.entryId)
                         },
                         onDelete = {
                             selectedEntry = null
-                            viewModel.archiveEntry(agenda.entry.id)
+                            viewModel.archiveEntry(card.entryId)
                         },
                     )
                 }

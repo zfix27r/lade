@@ -5,10 +5,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -17,10 +13,13 @@ import app.lade.calendar.domain.CalendarDateMode
 import app.lade.resources.R
 import kotlin.math.abs
 
+enum class SwipeAxis { HORIZONTAL, VERTICAL }
+
 @Composable
 fun CalendarDateSwipe(
     onSwipe: (CalendarDateMode) -> Unit,
     modifier: Modifier = Modifier,
+    axis: SwipeAxis = SwipeAxis.HORIZONTAL,
     content: @Composable () -> Unit,
 ) {
     val thresholdPx = with(LocalDensity.current) {
@@ -30,7 +29,7 @@ fun CalendarDateSwipe(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(thresholdPx) {
+            .pointerInput(axis, thresholdPx) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     var totalX = 0f
@@ -41,7 +40,6 @@ fun CalendarDateSwipe(
                     while (true) {
                         val event = awaitPointerEvent()
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        if (!change.pressed) break
 
                         val dx = change.position.x - change.previousPosition.x
                         val dy = change.position.y - change.previousPosition.y
@@ -53,16 +51,20 @@ fun CalendarDateSwipe(
                             else if (ay >= ax && ay > 8f) vertical = true
                         }
 
-                        if (horizontal) {
+                        if (axis == SwipeAxis.HORIZONTAL && horizontal) {
                             totalX += dx
                             change.consume()
-                        } else {
+                        } else if (axis == SwipeAxis.VERTICAL && vertical) {
                             totalY += dy
+                            change.consume()
                         }
+
+                        if (!change.pressed) break
                     }
 
-                    if (horizontal && abs(totalX) > thresholdPx) {
-                        if (totalX > 0f) onSwipe(CalendarDateMode.BACKWARD)
+                    val total = if (axis == SwipeAxis.HORIZONTAL) totalX else totalY
+                    if (abs(total) > thresholdPx) {
+                        if (total > 0f) onSwipe(CalendarDateMode.BACKWARD)
                         else onSwipe(CalendarDateMode.FORWARD)
                     }
                 }

@@ -13,6 +13,7 @@ import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
 import app.lade.draft.api.DraftApi
 import app.lade.more.ui.MoreScreen
+import app.lade.more.ui.internal.backup.BackupScreen
 import app.lade.reminders.ui.DayPartSettingsScreen
 import app.lade.synccalendar.ui.CalendarsStubScreen
 import app.lade.syncdevices.ui.DevicesStubScreen
@@ -58,8 +59,12 @@ fun AppNavGraph(
                 onDayPartSettings = { navController.navigate(Routes.DayPartSettings) },
                 onKindPrioritySettings = { navController.navigate(Routes.KindPrioritySettings) },
                 onOpenCalendar = { navController.navigate(Routes.Calendar) },
-                viewModel = TODO(),
+                onBackup = { navController.navigate(Routes.Backup) },
             )
+        }
+
+        composable(Routes.Backup) {
+            BackupScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.Devices) {

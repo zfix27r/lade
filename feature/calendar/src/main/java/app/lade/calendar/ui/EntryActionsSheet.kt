@@ -16,11 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import app.lade.agenda.api.agenda.AgendaModel
 
 @Composable
 fun EntryActionsSheet(
-    agenda: AgendaModel,
+    title: String,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -31,24 +30,19 @@ fun EntryActionsSheet(
             .padding(bottom = 16.dp),
     ) {
         Text(
-            text = agenda.entry.title.ifBlank { "Без названия" },
+            text = title.ifBlank { "Без названия" },
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
         )
         ListItem(
             headlineContent = { Text("Редактировать") },
-            leadingContent = {
-                Icon(Icons.Outlined.Edit, contentDescription = null)
-            },
+            leadingContent = { Icon(Icons.Outlined.Edit, contentDescription = null) },
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             modifier = Modifier.clickable(onClick = onEdit),
         )
         ListItem(
             headlineContent = {
-                Text(
-                    text = "Удалить",
-                    color = MaterialTheme.colorScheme.error,
-                )
+                Text("Удалить", color = MaterialTheme.colorScheme.error)
             },
             leadingContent = {
                 Icon(

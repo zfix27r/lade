@@ -22,8 +22,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.calendar.domain.CalendarDateMode
+import app.lade.calendar.domain.CalendarListStripMode
 import app.lade.calendar.domain.CalendarStateModel
 import app.lade.calendar.ui.component.list.collapse.CalendarCollapseConnection
 import app.lade.calendar.ui.component.list.collapse.CalendarCollapseStrip
@@ -31,6 +31,10 @@ import app.lade.calendar.ui.component.list.collapse.rememberCalendarCollapseMetr
 import app.lade.calendar.ui.component.list.components.AgendaCard
 import app.lade.calendar.ui.component.list.components.AgendaRow
 import app.lade.calendar.ui.component.list.components.CalendarListEmptyState
+import app.lade.calendar.ui.component.swipe.CalendarDateSwipe
+import app.lade.calendar.ui.component.swipe.CalendarListStripSwipe
+import app.lade.calendar.ui.component.swipe.SwipeAxis
+import app.lade.calendardata.api.CalendarCardModel
 import app.lade.entry.ui.color
 import app.lade.ui.gesture.rememberSnapToEdge
 import java.time.LocalDate
@@ -39,10 +43,12 @@ import java.time.LocalDate
 fun CalendarListLayout(
     state: CalendarStateModel,
     onSwipe: (CalendarDateMode) -> Unit,
+    onStripModeChange: (CalendarListStripMode) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    onOpenAgenda: (AgendaModel) -> Unit,
-    onEntryLongPress: (AgendaModel) -> Unit,
+    onOpenAgenda: (CalendarCardModel) -> Unit,
+    onEntryLongPress: (CalendarCardModel) -> Unit,
     onToggleDone: (entryId: Long, date: LocalDate) -> Unit,
+    onGoalToggle: (Long, LocalDate, Long) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarListConfig = DefaultCalendarListConfig,
 ) {
@@ -50,18 +56,12 @@ fun CalendarListLayout(
     val collapseProgress = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
+
     val fullScrollPx = with(density) {
         (config.collapse.rowHeight * config.collapse.fullScrollRows).toPx()
     }
 
     val snapToEdge = rememberSnapToEdge(collapseProgress, config.collapse.snapToEdge)
-    val metrics = rememberCalendarCollapseMetrics(
-        currentDate = state.currentDate,
-        config = config.collapse,
-        fullScrollPx = fullScrollPx,
-    )
-    val progressValue by collapseProgress.asState()
-    val listTopOffset = metrics.listTopOffset(progressValue)
 
     val connection = remember(collapseProgress, listState, snapToEdge, scope, fullScrollPx) {
         CalendarCollapseConnection(
@@ -73,6 +73,13 @@ fun CalendarListLayout(
         )
     }
 
+    val metrics = rememberCalendarCollapseMetrics(
+        currentDate = state.currentDate,
+        config = config.collapse,
+        fullScrollPx = fullScrollPx,
+    )
+    val progressValue by collapseProgress.asState()
+    val listTopOffset = metrics.listTopOffset(progressValue)
     val panelHeight = config.listBottomPaddingForInputBar
     val showEmptyState = state.entries.isEmpty() && config.showEmptyState
 
@@ -82,15 +89,28 @@ fun CalendarListLayout(
             .nestedScroll(connection),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            CalendarCollapseStrip(
-                currentDate = state.currentDate,
-                entries = state.entries,
-                onDateSelected = onDateSelected,
-                progress = collapseProgress,
-                metrics = metrics,
-                config = config.collapse,
+            CalendarDateSwipe(
+                onSwipe = onSwipe,
+                axis = SwipeAxis.HORIZONTAL,
                 modifier = Modifier.fillMaxWidth(),
-            )
+            ) {
+                CalendarListStripSwipe(
+                    mode = state.stripMode,
+                    onHorizontal = onSwipe,
+                    onVertical = onStripModeChange,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    CalendarCollapseStrip(
+                        currentDate = state.currentDate,
+                        entries = state.entries,
+                        onDateSelected = onDateSelected,
+                        progress = collapseProgress,
+                        metrics = metrics,
+                        config = config.collapse,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -115,11 +135,10 @@ fun CalendarListLayout(
                     ) {
                         items(
                             items = state.entries,
-                            key = { "entry-${it.entry.id}-${it.date.toEpochDay()}" },
-                        ) { agenda ->
-                            val done = agenda.logs.any { (it.actualAmount ?: 0) > 0 }
+                            key = { "entry-${it.entryId}-${it.date.toEpochDay()}" },
+                        ) { card ->
                             val containerColor by animateColorAsState(
-                                targetValue = if (done) {
+                                targetValue = if (card.allGoalsDone) {
                                     MaterialTheme.colorScheme.surfaceContainerHighest
                                 } else {
                                     MaterialTheme.colorScheme.surfaceContainerLow
@@ -128,7 +147,7 @@ fun CalendarListLayout(
                             )
                             AgendaCard(
                                 cornerRadius = config.listEntryCornerRadius,
-                                stripeColor = agenda.entry.entryKind.color(),
+                                stripeColor = card.entryKind.color(),
                                 stripeWidth = config.listEntryTypeStripeWidth,
                                 containerColor = containerColor,
                                 modifier = if (config.enableEntryAnimations) {
@@ -138,10 +157,13 @@ fun CalendarListLayout(
                                 },
                             ) {
                                 AgendaRow(
-                                    agenda = agenda,
-                                    onOpenAgenda = { onOpenAgenda(agenda) },
-                                    onToggleDone = { onToggleDone(agenda.entry.id, agenda.date) },
-                                    onLongPress = { onEntryLongPress(agenda) },
+                                    card = card,
+                                    onOpenAgenda = { onOpenAgenda(card) },
+                                    onToggleDone = { onToggleDone(card.entryId, card.date) },
+                                    onGoalToggle = { goalId ->
+                                        onGoalToggle(card.entryId, card.date, goalId)
+                                    },
+                                    onLongPress = { onEntryLongPress(card) },
                                     enableMarkHaptics = config.enableMarkHaptics,
                                 )
                             }

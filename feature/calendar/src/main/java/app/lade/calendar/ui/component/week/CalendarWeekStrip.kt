@@ -18,25 +18,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import app.lade.agenda.api.agenda.AgendaModel
-import app.lade.calendar.domain.CalendarMode
+import app.lade.calendardata.api.CalendarCardModel
 import app.lade.resources.R
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.Locale
-import androidx.compose.ui.platform.LocalLocale
+import java.time.temporal.WeekFields
 
 @Composable
 fun CalendarWeekStrip(
-    mode: CalendarMode,
     currentDate: LocalDate,
-    entries: List<AgendaModel>,
+    entries: List<CalendarCardModel>,
     onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val days = daysFor(mode, currentDate)
+    val weekFields = WeekFields.of(LocalLocale.current.platformLocale)
+    val weekStart = currentDate.with(weekFields.dayOfWeek(), 1L)
+    val days = (0L..6L).map { weekStart.plusDays(it) }
     val today = LocalDate.now()
     val datesWithEntries = entries.map { it.date }.toSet()
 
@@ -115,18 +115,5 @@ private fun WeekStripCell(
         } else {
             Box(modifier = Modifier.size(4.dp))
         }
-    }
-}
-
-private fun daysFor(mode: CalendarMode, anchor: LocalDate): List<LocalDate> {
-    val weekFields = java.time.temporal.WeekFields.of(Locale.getDefault())
-    return when (mode) {
-        CalendarMode.DAY -> listOf(anchor)
-        CalendarMode.DAY_3 -> (0L..2L).map { anchor.plusDays(it) }
-        CalendarMode.WEEK -> {
-            val weekStart = anchor.with(weekFields.dayOfWeek(), 1L)
-            (0L..6L).map { weekStart.plusDays(it) }
-        }
-        else -> emptyList()
     }
 }

@@ -37,7 +37,8 @@ fun MoreScreen(
 	onCalendars: () -> Unit,
 	onDayPartSettings: () -> Unit,
 	onKindPrioritySettings: () -> Unit,
-	viewModel: TodaySummaryViewModel = hiltViewModel(),
+	onBackup: () -> Unit,
+	viewModel: MoreViewModel = hiltViewModel(),
 ) {
 	val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -150,6 +151,15 @@ fun MoreScreen(
 				modifier = Modifier
 					.fillMaxWidth()
 					.clickable(onClick = onDayPartSettings),
+			)
+			ListItem(
+				headlineContent = { Text(stringResource(R.string.backup_title)) },
+				supportingContent = {
+					Text(stringResource(R.string.backup_subtitle))
+				},
+				modifier = Modifier
+					.fillMaxWidth()
+					.clickable(onClick = onBackup),
 			)
 		}
 	}

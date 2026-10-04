@@ -5,10 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.CalendarViewWeek
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ViewWeek
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -69,8 +68,7 @@ fun AppBarModeBtn(
 
 private fun CalendarMode.icon() = when (this) {
     CalendarMode.LIST -> Icons.AutoMirrored.Filled.ViewList
-    CalendarMode.DAY -> Icons.Filled.CalendarViewDay
-    CalendarMode.DAY_3 -> Icons.Filled.ViewWeek
+    CalendarMode.TIMELINE -> Icons.Filled.ViewAgenda
     CalendarMode.WEEK -> Icons.Filled.CalendarViewWeek
     CalendarMode.MONTH -> Icons.Filled.CalendarMonth
     CalendarMode.YEAR -> Icons.Filled.CalendarToday
@@ -78,8 +76,7 @@ private fun CalendarMode.icon() = when (this) {
 
 private fun CalendarMode.labelRes() = when (this) {
     CalendarMode.LIST -> R.string.calendar_view_feed
-    CalendarMode.DAY -> R.string.calendar_view_day
-    CalendarMode.DAY_3 -> R.string.calendar_view_day_3
+    CalendarMode.TIMELINE -> R.string.calendar_view_timeline
     CalendarMode.WEEK -> R.string.calendar_view_week
     CalendarMode.MONTH -> R.string.calendar_view_month
     CalendarMode.YEAR -> R.string.calendar_view_year

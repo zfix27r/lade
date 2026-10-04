@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.draft.R
 import app.lade.draft.internal.di.BarInputEntryPoint
+import app.lade.draft.internal.input.BarInputSubmit
 import app.lade.draft.internal.ui.bar.BarState
 import app.lade.ui.theme.FieldSizes
 import app.lade.ui.theme.LadeMotion
@@ -47,15 +49,21 @@ internal fun BarInput(
         EntryPointAccessors.fromApplication(
             context.applicationContext,
             BarInputEntryPoint::class.java,
-        ).barInputPort()
+        ).barInputControlPort()
     }
 
     val prefill by port.prefill.collectAsStateWithLifecycle()
-    val submitVisible by port.submitVisible.collectAsStateWithLifecycle()
+    val submit by port.submit.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
 
     var fieldValue by remember {
         mutableStateOf(TextFieldValue("", TextRange(0)))
+    }
+
+    LaunchedEffect(Unit) {
+        port.clearInput.collect {
+            fieldValue = TextFieldValue("", TextRange(0))
+        }
     }
 
     LaunchedEffect(prefill) {
@@ -103,17 +111,26 @@ internal fun BarInput(
         val exitSpec = LadeMotion.exit<Float>()
 
         AnimatedVisibility(
-            visible = submitVisible,
+            visible = submit != BarInputSubmit.None,
             enter = fadeIn(animationSpec = enterSpec),
             exit = fadeOut(animationSpec = exitSpec),
         ) {
-            BarInputIconButton(
-                icon = Icons.AutoMirrored.Filled.Send,
-                contentDescription = stringResource(R.string.draft_action_send),
-                onClick = port::onClickSubmit,
-                enabled = true,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+            when (submit) {
+                BarInputSubmit.None -> Unit
+                BarInputSubmit.Send -> BarInputIconButton(
+                    icon = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = stringResource(R.string.draft_action_send),
+                    onClick = port::onClickSubmit,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+
+                BarInputSubmit.Commit -> BarInputIconButton(
+                    icon = Icons.Outlined.Done,
+                    contentDescription = stringResource(R.string.draft_action_commit),
+                    onClick = port::onClickSubmit,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
     }
 }

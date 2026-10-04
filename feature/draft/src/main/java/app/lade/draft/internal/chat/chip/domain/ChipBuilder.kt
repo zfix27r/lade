@@ -19,153 +19,119 @@ internal class ChipBuilder(
     private val humanize: Humanize,
 ) {
 
-    fun buildEntryChips(
-        model: DraftModel,
-        states: ChipStates,
-        onChipClick: (ChipKind, Int) -> Unit,
-        onChipRemove: (ChipKind, Int) -> Unit,
-    ): List<ChipModel> = buildList {
+    fun build(model: DraftModel): List<ChipData> = buildList {
+        buildTitle(model)
+        buildDateFrom(model)
+        buildDateTo(model)
+        buildTimeFrom(model)
+        buildTimeEnd(model)
+        buildRrule(model)
+        buildGoals(model)
+        buildAlarms(model)
+    }
+
+    private fun MutableList<ChipData>.buildTitle(model: DraftModel) {
         model.title.takeIf { it.isNotBlank() }?.let {
-            add(
-                chip(
-                    icon = (model.entryKind ?: EntryKind.NOTE).icon(),
-                    value = it,
-                    kind = ChipKind.TITLE,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = (model.entryKind ?: EntryKind.NOTE).icon(),
+                value = it,
+                kind = ChipKind.TITLE,
+                index = 0,
+            ))
         }
+    }
+
+    private fun MutableList<ChipData>.buildDateFrom(model: DraftModel) {
         model.dateFrom?.let { date ->
-            add(
-                chip(
-                    icon = Icons.Outlined.CalendarToday,
-                    value = humanize.date(date).best.capitalize(),
-                    kind = ChipKind.DATE_FROM,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = Icons.Outlined.CalendarToday,
+                value = humanize.date(date).best.capitalize(),
+                kind = ChipKind.DATE_FROM,
+                index = 0,
+            ))
         }
+    }
+
+    private fun MutableList<ChipData>.buildDateTo(model: DraftModel) {
         model.dateTo?.let { date ->
-            add(
-                chip(
-                    icon = Icons.Outlined.CalendarToday,
-                    value = humanize.date(date).best.capitalize(),
-                    kind = ChipKind.DATE_TO,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = Icons.Outlined.CalendarToday,
+                value = humanize.date(date).best.capitalize(),
+                kind = ChipKind.DATE_TO,
+                index = 0,
+            ))
         }
+    }
+
+    private fun MutableList<ChipData>.buildTimeFrom(model: DraftModel) {
         model.timeFrom?.let { time ->
-            add(
-                chip(
-                    icon = Icons.Outlined.Schedule,
-                    value = humanize.time(time).best.capitalize(),
-                    kind = ChipKind.TIME_FROM,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = Icons.Outlined.Schedule,
+                value = humanize.time(time).best.capitalize(),
+                kind = ChipKind.TIME_FROM,
+                index = 0,
+            ))
         }
+    }
+
+    private fun MutableList<ChipData>.buildTimeEnd(model: DraftModel) {
         model.timeEnd?.let { time ->
-            add(
-                chip(
-                    icon = Icons.Outlined.Update,
-                    value = humanize.time(time).best.capitalize(),
-                    kind = ChipKind.TIME_END,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = Icons.Outlined.Update,
+                value = humanize.time(time).best.capitalize(),
+                kind = ChipKind.TIME_END,
+                index = 0,
+            ))
         }
+    }
+
+    private fun MutableList<ChipData>.buildRrule(model: DraftModel) {
         model.rrule?.takeIf { it.isNotBlank() }?.let { rrule ->
-            add(
-                chip(
-                    icon = Icons.Outlined.Repeat,
-                    value = humanize.rrule(rrule).best.capitalize(),
-                    kind = ChipKind.RRULE,
-                    index = 0,
-                    states = states,
-                    onChipClick = onChipClick,
-                    onChipRemove = onChipRemove,
-                )
-            )
+            add(data(
+                icon = Icons.Outlined.Repeat,
+                value = humanize.rrule(rrule).best.capitalize(),
+                kind = ChipKind.RRULE,
+                index = 0,
+            ))
         }
     }
 
-    fun buildGoalChips(
-        model: DraftModel,
-        states: ChipStates,
-        onChipClick: (ChipKind, Int) -> Unit,
-        onChipRemove: (ChipKind, Int) -> Unit,
-    ): List<ChipModel> = model.goals.mapIndexed { index, goal ->
-        chip(
-            icon = Icons.Outlined.EmojiEvents,
-            value = humanize.goal(
-                goal.title,
-                goal.unit,
-                goal.amount,
-                goal.repeat,
-                goal.weight,
-            ).best.capitalize(),
-            kind = ChipKind.GOAL,
-            index = index,
-            states = states,
-            onChipClick = onChipClick,
-            onChipRemove = onChipRemove,
-        )
+    private fun MutableList<ChipData>.buildGoals(model: DraftModel) {
+        model.goals.forEachIndexed { index, goal ->
+            add(data(
+                icon = Icons.Outlined.EmojiEvents,
+                value = humanize.goal(
+                    goal.title,
+                    goal.unit,
+                    goal.amount,
+                    goal.repeat,
+                    goal.weight,
+                ).best.capitalize(),
+                kind = ChipKind.GOAL,
+                index = index,
+            ))
+        }
     }
 
-    fun buildAlarmChips(
-        model: DraftModel,
-        states: ChipStates,
-        onChipClick: (ChipKind, Int) -> Unit,
-        onChipRemove: (ChipKind, Int) -> Unit,
-    ): List<ChipModel> = model.alarms.mapIndexed { index, alarm ->
-        chip(
-            icon = Icons.Outlined.Alarm,
-            value = humanize.time(alarm.time).best.capitalize(),
-            kind = ChipKind.ALARM,
-            index = index,
-            states = states,
-            onChipClick = onChipClick,
-            onChipRemove = onChipRemove,
-        )
+    private fun MutableList<ChipData>.buildAlarms(model: DraftModel) {
+        model.alarms.forEachIndexed { index, alarm ->
+            add(data(
+                icon = Icons.Outlined.Alarm,
+                value = humanize.time(alarm.time).best.capitalize(),
+                kind = ChipKind.ALARM,
+                index = index,
+            ))
+        }
     }
 
-    private fun chip(
+    private fun data(
         icon: ImageVector,
         value: String,
         kind: ChipKind,
         index: Int,
-        states: ChipStates,
-        onChipClick: (ChipKind, Int) -> Unit,
-        onChipRemove: (ChipKind, Int) -> Unit,
-    ): ChipModel {
-        val key = ChipKey(kind, index)
-        val state = states.stateOf(key)
-        val emphasis = states.emphasisOf(key)
-        return ChipModel(
-            icon = icon,
-            value = value,
-            kind = kind,
-            index = index,
-            state = state,
-            emphasis = emphasis,
-            onClick = { onChipClick(kind, index) },
-            onRemove = { onChipRemove(kind, index) },
-        )
-    }
+    ): ChipData = ChipData(
+        key = ChipKey(kind, index),
+        icon = icon,
+        value = value,
+    )
 }

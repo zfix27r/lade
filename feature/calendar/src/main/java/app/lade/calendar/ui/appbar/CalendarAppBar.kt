@@ -9,24 +9,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.style.TextOverflow
 import app.lade.calendar.domain.CalendarMode
-import app.lade.calendar.domain.CalendarView
 import app.lade.ui.profile.ProfileButton
 import java.time.LocalDate
+import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarAppBar(
     mode: CalendarMode,
     currentDate: LocalDate,
+    visibleMonth: YearMonth,
     onModeChange: (CalendarMode) -> Unit,
-    view: CalendarView,
-    onViewChange: (CalendarView) -> Unit,
     onTitleClick: () -> Unit,
     onShare: () -> Unit,
     onOpenProfile: () -> Unit,
 ) {
     val locale = LocalLocale.current.platformLocale
-    val title = calendarTitle(mode, currentDate, locale)
+    val title = calendarTitle(mode, currentDate, visibleMonth, locale)
 
     TopAppBar(
         title = {
@@ -42,9 +41,6 @@ fun CalendarAppBar(
         },
         actions = {
             AppBarModeBtn(mode = mode, onModeChange = onModeChange)
-            if (mode == CalendarMode.LIST) {
-                AppBarViewBtn(view = view, onViewChange = onViewChange)
-            }
             AppBarMoreMenu(onShare = onShare)
             ProfileButton(onClick = onOpenProfile)
         },

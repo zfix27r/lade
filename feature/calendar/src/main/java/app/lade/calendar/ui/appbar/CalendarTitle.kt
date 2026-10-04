@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import app.lade.calendar.domain.CalendarMode
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
@@ -12,6 +13,7 @@ import java.util.Locale
 fun calendarTitle(
     mode: CalendarMode,
     date: LocalDate,
+    visibleMonth: YearMonth,
     locale: Locale,
 ): String {
     val monthFmt = remember(locale) {
@@ -22,15 +24,7 @@ fun calendarTitle(
     }
     return when (mode) {
         CalendarMode.LIST -> date.format(monthFmt)
-        CalendarMode.DAY -> date.format(dayMonthFmt)
-        CalendarMode.DAY_3 -> {
-            val end = date.plusDays(2)
-            if (date.month == end.month) {
-                "${date.dayOfMonth} – ${end.format(dayMonthFmt)}"
-            } else {
-                "${date.format(dayMonthFmt)} – ${end.format(dayMonthFmt)}"
-            }
-        }
+        CalendarMode.TIMELINE -> visibleMonth.atDay(1).format(monthFmt)
         CalendarMode.WEEK -> {
             val weekFields = WeekFields.of(locale)
             val start = date.with(weekFields.dayOfWeek(), 1L)

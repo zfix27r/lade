@@ -1,16 +1,19 @@
 package app.lade.di
 
 import android.content.Context
-import androidx.room.Room
-import app.lade.categorystore.CategoryDao
-import app.lade.chatstore.ChatDictDao
-import app.lade.chatstore.ChatMessageDao
-import app.lade.db.LadeDatabase
 import app.lade.agendastore.entry.EntryDao
 import app.lade.agendastore.goal.GoalDao
 import app.lade.agendastore.log.LogDao
+import app.lade.categorystore.CategoryDao
+import app.lade.chatstore.ChatDictDao
+import app.lade.chatstore.ChatMessageDao
+import app.lade.database.DatabaseControl
 import app.lade.database.Transaction
+import app.lade.db.DatabaseControlImpl
+import app.lade.db.LadeDatabase
+import app.lade.db.LadeDatabaseHolder
 import app.lade.db.TransactionImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,40 +23,43 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
-	@Provides
+internal abstract class DatabaseModule {
+
+	@Binds
 	@Singleton
-	fun provideDatabase(
-        @ApplicationContext context: Context,
-	): LadeDatabase =
-		Room.databaseBuilder<LadeDatabase>(
-			context = context,
-			name = "lade.db",
-		)
-			.fallbackToDestructiveMigration(dropAllTables = true)
-			.build()
+	internal abstract fun bindDatabaseControl(impl: DatabaseControlImpl): DatabaseControl
 
-	@Provides
-	@Singleton
-	fun provideTransaction(impl: TransactionImpl): Transaction = impl
+	companion object {
 
-	@Provides
-	fun provideCategoryDao(db: LadeDatabase): CategoryDao = db.categoryDao()
+		@Provides
+		@Singleton
+		internal fun provideLadeDatabase(
+			@ApplicationContext context: Context,
+			holder: LadeDatabaseHolder,
+		): LadeDatabase = holder.get(context)
 
-	@Provides
-	fun provideChatDictDao(db: LadeDatabase): ChatDictDao = db.chatDictDao()
+		@Provides
+		@Singleton
+		internal fun provideTransaction(impl: TransactionImpl): Transaction = impl
 
-	@Provides
-	fun provideChatMessageDao(db: LadeDatabase): ChatMessageDao = db.chatMessageDao()
+		@Provides
+		internal fun provideCategoryDao(db: LadeDatabase): CategoryDao = db.categoryDao()
 
-	@Provides
-	fun provideEntryDao(db: LadeDatabase): EntryDao = db.entryDao()
+		@Provides
+		internal fun provideChatDictDao(db: LadeDatabase): ChatDictDao = db.chatDictDao()
 
-	@Provides
-	@Singleton
-	fun provideGoalDao(db: LadeDatabase): GoalDao = db.goalDao()
+		@Provides
+		internal fun provideChatMessageDao(db: LadeDatabase): ChatMessageDao = db.chatMessageDao()
 
-	@Provides
-	@Singleton
-	fun provideLogDao(db: LadeDatabase): LogDao = db.logDao()
+		@Provides
+		internal fun provideEntryDao(db: LadeDatabase): EntryDao = db.entryDao()
+
+		@Provides
+		@Singleton
+		internal fun provideGoalDao(db: LadeDatabase): GoalDao = db.goalDao()
+
+		@Provides
+		@Singleton
+		internal fun provideLogDao(db: LadeDatabase): LogDao = db.logDao()
+	}
 }

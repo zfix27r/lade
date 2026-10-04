@@ -37,10 +37,17 @@ class AgendaDayProjector @Inject constructor(
 
     private fun appliesTask(entry: EntryModel, date: LocalDate): Boolean {
         val due = entry.dateFrom ?: return false
+        val rrule = entry.rrule
+        if (rrule.isNullOrBlank()) {
+            val to = entry.dateTo
+            return if (to == null) {
+                date == due
+            } else {
+                !date.isBefore(due) && !date.isAfter(to)
+            }
+        }
         if (date.isBefore(due)) return false
         entry.dateTo?.let { if (date.isAfter(it)) return false }
-        val rrule = entry.rrule
-        if (rrule.isNullOrBlank()) return true
         return recurrenceEngine.isDue(rrule, date, dtStart = due)
     }
 

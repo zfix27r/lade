@@ -11,6 +11,7 @@ interface Humanize {
     fun time(time: LocalTime): Humanized
     fun duration(minutes: Int): Humanized
     fun goal(title: String, unit: GoalUnit, amount: Int?, repeat: Int?, weight: Double?): Humanized
+    fun goalDetails(unit: GoalUnit, amount: Int?, repeat: Int?, weight: Double?): Humanized
     fun alarm(time: LocalTime, mode: String): Humanized
     fun reminder(minutesBefore: Int): Humanized
     fun entryKind(entryKind: EntryKind): Humanized

@@ -1,10 +1,12 @@
 package app.lade.draft.internal.input
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 internal interface BarInputPort {
-    val prefill: StateFlow<String?>
-    val submitVisible: StateFlow<Boolean>
-    fun onClickSubmit()
-    fun onChangeText(text: String)
+    val clickSubmit: SharedFlow<Unit>
+    val changeText: SharedFlow<String>
+
+    fun setPrefill(text: String?)
+    fun setSubmit(submit: BarInputSubmit)
+    fun clearInput()
 }

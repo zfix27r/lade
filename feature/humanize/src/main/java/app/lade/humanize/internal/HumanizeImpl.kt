@@ -37,12 +37,29 @@ internal class HumanizeImpl @Inject constructor(
     override fun date(date: LocalDate): Humanized = dateHumanize.format(date)
     override fun time(time: LocalTime): Humanized = timeHumanize.format(time)
     override fun duration(minutes: Int): Humanized = durationHumanize.format(minutes)
-    override fun goal(title: String, unit: GoalUnit, amount: Int?, repeat: Int?, weight: Double?): Humanized =
+    override fun goal(
+        title: String,
+        unit: GoalUnit,
+        amount: Int?,
+        repeat: Int?,
+        weight: Double?
+    ): Humanized =
         goalHumanize.format(title, unit, amount, repeat, weight)
+
     override fun alarm(time: LocalTime, mode: String): Humanized =
         alarmHumanize.format(time, mode)
+
     override fun reminder(minutesBefore: Int): Humanized =
         reminderHumanize.format(minutesBefore)
+
     override fun entryKind(entryKind: EntryKind): Humanized =
         entryKindHumanize.format(entryKind)
+
+    override fun goalDetails(
+        unit: GoalUnit,
+        amount: Int?,
+        repeat: Int?,
+        weight: Double?
+    ): Humanized =
+        goalHumanize.formatDetails(unit, amount, repeat, weight)
 }

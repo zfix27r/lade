@@ -13,13 +13,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import app.lade.agenda.api.agenda.AgendaModel
+import app.lade.calendardata.api.CalendarCardModel
 import java.time.LocalDate
 
 @Composable
 fun CalendarCollapseStrip(
     currentDate: LocalDate,
-    entries: List<AgendaModel>,
+    entries: List<CalendarCardModel>,
     onDateSelected: (LocalDate) -> Unit,
     progress: Animatable<Float, *>,
     metrics: CalendarCollapseMetrics,

@@ -26,7 +26,11 @@ android {
 dependencies {
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
-    implementation(project(":db:agenda"))
+    implementation(project(":core:entry"))
+
+    implementation(project(":db:agenda-store"))
+
+    implementation(project(":feature:calendar-data"))
     implementation(project(":feature:draft"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:agenda-ui"))

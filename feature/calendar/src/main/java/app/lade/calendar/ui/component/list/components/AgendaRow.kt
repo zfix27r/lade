@@ -1,12 +1,19 @@
 package app.lade.calendar.ui.component.list.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -15,6 +22,10 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,33 +34,36 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import app.lade.agenda.api.agenda.AgendaModel
 import app.lade.calendar.R
+import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendardata.api.CalendarGoalModel
 import app.lade.entry.EntryKind
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AgendaRow(
-    agenda: AgendaModel,
+    card: CalendarCardModel,
     onOpenAgenda: () -> Unit,
     onToggleDone: () -> Unit,
+    onGoalToggle: (Long) -> Unit,
     modifier: Modifier = Modifier,
     onLongPress: (() -> Unit)? = null,
     enableMarkHaptics: Boolean = true,
 ) {
-    val entry = agenda.entry
     val haptic = LocalHapticFeedback.current
-    val isDone = agenda.logs.any { (it.actualAmount ?: 0) > 0 }
-    val showMark = entry.entryKind != EntryKind.NOTE && entry.entryKind != EntryKind.SCHEDULE
+    val showMark = card.entryKind != EntryKind.NOTE && card.entryKind != EntryKind.SCHEDULE
+    var expanded by remember(card.entryId) { mutableStateOf(false) }
 
     val timeRange = buildString {
-        entry.startTime?.let { append(it) }
-        entry.endTime?.let { append("–").append(it) }
+        card.timeFrom?.let { append(it) }
+        card.timeTo?.let { append("–").append(it) }
     }
+
+    val pending = card.pendingGoals
+    val visibleGoals = if (expanded) pending else pending.take(MAX_VISIBLE_GOALS)
+    val hiddenCount = pending.size - visibleGoals.size
 
     val handleToggle: () -> Unit = {
         if (enableMarkHaptics) {
@@ -84,71 +98,52 @@ fun AgendaRow(
             }
         } else null,
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        elevation = ListItemDefaults.elevation(ListItemDefaults.Elevation),
         content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = entry.title.ifBlank {
-                        stringResource(R.string.calendar_time_block_untitled)
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f),
-                )
-                if (showMark) {
-                    MarkCircle(
-                        done = isDone,
-                        onClick = handleToggle,
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = card.title.ifBlank {
+                            stringResource(R.string.calendar_time_block_untitled)
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f),
                     )
+                    if (showMark && card.hasGoals) {
+                        MarkCircle(done = card.allGoalsDone, onClick = handleToggle)
+                    }
+                }
+                if (pending.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.padding(top = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        visibleGoals.forEach { goal ->
+                            GoalRow(
+                                goal = goal,
+                                onClick = { onGoalToggle(goal.id) },
+                            )
+                        }
+                        if (hiddenCount > 0 && !expanded) {
+                            ExpandRow(
+                                text = "Показать все (${pending.size})",
+                                onClick = { expanded = true },
+                            )
+                        }
+                        if (expanded && pending.size > MAX_VISIBLE_GOALS) {
+                            ExpandRow(
+                                text = "Свернуть",
+                                onClick = { expanded = false },
+                            )
+                        }
+                    }
                 }
             }
         },
     )
 }
 
-@Composable
-private fun MarkCircle(
-    done: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val color = if (done) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Box(
-        modifier = modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .clickable(
-                role = Role.Checkbox,
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .clip(CircleShape)
-                .background(if (done) color else Color.Transparent)
-                .then(
-                    if (done) Modifier else Modifier.background(
-                        color = color.copy(alpha = 0.4f),
-                        shape = CircleShape,
-                    )
-                ),
-        )
-        if (done) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(14.dp),
-            )
-        }
-    }
-}
+private const val MAX_VISIBLE_GOALS = 3

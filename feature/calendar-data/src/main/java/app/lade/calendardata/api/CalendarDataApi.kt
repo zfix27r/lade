@@ -1,0 +1,16 @@
+package app.lade.calendardata.api
+
+import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
+
+interface CalendarDataApi {
+    fun observeList(date: LocalDate): Flow<List<CalendarCardModel>>
+    fun observeRange(from: LocalDate, to: LocalDate): Flow<List<CalendarCardModel>>
+    fun observeMarkedDates(from: LocalDate, to: LocalDate): Flow<Set<LocalDate>>
+    suspend fun get(entryId: Long, date: LocalDate): CalendarCardModel?
+
+    suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long)
+    suspend fun toggleAllGoals(entryId: Long, date: LocalDate)
+    suspend fun skipAllGoals(entryId: Long, date: LocalDate)
+    suspend fun markEventVisited(entryId: Long, date: LocalDate, visited: Boolean)
+}

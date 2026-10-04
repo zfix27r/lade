@@ -1,21 +1,24 @@
 package app.lade.draft.internal.ui.bar
 
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.focus.FocusState
 import app.lade.draft.api.DraftPhase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
+import javax.inject.Singleton
 
-@Stable
-internal class DraftStateHolder {
+@Singleton
+internal class DraftStateHolder @Inject constructor() {
 
     private val _phase = MutableStateFlow(DraftPhase.IDLE)
     val phase: StateFlow<DraftPhase> = _phase.asStateFlow()
 
     private val _state = MutableStateFlow(BarState())
     val state: StateFlow<BarState> = _state.asStateFlow()
+
+    fun isIdle() = _phase.value == DraftPhase.IDLE
 
     fun enterEdit() {
         if (_phase.value == DraftPhase.EDIT) return

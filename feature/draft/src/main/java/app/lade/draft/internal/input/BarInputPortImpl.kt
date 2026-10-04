@@ -1,8 +1,7 @@
 package app.lade.draft.internal.input
 
 import app.lade.draft.api.DraftPhase
-import app.lade.draft.internal.input.BarInputControlPort
-import app.lade.draft.internal.input.BarInputPort
+import app.lade.draft.internal.input.domain.BarInputControlPort
 import app.lade.draft.internal.ui.bar.DraftStateHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,8 +23,11 @@ internal class BarInputPortImpl @Inject constructor(
     private val _prefill = MutableStateFlow<String?>(null)
     override val prefill: StateFlow<String?> = _prefill.asStateFlow()
 
-    private val _submitVisible = MutableStateFlow(false)
-    override val submitVisible: StateFlow<Boolean> = _submitVisible.asStateFlow()
+    private val _submit = MutableStateFlow<BarInputSubmit>(BarInputSubmit.None)
+    override val submit: StateFlow<BarInputSubmit> = _submit.asStateFlow()
+
+    private val _clearInput = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    override val clearInput: SharedFlow<Unit> = _clearInput.asSharedFlow()
 
     private val _clickSubmit = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     override val clickSubmit: SharedFlow<Unit> = _clickSubmit.asSharedFlow()
@@ -42,10 +44,12 @@ internal class BarInputPortImpl @Inject constructor(
     }
 
     override fun onClickSubmit() {
+        if (draftStateHolder.isIdle()) return
         _clickSubmit.tryEmit(Unit)
     }
 
     override fun onChangeText(text: String) {
+        if (draftStateHolder.isIdle()) return
         _changeText.tryEmit(text)
     }
 
@@ -53,12 +57,17 @@ internal class BarInputPortImpl @Inject constructor(
         _prefill.value = text
     }
 
-    override fun setSubmitVisible(visible: Boolean) {
-        _submitVisible.value = visible
+    override fun setSubmit(submit: BarInputSubmit) {
+        _submit.value = submit
+    }
+
+    override fun clearInput() {
+        _clearInput.tryEmit(Unit)
     }
 
     private fun setDefault() {
         _prefill.value = ""
-        _submitVisible.value = false
+        _submit.value = BarInputSubmit.None
+        _clearInput.tryEmit(Unit)
     }
 }
