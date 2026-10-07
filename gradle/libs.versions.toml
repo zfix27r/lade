@@ -1,6 +1,8 @@
 [versions]
 agp = "9.2.0"
 kotlin = "2.2.10"
+kotlinxCoroutines = "1.10.2"
+turbine = "1.2.0"
 ksp = "2.3.6"
 coreKtx = "1.16.0"
 lifecycleRuntimeKtx = "2.9.1"
@@ -48,6 +50,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

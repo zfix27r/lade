@@ -8,7 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import app.lade.calendar.ui.CalendarScreen
+import app.lade.calendar.api.CalendarRoute
 import app.lade.categories.ui.edit.CategoryEditScreen
 import app.lade.categories.ui.list.CategoriesListScreen
 import app.lade.draft.api.DraftApi
@@ -43,7 +43,7 @@ fun AppNavGraph(
         modifier = modifier,
     ) {
         composable(Routes.Calendar) {
-            CalendarScreen(
+            CalendarRoute(
                 onOpenProfile = onOpenProfile,
                 draftApi = draftApi,
             )
