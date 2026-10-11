@@ -7,12 +7,14 @@ import app.lade.humanize.api.Humanize
 import app.lade.humanize.api.Humanized
 import app.lade.humanize.internal.alarm.AlarmHumanize
 import app.lade.humanize.internal.date.DateHumanize
+import app.lade.humanize.internal.date.DateRangeHumanize
 import app.lade.humanize.internal.duration.DurationHumanize
 import app.lade.humanize.internal.entrykind.EntryKindHumanize
 import app.lade.humanize.internal.goal.GoalHumanize
 import app.lade.humanize.internal.reminder.ReminderHumanize
 import app.lade.humanize.internal.rrule.RruleHumanize
 import app.lade.humanize.internal.time.TimeHumanize
+import app.lade.humanize.internal.time.TimeRangeHumanize
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.time.LocalTime
@@ -26,7 +28,9 @@ internal class HumanizeImpl @Inject constructor(
 
     private val rruleHumanize = RruleHumanize(context)
     private val dateHumanize = DateHumanize(context)
+    private val dateRangeHumanize = DateRangeHumanize(context, dateHumanize)
     private val timeHumanize = TimeHumanize()
+    private val timeRangeHumanize = TimeRangeHumanize(timeHumanize)
     private val durationHumanize = DurationHumanize(context)
     private val goalHumanize = GoalHumanize(context)
     private val alarmHumanize = AlarmHumanize(context)
@@ -35,14 +39,18 @@ internal class HumanizeImpl @Inject constructor(
 
     override fun rrule(rrule: String): Humanized = rruleHumanize.format(rrule)
     override fun date(date: LocalDate): Humanized = dateHumanize.format(date)
+    override fun dateRange(from: LocalDate, to: LocalDate): Humanized =
+        dateRangeHumanize.format(from, to)
     override fun time(time: LocalTime): Humanized = timeHumanize.format(time)
+    override fun timeRange(from: LocalTime, to: LocalTime): Humanized =
+        timeRangeHumanize.format(from, to)
     override fun duration(minutes: Int): Humanized = durationHumanize.format(minutes)
     override fun goal(
         title: String,
         unit: GoalUnit,
         amount: Int?,
         repeat: Int?,
-        weight: Double?
+        weight: Double?,
     ): Humanized =
         goalHumanize.format(title, unit, amount, repeat, weight)
 
@@ -59,7 +67,7 @@ internal class HumanizeImpl @Inject constructor(
         unit: GoalUnit,
         amount: Int?,
         repeat: Int?,
-        weight: Double?
+        weight: Double?,
     ): Humanized =
         goalHumanize.formatDetails(unit, amount, repeat, weight)
 }

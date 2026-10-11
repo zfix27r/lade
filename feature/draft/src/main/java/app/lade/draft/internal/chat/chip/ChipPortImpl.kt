@@ -30,7 +30,7 @@ internal class ChipPortImpl @Inject constructor(
     private val draftStore: DraftStore,
     private val draftStateHolder: DraftStateHolder,
     humanize: Humanize,
-) : ChipOutPort, ChipControlPort {
+) : ChipOutsidePort, ChipInsidePort {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val builder = ChipBuilder(humanize)
@@ -40,6 +40,9 @@ internal class ChipPortImpl @Inject constructor(
 
     private val _chips = MutableStateFlow<List<ChipData>>(emptyList())
     override val chips: StateFlow<List<ChipData>> = _chips.asStateFlow()
+
+    private val _clickEdit = MutableSharedFlow<ChipKey>(extraBufferCapacity = 8)
+    override val clickEdit: SharedFlow<ChipKey> = _clickEdit.asSharedFlow()
 
     private val _clickRemove = MutableSharedFlow<ChipKey>(extraBufferCapacity = 8)
     override val clickRemove: SharedFlow<ChipKey> = _clickRemove.asSharedFlow()
@@ -51,7 +54,6 @@ internal class ChipPortImpl @Inject constructor(
                 .distinctUntilChanged()
                 .collect { rebuild() }
         }
-
         scope.launch {
             draftStateHolder.phase.collect { rebuild() }
         }
@@ -68,6 +70,7 @@ internal class ChipPortImpl @Inject constructor(
     override fun onClickEdit(key: ChipKey) {
         if (draftStateHolder.isIdle()) return
         _states.value = controller.onTap(_states.value, key)
+        _clickEdit.tryEmit(key)
     }
 
     override fun onClickRemove(key: ChipKey) {

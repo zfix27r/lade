@@ -13,7 +13,7 @@ internal data class StripLayout(
     val collapsedHeight: Dp get() = rowHeight
 
     fun rowColumnOffsetY(progress: Float): Dp =
-        -rowHeight * activeWeekIndex * progress
+        -rowHeight * activeWeekIndex * (1 - progress)
 
     fun listTopOffsetY(progress: Float): Dp =
         collapsedHeight + (monthHeight - collapsedHeight) * progress

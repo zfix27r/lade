@@ -23,19 +23,38 @@ internal class CalendarDayProjector @Inject constructor(
     }
 
     private fun appliesNote(entry: EntryEntity, date: LocalDate): Boolean {
-        val day = entry.dateFromEpochDay?.let(LocalDate::ofEpochDay) ?: return false
+        val from = entry.dateFromEpochDay?.let(LocalDate::ofEpochDay) ?: return false
+        val to = entry.dateToEpochDay?.let(LocalDate::ofEpochDay)
         val rrule = entry.rrule
-        if (rrule.isNullOrBlank()) return date == day
-        if (date.isBefore(day)) return false
-        entry.dateToEpochDay?.let { if (date.isAfter(LocalDate.ofEpochDay(it))) return false }
-        return recurrenceEngine.isDue(rrule, date, dtStart = day)
+
+        if (rrule.isNullOrBlank()) {
+            return if (to == null) {
+                date == from
+            } else {
+                !date.isBefore(from) && !date.isAfter(to)
+            }
+        }
+
+        if (date.isBefore(from)) return false
+        to?.let { if (date.isAfter(it)) return false }
+        return recurrenceEngine.isDue(rrule, date, dtStart = from)
     }
 
     private fun appliesSchedule(entry: EntryEntity, date: LocalDate): Boolean {
         val from = entry.dateFromEpochDay?.let(LocalDate::ofEpochDay) ?: return false
+        val to = entry.dateToEpochDay?.let(LocalDate::ofEpochDay)
+        val rrule = entry.rrule
+
+        if (rrule.isNullOrBlank()) {
+            return if (to == null) {
+                date == from
+            } else {
+                !date.isBefore(from) && !date.isAfter(to)
+            }
+        }
+
         if (date.isBefore(from)) return false
-        entry.dateToEpochDay?.let { if (date.isAfter(LocalDate.ofEpochDay(it))) return false }
-        val rrule = entry.rrule ?: return false
+        to?.let { if (date.isAfter(it)) return false }
         return recurrenceEngine.isDue(rrule, date, dtStart = from)
     }
 
@@ -62,12 +81,21 @@ internal class CalendarDayProjector @Inject constructor(
     }
 
     private fun appliesEvent(entry: EntryEntity, date: LocalDate): Boolean {
-        val day = entry.dateFromEpochDay?.let(LocalDate::ofEpochDay) ?: return false
+        val from = entry.dateFromEpochDay?.let(LocalDate::ofEpochDay) ?: return false
+        val to = entry.dateToEpochDay?.let(LocalDate::ofEpochDay)
         val rrule = entry.rrule
-        if (rrule.isNullOrBlank()) return date == day
-        if (date.isBefore(day)) return false
-        entry.dateToEpochDay?.let { if (date.isAfter(LocalDate.ofEpochDay(it))) return false }
-        return recurrenceEngine.isDue(rrule, date, dtStart = day)
+
+        if (rrule.isNullOrBlank()) {
+            return if (to == null) {
+                date == from
+            } else {
+                !date.isBefore(from) && !date.isAfter(to)
+            }
+        }
+
+        if (date.isBefore(from)) return false
+        to?.let { if (date.isAfter(it)) return false }
+        return recurrenceEngine.isDue(rrule, date, dtStart = from)
     }
 
     companion object {

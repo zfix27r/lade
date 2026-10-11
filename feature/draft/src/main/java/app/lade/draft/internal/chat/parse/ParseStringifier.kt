@@ -18,24 +18,26 @@ internal class ParseStringifier(
 
     fun stringifyDate(model: DraftModel): String {
         model.dateRaw?.takeIf { it.isNotBlank() }?.let { return it }
-        return buildString {
-            model.dateFrom?.let { append(humanize.date(it).best) }
-            model.dateTo?.let {
-                if (isNotEmpty()) append(" — ")
-                append(humanize.date(it).best)
-            }
-        }.trim()
+        val from = model.dateFrom
+        val to = model.dateTo
+        return when {
+            from != null && to != null -> humanize.dateRange(from, to).best
+            from != null -> humanize.date(from).best
+            to != null -> humanize.date(to).best
+            else -> ""
+        }
     }
 
     fun stringifyTime(model: DraftModel): String {
         model.timeRaw?.takeIf { it.isNotBlank() }?.let { return it }
-        return buildString {
-            model.timeFrom?.let { append(humanize.time(it).best) }
-            model.timeEnd?.let {
-                if (isNotEmpty()) append(" — ")
-                append(humanize.time(it).best)
-            }
-        }.trim()
+        val from = model.timeFrom
+        val end = model.timeEnd
+        return when {
+            from != null && end != null -> humanize.timeRange(from, end).best
+            from != null -> humanize.time(from).best
+            end != null -> humanize.time(end).best
+            else -> ""
+        }
     }
 
     fun stringifyRrule(model: DraftModel): String {
@@ -79,15 +81,28 @@ internal class ParseStringifier(
         return "за ${reminder.minutesBefore} мин"
     }
 
+    fun stringifyDuration(model: DraftModel): String {
+        val minutes = model.durationMinutes ?: return ""
+        val h = minutes / 60
+        val m = minutes % 60
+        return when {
+            h == 0 -> "${m}мин"
+            m == 0 -> "${h}ч"
+            else -> "${h}ч ${m}мин"
+        }
+    }
+
     fun stringify(kind: ChipKind, model: DraftModel, index: Int): String {
         return when (kind) {
             ChipKind.TITLE -> stringifyTitle(model)
-            ChipKind.DATE_FROM, ChipKind.DATE_TO -> stringifyDate(model)
-            ChipKind.TIME_FROM, ChipKind.TIME_END -> stringifyTime(model)
+            ChipKind.DATE -> stringifyDate(model)
+            ChipKind.TIME -> stringifyTime(model)
+            ChipKind.DURATION -> stringifyDuration(model)
             ChipKind.RRULE -> stringifyRrule(model)
             ChipKind.GOAL -> model.goals.getOrNull(index)?.let { stringifyGoal(it) }.orEmpty()
             ChipKind.ALARM -> model.alarms.getOrNull(index)?.let { stringifyAlarm(it) }.orEmpty()
-            ChipKind.REMINDER -> model.reminders.getOrNull(index)?.let { stringifyReminder(it) }.orEmpty()
+            ChipKind.REMINDER -> model.reminders.getOrNull(index)?.let { stringifyReminder(it) }
+                .orEmpty()
         }
     }
 }

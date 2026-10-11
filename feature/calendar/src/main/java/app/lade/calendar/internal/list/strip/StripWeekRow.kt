@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import app.lade.calendar.api.config.StripConfig
-import app.lade.calendar.internal.list.strip.anim.outOfMonthAlpha
+import app.lade.calendar.internal.list.strip.swipe.stripOutOfMonthAlpha
 import app.lade.calendardata.api.DayProgress
 import app.lade.ui.theme.LocalToday
 import java.time.LocalDate
@@ -19,7 +19,7 @@ import java.time.Month
 @Composable
 internal fun StripWeekRow(
     week: List<LocalDate>,
-    currentDate: LocalDate,
+    selectedDate: LocalDate,
     pageMonth: Month,
     markedDates: Map<LocalDate, DayProgress>,
     progressState: State<Float>,
@@ -40,9 +40,9 @@ internal fun StripWeekRow(
                     .fillMaxHeight()
                     .graphicsLayer {
                         alpha = if (outOfMonth) {
-                            outOfMonthAlpha(
+                            stripOutOfMonthAlpha(
                                 progress = progressState.value,
-                                start = config.outOfMonthAlphaStart,
+                                threshold = config.outOfMonthAlphaThreshold,
                             )
                         } else {
                             1f
@@ -52,7 +52,7 @@ internal fun StripWeekRow(
             ) {
                 StripMonthDayCircle(
                     date = date,
-                    isActive = date == currentDate,
+                    isActive = date == selectedDate,
                     isToday = date == today,
                     progress = markedDates[date],
                     isOutOfMonth = outOfMonth,

@@ -27,7 +27,7 @@ dependencies {
     implementation(project(":core:resources"))
     implementation(project(":core:ui"))
     implementation(project(":feature:draft-data"))
-    implementation(project(":feature:chat"))
+    implementation(project(":feature:parser"))
     implementation(project(":feature:humanize"))
 
     implementation(libs.androidx.core.ktx)

@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -52,30 +50,23 @@ import kotlinx.coroutines.withContext
 internal fun CalendarScreen(
     onOpenProfile: () -> Unit,
     draftApi: DraftApi,
-    config: CalendarConfig = DefaultCalendarConfig,
     modifier: Modifier = Modifier,
+    config: CalendarConfig = DefaultCalendarConfig,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val stripState by viewModel.strip.state.collectAsStateWithLifecycle()
     var selectedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
     var openedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
     val view = LocalView.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+    )
 
     val draftPhase by draftApi.phase.collectAsStateWithLifecycle()
     val draftIsEditing = draftPhase == DraftPhase.EDIT
-
-    val offsetXState: State<Float> = viewModel.strip.state
-        .collectAsState(initial = stripState)
-        .let { stateFlowState ->
-            remember(stateFlowState) {
-                derivedStateOf { stateFlowState.value.offsetX }
-            }
-        }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -94,6 +85,10 @@ internal fun CalendarScreen(
             onEntryLongPress = { card -> selectedEntry = card },
             onToggleDone = viewModel::toggleDone,
             onGoalToggle = viewModel::toggleGoal,
+            onGoalValueChange = viewModel::setGoalValue,
+            onLoadGoalDetails = viewModel::loadGoalDetails,
+            onStartTimer = viewModel::startTimer,
+            onFinishTimer = viewModel::finishTimer,
             onOpenDay = { date ->
                 viewModel.onDateSelected(date)
                 viewModel.onModeChange(CalendarMode.WEEK)
@@ -132,7 +127,7 @@ internal fun CalendarScreen(
                     topBar = {
                         AppBarView(
                             mode = state.mode,
-                            stripDate = stripState.date,
+                            stripDate = state.currentDate,
                             onModeChange = viewModel::onModeChange,
                             onTitleClick = viewModel::goToday,
                             onShare = {
@@ -154,10 +149,9 @@ internal fun CalendarScreen(
                     ) {
                         CalendarModeContent(
                             state = state,
-                            stripState = stripState,
-                            strip = viewModel.strip,
-                            offsetXState = offsetXState,
+                            markedDatesStore = viewModel.markedDatesStore,
                             actions = actions,
+                            config = config,
                             modifier = Modifier.fillMaxSize(),
                         )
                     }

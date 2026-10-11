@@ -1,11 +1,10 @@
 package app.lade.draft.internal.chat.chip
 
-internal enum class ChipKind {
+enum class ChipKind {
     TITLE,
-    DATE_FROM,
-    DATE_TO,
-    TIME_FROM,
-    TIME_END,
+    DATE,
+    TIME,
+    DURATION,
     RRULE,
     GOAL,
     ALARM,

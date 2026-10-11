@@ -5,10 +5,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
-import app.lade.calendar.internal.list.strip.anim.StripSwipeGesture
+import app.lade.calendar.internal.list.strip.port.StripScrollPort
 
 internal class StripConnection(
-    private val gesture: StripSwipeGesture,
+    private val port: StripScrollPort,
     private val listState: LazyListState,
     private val fullScrollPx: Float,
 ) : NestedScrollConnection {
@@ -16,10 +16,10 @@ internal class StripConnection(
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         if (source != NestedScrollSource.UserInput) return Offset.Zero
         val deltaY = available.y
-        val progress = gesture.progress()
+        val progress = port.progress.value
 
         if (isIntermediate(progress)) {
-            gesture.onProgressDrag(deltaY, fullScrollPx)
+            port.onScroll(deltaY, fullScrollPx)
             return Offset(0f, deltaY)
         }
 
@@ -29,7 +29,7 @@ internal class StripConnection(
         val canExpand = deltaY > 0f && progress == 0f && isListAtTop
         if (!canCollapse && !canExpand) return Offset.Zero
 
-        gesture.onProgressDrag(deltaY, fullScrollPx)
+        port.onScroll(deltaY, fullScrollPx)
         return Offset(0f, deltaY)
     }
 
@@ -38,20 +38,17 @@ internal class StripConnection(
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
-        if (source == NestedScrollSource.UserInput &&
-            isIntermediate(gesture.progress())
-        ) {
+        if (source == NestedScrollSource.UserInput && isIntermediate(port.progress.value)) {
             return available
         }
         return Offset.Zero
     }
 
     override suspend fun onPreFling(available: Velocity): Velocity {
-        val progress = gesture.progress()
-        if (!isIntermediate(progress)) return Velocity.Zero
+        val progress = port.progress.value
 
-        val target = if (progress >= 0.5f) 1f else 0f
-        gesture.onProgressRelease(target)
+        if (!isIntermediate(progress)) return Velocity.Zero
+        port.onStop()
         return available
     }
 

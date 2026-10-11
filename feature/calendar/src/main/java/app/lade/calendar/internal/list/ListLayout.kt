@@ -5,115 +5,78 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.unit.Dp
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
+import app.lade.calendar.internal.data.MarkedDatesStore
 import app.lade.calendar.internal.domain.CalendarStateModel
-import app.lade.calendar.internal.list.strip.StripConnection
-import app.lade.calendar.internal.list.strip.StripSwipeRow
-import app.lade.calendar.internal.list.strip.data.StripState
-import app.lade.calendar.internal.list.strip.data.StripStateHolder
-import app.lade.calendar.internal.list.strip.data.stripWeeks
-import app.lade.calendar.internal.list.strip.layout.stripLayoutRemember
-import app.lade.calendar.internal.list.strip.rememberStripController
+import app.lade.calendar.internal.list.strip.StripHost
+import app.lade.calendar.internal.list.strip.StripHostParams
 import app.lade.calendardata.api.CalendarCardModel
 import java.time.LocalDate
-import java.time.temporal.WeekFields
 
 @Composable
 internal fun ListLayout(
     state: CalendarStateModel,
-    stripState: StripState,
-    strip: StripStateHolder,
-    offsetXState: State<Float>,
+    markedDatesStore: MarkedDatesStore,
     onDateSelected: (LocalDate) -> Unit,
     onOpenAgenda: (CalendarCardModel) -> Unit,
     onEntryLongPress: (CalendarCardModel) -> Unit,
-    onToggleDone: (entryId: Long, date: LocalDate) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
+    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
+    onLoadGoalDetails: (Long, LocalDate) -> Unit,
+    onStartTimer: (Long, LocalDate) -> Unit,
+    onFinishTimer: (Long, LocalDate, Int) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
     val listState = rememberLazyListState()
-    val density = LocalDensity.current
-    val locale = LocalLocale.current.platformLocale
-    val weekFields = remember(locale) { WeekFields.of(locale) }
-
-    val stripController = rememberStripController(strip, config.strip)
-
-    val fullScrollPx = with(density) {
-        (config.strip.rowHeight * config.strip.scrollRows).toPx()
-    }
-
-    val connection = StripConnection(
-        gesture = stripController.gesture,
-        listState = listState,
-        fullScrollPx = fullScrollPx,
-    )
-
-    val centralWeeks = remember(stripState.date, weekFields) {
-        stripWeeks(stripState.date, weekFields)
-    }
-    val layout = stripLayoutRemember(
-        weeks = centralWeeks,
-        activeDate = state.currentDate,
-        config = config.strip,
-    )
+    val markedDates = markedDatesStore.marked.collectAsState()
     val panelHeight = config.list.bottomPaddingForInputBar
 
-    val progressState: State<Float> = strip.state
-        .collectAsState(initial = stripState)
-        .let { stateFlowState ->
-            remember(stateFlowState) {
-                derivedStateOf { stateFlowState.value.progress }
-            }
-        }
-
-    val topOffsetProvider: () -> androidx.compose.ui.unit.Dp = remember(layout, progressState) {
-        { layout.listTopOffsetY(progressState.value) }
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .nestedScroll(connection),
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Box(
+    Box(modifier = modifier.fillMaxSize()) {
+        val stripResult = StripHost(
+            StripHostParams(
+                calendarDate = state.currentDate,
+                calendarMarkedDates = markedDates,
+                config = config.strip,
+                listState = listState,
+                onDateSelected = onDateSelected,
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter),
-            ) {
-                StripSwipeRow(
-                    currentDate = state.currentDate,
-                    stripState = stripState,
-                    progressState = progressState,
-                    offsetXState = offsetXState,
-                    controller = stripController,
-                    markedDates = state.markedDates,
-                    onDateSelected = onDateSelected,
-                    config = config.strip,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            )
+        )
+
+        val topOffsetProvider: () -> Dp = remember(stripResult) {
+            stripResult.topOffset
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(stripResult.listPort.connection),
+        ) {
             ListContent(
                 entries = state.entries,
                 topOffsetProvider = topOffsetProvider,
                 config = config.list,
+                timerConfig = config.timer,
                 panelHeight = panelHeight,
                 listState = listState,
+                goalDetailsCache = state.goalDetailsCache,
                 onOpenAgenda = onOpenAgenda,
                 onEntryLongPress = onEntryLongPress,
-                onToggleDone = onToggleDone,
                 onGoalToggle = onGoalToggle,
+                onGoalValueChange = onGoalValueChange,
+                onLoadGoalDetails = onLoadGoalDetails,
+                onStartTimer = onStartTimer,
+                onFinishTimer = onFinishTimer,
                 modifier = Modifier.fillMaxSize(),
             )
         }

@@ -75,6 +75,7 @@ class AgendaApiImpl @Inject constructor(
         return try {
             val entryId = transaction.runIn {
                 val id = entryStore.save(model.entry)
+
                 if (model.goals.isNotEmpty()) {
                     goalStore.save(id, model.goals.map { it.copy(entryId = id) })
                 }

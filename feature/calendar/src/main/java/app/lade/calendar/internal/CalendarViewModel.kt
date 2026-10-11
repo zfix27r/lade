@@ -3,9 +3,7 @@ package app.lade.calendar.internal
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.lade.calendar.api.config.DefaultStripConfig
 import app.lade.calendar.api.config.DefaultTimelineWindowConfig
-import app.lade.calendar.api.config.StripConfig
 import app.lade.calendar.api.config.TimelineWindowConfig
 import app.lade.calendar.internal.data.MarkedDatesStore
 import app.lade.calendar.internal.data.buildTimelineDays
@@ -16,11 +14,11 @@ import app.lade.calendar.internal.domain.CalendarDateMode
 import app.lade.calendar.internal.domain.CalendarStateModel
 import app.lade.calendar.internal.domain.CalendarUiEvent
 import app.lade.calendar.internal.domain.mode.CalendarMode
-import app.lade.calendar.internal.list.strip.data.StripStateHolder
 import app.lade.calendardata.api.CalendarDataApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,12 +34,13 @@ import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class CalendarViewModel @Inject constructor(
     private val calendarData: CalendarDataApi,
-    private val markedDatesStore: MarkedDatesStore,
+    internal val markedDatesStore: MarkedDatesStore,
     private val savedStateHandle: SavedStateHandle,
     private val timelineConfig: TimelineWindowConfig = DefaultTimelineWindowConfig,
 ) : ViewModel() {
@@ -72,8 +71,6 @@ internal class CalendarViewModel @Inject constructor(
 
     private var timelineWindow = timelineWindow(_state.value.currentDate, timelineConfig)
 
-    val strip = StripStateHolder(initialDate = _state.value.currentDate)
-
     private var markedDatesStoreStarted = false
 
     init {
@@ -89,13 +86,10 @@ internal class CalendarViewModel @Inject constructor(
 
     fun onDateSelected(date: LocalDate) {
         _state.update { it.copy(currentDate = date) }
-        strip.setAnchor(date)
     }
 
     fun goToday() {
-        val today = LocalDate.now()
-        _state.update { it.copy(currentDate = today) }
-        strip.setAnchor(today)
+        _state.update { it.copy(currentDate = LocalDate.now()) }
     }
 
     fun onTimelineScroll(firstVisibleDate: LocalDate) {
@@ -151,6 +145,120 @@ internal class CalendarViewModel @Inject constructor(
         _events.tryEmit(CalendarUiEvent.Error("Not implemented"))
     }
 
+    fun loadGoalDetails(entryId: Long, date: LocalDate) {
+        val key = expandableKey(entryId, date)
+        if (_state.value.goalDetailsCache.containsKey(key)) return
+        viewModelScope.launch {
+            runCatching {
+                calendarData.getGoalDetails(entryId, date)
+            }.onSuccess { details ->
+                _state.update {
+                    it.copy(goalDetailsCache = it.goalDetailsCache + (key to details))
+                }
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to load goal details"))
+            }
+        }
+    }
+
+    fun setGoalAmount(entryId: Long, date: LocalDate, goalId: Long, amount: Int) {
+        viewModelScope.launch {
+            runCatching {
+                calendarData.setGoalAmount(entryId, date, goalId, amount)
+            }.onSuccess {
+                val key = expandableKey(entryId, date)
+                _state.update { state ->
+                    val cached = state.goalDetailsCache[key] ?: return@update state
+                    val updated = cached.map { goal ->
+                        if (goal.id == goalId) {
+                            goal.copy(
+                                actualAmount = amount,
+                                isDone = goal.plannedAmount?.let { amount >= it } ?: goal.isDone,
+                            )
+                        } else {
+                            goal
+                        }
+                    }
+                    state.copy(goalDetailsCache = state.goalDetailsCache + (key to updated))
+                }
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to set goal amount"))
+            }
+        }
+    }
+
+    private var saveGoalJob: Job? = null
+
+    fun setGoalValue(
+        entryId: Long,
+        date: LocalDate,
+        goalId: Long,
+        value: Int,
+    ) {
+        val key = expandableKey(entryId, date)
+        val cached = _state.value.goalDetailsCache[key]
+        val goal = cached?.firstOrNull { it.id == goalId } ?: return
+        val planned = goal.plannedAmount ?: return
+        val clamped = value.coerceIn(0, planned)
+
+        _state.update { state ->
+            val list = state.goalDetailsCache[key] ?: return@update state
+            val updated = list.map { g ->
+                if (g.id == goalId) {
+                    g.copy(
+                        actualAmount = clamped,
+                        isDone = clamped >= planned,
+                    )
+                } else {
+                    g
+                }
+            }
+            state.copy(goalDetailsCache = state.goalDetailsCache + (key to updated))
+        }
+
+        saveGoalJob?.cancel()
+        saveGoalJob = viewModelScope.launch {
+            delay(SAVE_GOAL_DEBOUNCE_MS.milliseconds)
+            runCatching {
+                calendarData.setGoalAmount(entryId, date, goalId, clamped)
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to save goal"))
+            }
+        }
+    }
+
+    fun startTimer(entryId: Long, date: LocalDate) {
+        viewModelScope.launch {
+            runCatching {
+                calendarData.startTimer(entryId, date, System.currentTimeMillis())
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to start timer"))
+            }
+        }
+    }
+
+    fun finishTimer(entryId: Long, date: LocalDate, actualMinutes: Int) {
+        viewModelScope.launch {
+            runCatching {
+                calendarData.finishTimer(
+                    entryId = entryId,
+                    date = date,
+                    endedAtMs = System.currentTimeMillis(),
+                    actualMinutes = actualMinutes,
+                )
+            }.onFailure {
+                _events.tryEmit(CalendarUiEvent.Error("Failed to finish timer"))
+            }
+        }
+    }
+
+    private companion object {
+        const val SAVE_GOAL_DEBOUNCE_MS = 400L
+    }
+
+    private fun expandableKey(entryId: Long, date: LocalDate): String =
+        "expandable-$entryId-${date.toEpochDay()}"
+
     private fun observeModeAndDate() {
         viewModelScope.launch {
             _state
@@ -171,15 +279,15 @@ internal class CalendarViewModel @Inject constructor(
 
     private fun observeMarkedDates() {
         viewModelScope.launch {
-            strip.state
-                .map { s -> MarkedKey(s.date, s.isMonthMode) }
+            _state
+                .map { it.currentDate }
                 .distinctUntilChanged()
-                .collect { key ->
+                .collect { date ->
                     if (!markedDatesStoreStarted) {
-                        markedDatesStore.start(key.anchor)
+                        markedDatesStore.start(date)
                         markedDatesStoreStarted = true
                     } else {
-                        markedDatesStore.setAnchor(key.anchor)
+                        markedDatesStore.setAnchor(date)
                     }
                 }
         }
@@ -270,9 +378,4 @@ internal class CalendarViewModel @Inject constructor(
                 .collect { savedStateHandle[keyMode] = it.name }
         }
     }
-
-    private data class MarkedKey(
-        val anchor: LocalDate,
-        val isMonth: Boolean,
-    )
 }

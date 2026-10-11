@@ -17,6 +17,8 @@ data class CalendarCardModel(
     val goals: List<CalendarGoalModel>,
     val goalsDone: Int,
     val goalsTotal: Int,
+    val daysLeft: Int? = null,
+    val timer: CalendarTimerModel? = null,
 ) {
     val hasGoals: Boolean get() = goalsTotal > 0
     val allGoalsDone: Boolean get() = hasGoals && goalsDone == goalsTotal

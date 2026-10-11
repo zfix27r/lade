@@ -37,6 +37,7 @@ data class LogEntity(
 	val actualAmount: Int? = null,
 	val actualRepeat: Int? = null,
 	val actualWeight: Double? = null,
+	val timerStartedAtMs: Long? = null,
 	val origin: String = "unknown",
 	val createdAtEpochMs: Long,
 )

@@ -13,6 +13,7 @@ data class EntryModel(
     val dateTo: LocalDate? = null,
     val startTime: LocalTime? = null,
     val endTime: LocalTime? = null,
+    val durationMinutes: Int? = null,
     val rrule: String? = null,
     val alarmMode: String = "none",
     val reminderMinutesBefore: Int? = null,
@@ -21,7 +22,7 @@ data class EntryModel(
     val createdAtEpochMs: Long = 0,
     val updatedAtEpochMs: Long? = null,
 ) {
-	val isArchived: Boolean get() = archivedAtEpochMs != null
-	val isPaused: Boolean get() = pausedAtEpochMs != null
-	val isSeries: Boolean get() = !rrule.isNullOrBlank()
+    val isArchived: Boolean get() = archivedAtEpochMs != null
+    val isPaused: Boolean get() = pausedAtEpochMs != null
+    val isSeries: Boolean get() = !rrule.isNullOrBlank()
 }

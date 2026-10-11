@@ -172,6 +172,7 @@ internal class DraftStore @Inject constructor(
                     _effects.emit(DraftEffect.Saved(result.value))
                 }
                 is Result.Failure -> {
+                    println(result)
                     _effects.emit(DraftEffect.Error(result.error))
                 }
             }

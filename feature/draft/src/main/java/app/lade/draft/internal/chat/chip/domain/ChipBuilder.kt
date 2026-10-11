@@ -6,7 +6,7 @@ import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.Update
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.ui.graphics.vector.ImageVector
 import app.lade.draft.internal.chat.chip.ChipKind
 import app.lade.draftdata.DraftModel
@@ -21,10 +21,9 @@ internal class ChipBuilder(
 
     fun build(model: DraftModel): List<ChipData> = buildList {
         buildTitle(model)
-        buildDateFrom(model)
-        buildDateTo(model)
-        buildTimeFrom(model)
-        buildTimeEnd(model)
+        buildDate(model)
+        buildTime(model)
+        buildDuration(model)
         buildRrule(model)
         buildGoals(model)
         buildAlarms(model)
@@ -41,48 +40,55 @@ internal class ChipBuilder(
         }
     }
 
-    private fun MutableList<ChipData>.buildDateFrom(model: DraftModel) {
-        model.dateFrom?.let { date ->
-            add(data(
-                icon = Icons.Outlined.CalendarToday,
-                value = humanize.date(date).best.capitalize(),
-                kind = ChipKind.DATE_FROM,
-                index = 0,
-            ))
+    private fun MutableList<ChipData>.buildDate(model: DraftModel) {
+        val from = model.dateFrom
+        val to = model.dateTo
+        val value = when {
+            from != null && to != null -> humanize.dateRange(from, to).best
+            from != null -> humanize.date(from).best
+            to != null -> humanize.date(to).best
+            else -> return
         }
+        add(data(
+            icon = Icons.Outlined.CalendarToday,
+            value = value.capitalize(),
+            kind = ChipKind.DATE,
+            index = 0,
+        ))
     }
 
-    private fun MutableList<ChipData>.buildDateTo(model: DraftModel) {
-        model.dateTo?.let { date ->
-            add(data(
-                icon = Icons.Outlined.CalendarToday,
-                value = humanize.date(date).best.capitalize(),
-                kind = ChipKind.DATE_TO,
-                index = 0,
-            ))
+    private fun MutableList<ChipData>.buildTime(model: DraftModel) {
+        val from = model.timeFrom
+        val end = model.timeEnd
+        val value = when {
+            from != null && end != null -> humanize.timeRange(from, end).best
+            from != null -> humanize.time(from).best
+            end != null -> humanize.time(end).best
+            else -> return
         }
+        add(data(
+            icon = Icons.Outlined.Schedule,
+            value = value.capitalize(),
+            kind = ChipKind.TIME,
+            index = 0,
+        ))
     }
 
-    private fun MutableList<ChipData>.buildTimeFrom(model: DraftModel) {
-        model.timeFrom?.let { time ->
-            add(data(
-                icon = Icons.Outlined.Schedule,
-                value = humanize.time(time).best.capitalize(),
-                kind = ChipKind.TIME_FROM,
-                index = 0,
-            ))
+    private fun MutableList<ChipData>.buildDuration(model: DraftModel) {
+        val minutes = model.durationMinutes ?: return
+        val h = minutes / 60
+        val m = minutes % 60
+        val value = when {
+            h == 0 -> "${m}мин"
+            m == 0 -> "${h}ч"
+            else -> "${h}ч ${m}мин"
         }
-    }
-
-    private fun MutableList<ChipData>.buildTimeEnd(model: DraftModel) {
-        model.timeEnd?.let { time ->
-            add(data(
-                icon = Icons.Outlined.Update,
-                value = humanize.time(time).best.capitalize(),
-                kind = ChipKind.TIME_END,
-                index = 0,
-            ))
-        }
+        add(data(
+            icon = Icons.Outlined.Timer,
+            value = value,
+            kind = ChipKind.DURATION,
+            index = 0,
+        ))
     }
 
     private fun MutableList<ChipData>.buildRrule(model: DraftModel) {

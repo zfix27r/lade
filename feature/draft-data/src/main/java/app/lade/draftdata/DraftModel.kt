@@ -17,6 +17,7 @@ data class DraftModel(
     val dateTo: LocalDate? = null,
     val timeFrom: LocalTime? = null,
     val timeEnd: LocalTime? = null,
+    val durationMinutes: Int? = null,
     val rrule: String? = null,
     val goals: List<DraftGoal> = emptyList(),
     val notes: List<DraftNote> = emptyList(),
@@ -27,6 +28,7 @@ data class DraftModel(
         get() = title.isBlank() &&
                 dateFrom == null &&
                 timeFrom == null &&
+                durationMinutes == null &&
                 rrule == null &&
                 goals.isEmpty() &&
                 alarms.isEmpty() &&

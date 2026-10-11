@@ -17,13 +17,16 @@ import kotlin.math.roundToInt
 @Composable
 internal fun StripPage(
     pageDate: LocalDate,
+    selectedDate: LocalDate,
     anchorDate: LocalDate,
     markedDates: Map<LocalDate, DayProgress>,
     progressState: State<Float>,
+    offsetXState: State<Float>,
+    pageIndex: Int,
+    pageWidth: Float,
     weeks: List<List<LocalDate>>,
     layout: StripLayout,
     config: StripConfig,
-    offsetProvider: () -> Float,
     modifier: Modifier = Modifier,
 ) {
     val pageMonth = pageDate.month
@@ -33,7 +36,7 @@ internal fun StripPage(
             .fillMaxWidth()
             .offset {
                 IntOffset(
-                    x = offsetProvider().roundToInt(),
+                    x = (offsetXState.value + pageIndex * pageWidth).roundToInt(),
                     y = layout.rowColumnOffsetY(progressState.value).roundToPx(),
                 )
             },
@@ -41,7 +44,7 @@ internal fun StripPage(
         weeks.forEach { week ->
             StripWeekRow(
                 week = week,
-                currentDate = anchorDate,
+                selectedDate = selectedDate,
                 pageMonth = pageMonth,
                 markedDates = markedDates,
                 progressState = progressState,
@@ -49,6 +52,7 @@ internal fun StripPage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(layout.rowHeight),
+
             )
         }
     }

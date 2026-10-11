@@ -10,6 +10,9 @@
     <string name="humanize_date_tomorrow_short">завтра</string>
     <string name="humanize_date_tomorrow_long">завтра</string>
 
+    <string name="humanize_date_range_short">%1$s – %2$s</string>
+    <string name="humanize_date_range_long">%1$s – %2$s</string>
+    <string name="humanize_date_range_same_month_short">%1$s – %2$s</string>
 
     <string name="humanize_reminder_moment_short">в момент</string>
     <string name="humanize_reminder_moment_long">в момент события</string>

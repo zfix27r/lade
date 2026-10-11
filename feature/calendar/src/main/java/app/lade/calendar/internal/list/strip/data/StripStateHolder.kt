@@ -1,34 +1,55 @@
 package app.lade.calendar.internal.list.strip.data
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import app.lade.calendar.internal.list.strip.swipe.StripSwipeState
 import java.time.LocalDate
 
-internal class StripStateHolder(initialDate: LocalDate = LocalDate.now()) {
+internal class StripStateHolder(initialDate: LocalDate) {
 
-    private val _state = MutableStateFlow(StripState(date = initialDate))
-    val state: StateFlow<StripState> = _state.asStateFlow()
+    val stripDate = mutableStateOf(initialDate)
+    val widthPx = mutableIntStateOf(0)
+    val targetOffsetX = mutableFloatStateOf(0f)
+    val targetProgress = mutableFloatStateOf(1f)
+    val isDragging = mutableStateOf(false)
+    val swipeState = mutableStateOf(StripSwipeState.NONE)
 
-    fun setDate(date: LocalDate) {
-        _state.update { it.copy(date = date) }
+    fun setStripDate(value: LocalDate) {
+        stripDate.value = value
     }
 
-    fun setOffsetX(offsetX: Float) {
-        _state.update { it.copy(offsetX = offsetX) }
+    fun setWidthPx(value: Int) {
+        if (widthPx.intValue == value) return
+        widthPx.intValue = value
     }
 
-    fun setProgress(progress: Float) {
-        _state.update { it.copy(progress = progress) }
+    fun setTargetOffsetX(value: Float) {
+        targetOffsetX.floatValue = value
     }
 
-    fun setWidthPx(widthPx: Int) {
-        if (_state.value.widthPx == widthPx) return
-        _state.update { it.copy(widthPx = widthPx) }
+    fun setTargetProgress(value: Float) {
+        targetProgress.floatValue = value
     }
 
-    fun setAnchor(date: LocalDate) {
-        _state.update { it.copy(date = date, offsetX = 0f) }
+    fun setDragging(value: Boolean) {
+        if (isDragging.value == value) return
+        isDragging.value = value
+    }
+
+    fun setSwipeState(value: StripSwipeState) {
+        if (swipeState.value == value) return
+        swipeState.value = value
+    }
+
+    fun commitPageShift() {
+        targetOffsetX.floatValue = 0f
+    }
+
+    fun followCalendarDate(calendarDate: LocalDate) {
+        val current = stripDate.value
+        if (calendarDate.year != current.year || calendarDate.month != current.month) {
+            stripDate.value = calendarDate
+        }
     }
 }

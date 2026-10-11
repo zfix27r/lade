@@ -3,9 +3,9 @@ package app.lade.draft.internal.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.lade.draft.api.DraftPhase
-import app.lade.draft.internal.chat.chip.ChipOutPort
+import app.lade.draft.internal.chat.chip.ChipOutsidePort
 import app.lade.draft.internal.chat.chip.domain.ChipKey
-import app.lade.draft.internal.chat.parse.ChipEngine
+import app.lade.draft.internal.chat.parse.ParseEngine
 import app.lade.draft.internal.chat.parse.ParseStringifier
 import app.lade.draft.internal.chat.parse.ParserRequestFactory
 import app.lade.draft.internal.domain.DraftIntent
@@ -28,8 +28,8 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 internal class ChatViewModel @Inject constructor(
     private val store: DraftStore,
-    private val engine: ChipEngine,
-    private val chips: ChipOutPort,
+    private val engine: ParseEngine,
+    private val chips: ChipOutsidePort,
     private val barState: DraftStateHolder,
     private val input: BarInputPort,
     humanize: Humanize,

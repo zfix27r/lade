@@ -3,5 +3,15 @@
     <string name="calendar_list_empty_title">Нет записей</string>
     <string name="calendar_list_empty_subtitle">На этот день ничего не запланировано</string>
     <string name="calendar_time_block_untitled">Без названия</string>
+    <string name="calendar_mark_done">Выполнено</string>
+    <string name="calendar_mark_not_done">Не выполнено</string>
 
+    <string name="calendar_days_left_today">сегодня</string>
+
+    <plurals name="calendar_days_left">
+        <item quantity="one">остался %d день</item>
+        <item quantity="few">осталось %d дня</item>
+        <item quantity="many">осталось %d дней</item>
+        <item quantity="other">осталось %d дней</item>
+    </plurals>
 </resources>

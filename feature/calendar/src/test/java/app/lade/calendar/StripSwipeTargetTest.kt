@@ -1,6 +1,6 @@
 package app.lade.calendar
 
-import app.lade.calendar.internal.list.strip.data.stripSwipeTarget
+import app.lade.calendar.internal.list.strip.swipe.stripSwipeTarget
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

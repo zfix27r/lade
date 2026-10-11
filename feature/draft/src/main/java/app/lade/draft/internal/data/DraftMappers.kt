@@ -16,6 +16,7 @@ internal fun AgendaModel.toDraft(): DraftModel = DraftModel(
     dateTo = entry.dateTo,
     timeFrom = entry.startTime,
     timeEnd = entry.endTime,
+    durationMinutes = entry.durationMinutes,   // ← добавили
     rrule = entry.rrule,
     goals = goals.map { it.toDraftGoal() },
     alarms = emptyList(),
@@ -54,6 +55,7 @@ internal fun DraftModel.toEntryModel(existing: EntryModel?): EntryModel {
         dateTo = dateTo,
         startTime = timeFrom,
         endTime = timeEnd,
+        durationMinutes = durationMinutes,   // ← добавили
         rrule = rrule ?: existing?.rrule,
         alarmMode = existing?.alarmMode ?: "none",
         reminderMinutesBefore = existing?.reminderMinutesBefore,

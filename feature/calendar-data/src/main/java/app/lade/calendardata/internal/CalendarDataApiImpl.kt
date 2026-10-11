@@ -8,7 +8,10 @@ import app.lade.agendastore.log.LogDao
 import app.lade.agendastore.log.LogEntity
 import app.lade.calendardata.api.CalendarCardModel
 import app.lade.calendardata.api.CalendarDataApi
+import app.lade.calendardata.api.CalendarGoalExpandedModel
 import app.lade.calendardata.api.CalendarGoalModel
+import app.lade.calendardata.api.CalendarTimerHistoryItem
+import app.lade.calendardata.api.CalendarTimerModel
 import app.lade.calendardata.api.DayProgress
 import app.lade.calendardata.internal.mapper.isAlarm
 import app.lade.calendardata.internal.mapper.isDone
@@ -16,6 +19,7 @@ import app.lade.calendardata.internal.mapper.isSeries
 import app.lade.calendardata.internal.mapper.toEntryKind
 import app.lade.calendardata.internal.mapper.toLocalTimeFrom
 import app.lade.calendardata.internal.mapper.toLocalTimeTo
+import app.lade.entry.EntryKind
 import app.lade.goal.GoalUnit
 import app.lade.humanize.api.Humanize
 import kotlinx.coroutines.flow.Flow
@@ -113,6 +117,36 @@ internal class CalendarDataApiImpl @Inject constructor(
         return buildCard(date, entry, goals, logs)
     }
 
+    override suspend fun getGoalDetails(
+        entryId: Long,
+        date: LocalDate,
+    ): List<CalendarGoalExpandedModel> {
+        val entry = entryDao.getById(entryId) ?: return emptyList()
+        if (!projector.appliesTo(entry, date)) return emptyList()
+        val goals = goalDao.getByEntryId(entryId)
+        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
+        val logsByGoal = logs.filter { it.goalId != null }.associateBy { it.goalId }
+        return goals.map { goal ->
+            val log = logsByGoal[goal.id]
+            CalendarGoalExpandedModel(
+                id = goal.id,
+                title = goal.title,
+                description = humanize.goalDetails(
+                    unit = GoalUnit.fromStorage(goal.unit),
+                    amount = goal.amount,
+                    repeat = goal.repeat,
+                    weight = goal.weight,
+                ).best,
+                isDone = goal.isDone(log),
+                actualAmount = log?.actualAmount,
+                plannedAmount = goal.amount,
+                unit = GoalUnit.fromStorage(goal.unit),
+                repeat = goal.repeat,
+                weight = goal.weight,
+            )
+        }
+    }
+
     override suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long) {
         val goals = goalDao.getByEntryId(entryId)
         val goal = goals.firstOrNull { it.id == goalId } ?: return
@@ -191,6 +225,33 @@ internal class CalendarDataApiImpl @Inject constructor(
         logDao.insertAll(logs)
     }
 
+    override suspend fun setGoalAmount(
+        entryId: Long,
+        date: LocalDate,
+        goalId: Long,
+        actualAmount: Int,
+    ) {
+        val goals = goalDao.getByEntryId(entryId)
+        val goal = goals.firstOrNull { it.id == goalId } ?: return
+        val log = LogEntity(
+            entryId = entryId,
+            epochDay = date.toEpochDay(),
+            goalId = goalId,
+            name = goal.title,
+            unit = goal.unit,
+            plannedAmount = goal.amount,
+            plannedRepeat = goal.repeat,
+            plannedWeight = goal.weight,
+            actualAmount = actualAmount.coerceAtLeast(0),
+            actualRepeat = goal.repeat ?: 0,
+            actualWeight = goal.weight,
+            origin = "calendar",
+            createdAtEpochMs = System.currentTimeMillis(),
+        )
+        logDao.deleteByGoalAndDay(goalId, date.toEpochDay())
+        logDao.insertAll(listOf(log))
+    }
+
     override suspend fun markEventVisited(entryId: Long, date: LocalDate, visited: Boolean) {
         val log = LogEntity(
             entryId = entryId,
@@ -202,6 +263,39 @@ internal class CalendarDataApiImpl @Inject constructor(
         )
         logDao.deleteByEntryAndDay(entryId, date.toEpochDay())
         logDao.insertAll(listOf(log))
+    }
+
+    override suspend fun startTimer(entryId: Long, date: LocalDate, startedAtMs: Long) {
+        val entry = entryDao.getById(entryId) ?: return
+        val log = LogEntity(
+            entryId = entryId,
+            epochDay = date.toEpochDay(),
+            goalId = null,
+            name = entry.title,
+            plannedAmount = entry.durationMinutes,
+            timerStartedAtMs = startedAtMs,
+            actualAmount = null,
+            origin = "timer",
+            createdAtEpochMs = System.currentTimeMillis(),
+        )
+        logDao.insertAll(listOf(log))
+    }
+
+    override suspend fun finishTimer(
+        entryId: Long,
+        date: LocalDate,
+        endedAtMs: Long,
+        actualMinutes: Int,
+    ) {
+        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
+        val lastTimer = logs
+            .filter { it.goalId == null && it.origin == "timer" && it.actualAmount == null }
+            .maxByOrNull { it.createdAtEpochMs }
+            ?: return
+
+        logDao.insertAll(
+            listOf(lastTimer.copy(actualAmount = actualMinutes.coerceAtLeast(0)))
+        )
     }
 
     private fun buildCards(
@@ -249,6 +343,12 @@ internal class CalendarDataApiImpl @Inject constructor(
                 plannedAmount = goal.amount,
             )
         }
+
+        val daysLeft = entry.dateToEpochDay
+            ?.let { it - date.toEpochDay() }
+            ?.takeIf { it >= 0 }
+            ?.toInt()
+
         return CalendarCardModel(
             date = date,
             entryId = entry.id,
@@ -262,6 +362,61 @@ internal class CalendarDataApiImpl @Inject constructor(
             goals = cardGoals,
             goalsDone = cardGoals.count { it.isDone },
             goalsTotal = cardGoals.size,
+            daysLeft = daysLeft,
+            timer = buildTimer(entry, logs),
         )
+    }
+
+    private fun buildTimer(
+        entry: EntryEntity,
+        logs: List<LogEntity>,
+    ): CalendarTimerModel? {
+        if (entry.kind != EntryKind.HABIT.storage) return null
+        val duration = entry.durationMinutes ?: return null
+        val startMinutes = entry.startTimeMinutes ?: return null
+
+        val lastTimer = logs
+            .filter { it.goalId == null && it.origin == "timer" }
+            .maxByOrNull { it.createdAtEpochMs }
+            ?: return CalendarTimerModel(
+                plannedStartMinutes = startMinutes,
+                durationMinutes = duration,
+                startedAtMs = null,
+                actualMinutes = null,
+            )
+
+        val startedAt = lastTimer.timerStartedAtMs
+        val actual = lastTimer.actualAmount
+
+        return CalendarTimerModel(
+            plannedStartMinutes = startMinutes,
+            durationMinutes = duration,
+            startedAtMs = startedAt,
+            actualMinutes = actual,
+        )
+    }
+
+    override suspend fun getTimerHistory(
+        entryId: Long,
+        date: LocalDate,
+    ): List<CalendarTimerHistoryItem> {
+        val entry = entryDao.getById(entryId) ?: return emptyList()
+        val planned = entry.durationMinutes ?: return emptyList()
+
+        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
+            .filter { it.goalId == null && it.origin == "timer" && it.timerStartedAtMs != null }
+            .sortedByDescending { it.createdAtEpochMs }
+
+        return logs.map { log ->
+            val actual = log.actualAmount
+            val started = log.timerStartedAtMs!!
+            CalendarTimerHistoryItem(
+                id = log.id,
+                startedAtMs = started,
+                finishedAtMs = actual?.let { started + it * 60_000L },
+                actualMinutes = actual,
+                plannedMinutes = log.plannedAmount ?: planned,
+            )
+        }
     }
 }

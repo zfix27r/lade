@@ -3,6 +3,7 @@ package app.lade.agenda.data.entry
 import app.lade.agenda.api.entry.EntryError
 import app.lade.agenda.api.entry.EntryModel
 import app.lade.entry.EntryKind
+import java.time.LocalTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,19 +18,26 @@ class EntryValidator @Inject constructor() {
             }
             EntryKind.EVENT -> when {
                 entry.dateFrom == null -> EntryError.DateMissing
-                entry.startTime == null || entry.endTime == null -> EntryError.TimeRangeMissing
-                entry.endTime <= entry.startTime -> EntryError.TimeRangeInvalid
-                else -> null
+                else -> validateTimeRange(entry.startTime, entry.endTime, required = true)
             }
             EntryKind.HABIT -> {
                 if (entry.rrule.isNullOrBlank()) EntryError.RecurrenceMissing else null
             }
             EntryKind.SCHEDULE -> when {
-                entry.startTime == null || entry.endTime == null -> EntryError.TimeRangeMissing
-                entry.endTime <= entry.startTime -> EntryError.TimeRangeInvalid
-                entry.rrule.isNullOrBlank() -> EntryError.RecurrenceMissing
-                else -> null
+                entry.dateFrom == null -> EntryError.DateMissing
+                else -> validateTimeRange(entry.startTime, entry.endTime, required = false)
             }
         }
+    }
+
+    private fun validateTimeRange(
+        start: LocalTime?,
+        end: LocalTime?,
+        required: Boolean,
+    ): EntryError? = when {
+        start == null && end == null -> if (required) EntryError.TimeRangeMissing else null
+        start == null || end == null -> EntryError.TimeRangeMissing
+        end <= start -> EntryError.TimeRangeInvalid
+        else -> null
     }
 }

@@ -20,6 +20,7 @@ data class EntryEntity(
 	val dateToEpochDay: Long? = null,
 	val startTimeMinutes: Int? = null,
 	val endTimeMinutes: Int? = null,
+	val durationMinutes: Int? = null,
 	val rrule: String? = null,
 	val alarmMode: String = "none",
 	val reminderMinutesBefore: Int? = null,

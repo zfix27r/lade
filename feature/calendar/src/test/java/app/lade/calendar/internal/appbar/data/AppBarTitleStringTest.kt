@@ -1,7 +1,6 @@
 package app.lade.calendar.internal.appbar.data
 
 import app.lade.calendar.internal.domain.mode.CalendarMode
-import app.lade.calendar.internal.list.strip.data.StripState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale

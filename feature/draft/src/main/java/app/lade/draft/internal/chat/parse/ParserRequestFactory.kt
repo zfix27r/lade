@@ -1,8 +1,8 @@
 package app.lade.draft.internal.chat.parse
 
-import app.lade.chat.api.ParserContract
-import app.lade.chat.api.ParserEntryModel
-import app.lade.chat.api.ParserModel
+import app.lade.parser.api.ParserContract
+import app.lade.parser.api.ParserEntryModel
+import app.lade.parser.api.ParserModel
 import app.lade.draft.internal.chat.chip.ChipKind
 import app.lade.draft.internal.chat.chip.domain.ChipKey
 import app.lade.draft.internal.chat.chip.domain.ChipStates
@@ -26,10 +26,17 @@ internal object ParserRequestFactory {
 
     private fun entryFor(kind: ChipKind): ParserEntryModel = when (kind) {
         ChipKind.TITLE -> ParserEntryModel(title = ParserContract.find())
-        ChipKind.DATE_FROM -> ParserEntryModel(dateFrom = ParserContract.find())
-        ChipKind.DATE_TO -> ParserEntryModel(dateTo = ParserContract.find())
-        ChipKind.TIME_FROM -> ParserEntryModel(timeFrom = ParserContract.find())
-        ChipKind.TIME_END -> ParserEntryModel(timeTo = ParserContract.find())
+        ChipKind.DATE -> ParserEntryModel(
+            dateFrom = ParserContract.find(),
+            dateTo = ParserContract.find(),
+        )
+        ChipKind.TIME -> ParserEntryModel(
+            timeFrom = ParserContract.find(),
+            timeTo = ParserContract.find(),
+        )
+        ChipKind.DURATION -> ParserEntryModel(
+            durationMinutes = ParserContract.find(),
+        )
         ChipKind.RRULE -> ParserEntryModel(rrule = ParserContract.find())
         ChipKind.GOAL -> ParserEntryModel()
         ChipKind.ALARM -> ParserEntryModel()
@@ -41,10 +48,11 @@ internal object ParserRequestFactory {
         return ParserEntryModel(
             kind = ParserContract.find(),
             title = if (ChipKind.TITLE in committed) ParserContract.skip() else ParserContract.find(),
-            dateFrom = if (ChipKind.DATE_FROM in committed) ParserContract.skip() else ParserContract.find(),
-            dateTo = if (ChipKind.DATE_TO in committed) ParserContract.skip() else ParserContract.find(),
-            timeFrom = if (ChipKind.TIME_FROM in committed) ParserContract.skip() else ParserContract.find(),
-            timeTo = if (ChipKind.TIME_END in committed) ParserContract.skip() else ParserContract.find(),
+            dateFrom = if (ChipKind.DATE in committed) ParserContract.skip() else ParserContract.find(),
+            dateTo = if (ChipKind.DATE in committed) ParserContract.skip() else ParserContract.find(),
+            timeFrom = if (ChipKind.TIME in committed) ParserContract.skip() else ParserContract.find(),
+            timeTo = if (ChipKind.TIME in committed) ParserContract.skip() else ParserContract.find(),
+            durationMinutes = if (ChipKind.DURATION in committed) ParserContract.skip() else ParserContract.find(),
             rrule = if (ChipKind.RRULE in committed) ParserContract.skip() else ParserContract.find(),
         )
     }
@@ -56,21 +64,27 @@ internal object ParserRequestFactory {
             if (draft.title.isNotBlank() && ChipKind.TITLE !in proposed && editing != ChipKind.TITLE) {
                 add(ChipKind.TITLE)
             }
-            if (draft.dateFrom != null && ChipKind.DATE_FROM !in proposed && editing != ChipKind.DATE_FROM) {
-                add(ChipKind.DATE_FROM)
+            if (hasDate(draft) && ChipKind.DATE !in proposed && editing != ChipKind.DATE) {
+                add(ChipKind.DATE)
             }
-            if (draft.dateTo != null && ChipKind.DATE_TO !in proposed && editing != ChipKind.DATE_TO) {
-                add(ChipKind.DATE_TO)
+            if (hasTime(draft) && ChipKind.TIME !in proposed && editing != ChipKind.TIME) {
+                add(ChipKind.TIME)
             }
-            if (draft.timeFrom != null && ChipKind.TIME_FROM !in proposed && editing != ChipKind.TIME_FROM) {
-                add(ChipKind.TIME_FROM)
-            }
-            if (draft.timeEnd != null && ChipKind.TIME_END !in proposed && editing != ChipKind.TIME_END) {
-                add(ChipKind.TIME_END)
+            if (hasDuration(draft) && ChipKind.DURATION !in proposed && editing != ChipKind.DURATION) {
+                add(ChipKind.DURATION)
             }
             if (!draft.rrule.isNullOrBlank() && ChipKind.RRULE !in proposed && editing != ChipKind.RRULE) {
                 add(ChipKind.RRULE)
             }
         }
     }
+
+    private fun hasDate(draft: DraftModel): Boolean =
+        draft.dateFrom != null || draft.dateTo != null
+
+    private fun hasTime(draft: DraftModel): Boolean =
+        draft.timeFrom != null || draft.timeEnd != null
+
+    private fun hasDuration(draft: DraftModel): Boolean =
+        draft.durationMinutes != null
 }

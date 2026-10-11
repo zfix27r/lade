@@ -24,7 +24,7 @@ import app.lade.agendastore.log.LogEntity
 		GoalEntity::class,
 		LogEntity::class,
 	],
-	version = 14,
+	version = 15,
 	exportSchema = false,
 )
 abstract class LadeDatabase : RoomDatabase() {

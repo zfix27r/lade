@@ -1,7 +1,7 @@
 package app.lade.draft.internal.di
 
-import app.lade.draft.internal.chat.chip.ChipControlPort
-import app.lade.draft.internal.chat.chip.ChipOutPort
+import app.lade.draft.internal.chat.chip.ChipInsidePort
+import app.lade.draft.internal.chat.chip.ChipOutsidePort
 import app.lade.draft.internal.chat.chip.ChipPortImpl
 import dagger.Binds
 import dagger.Module
@@ -15,9 +15,9 @@ internal abstract class ChipModule {
 
     @Binds
     @Singleton
-    abstract fun bindChipOutPort(impl: ChipPortImpl): ChipOutPort
+    abstract fun bindChipOutPort(impl: ChipPortImpl): ChipOutsidePort
 
     @Binds
     @Singleton
-    abstract fun bindChipControlPort(impl: ChipPortImpl): ChipControlPort
+    abstract fun bindChipControlPort(impl: ChipPortImpl): ChipInsidePort
 }

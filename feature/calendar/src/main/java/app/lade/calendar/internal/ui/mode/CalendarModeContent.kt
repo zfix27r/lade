@@ -2,16 +2,14 @@ package app.lade.calendar.internal.ui.mode
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
+import app.lade.calendar.internal.data.MarkedDatesStore
 import app.lade.calendar.internal.domain.CalendarStateModel
 import app.lade.calendar.internal.domain.mode.CalendarMode
 import app.lade.calendar.internal.domain.mode.CalendarModeActions
 import app.lade.calendar.internal.list.ListLayout
-import app.lade.calendar.internal.list.strip.data.StripState
-import app.lade.calendar.internal.list.strip.data.StripStateHolder
 import app.lade.calendar.internal.swipe.CalendarDateSwipe
 import app.lade.calendar.internal.swipe.CalendarSwipeAxis
 import app.lade.calendar.internal.timeline.TimelineLayout
@@ -23,9 +21,7 @@ import java.time.YearMonth
 @Composable
 internal fun CalendarModeContent(
     state: CalendarStateModel,
-    stripState: StripState,
-    strip: StripStateHolder,
-    offsetXState: State<Float>,
+    markedDatesStore: MarkedDatesStore,
     actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
@@ -33,14 +29,15 @@ internal fun CalendarModeContent(
     when (state.mode) {
         CalendarMode.LIST -> ListLayout(
             state = state,
-            stripState = stripState,
-            strip = strip,
-            offsetXState = offsetXState,
+            markedDatesStore = markedDatesStore,
             onDateSelected = actions.onDateSelected,
             onOpenAgenda = actions.onOpenAgenda,
             onEntryLongPress = actions.onEntryLongPress,
-            onToggleDone = actions.onToggleDone,
             onGoalToggle = actions.onGoalToggle,
+            onGoalValueChange = actions.onGoalValueChange,
+            onLoadGoalDetails = actions.onLoadGoalDetails,
+            onStartTimer = actions.onStartTimer,
+            onFinishTimer = actions.onFinishTimer,
             config = config,
             modifier = modifier.fillMaxSize(),
         )

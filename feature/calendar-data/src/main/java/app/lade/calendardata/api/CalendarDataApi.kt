@@ -9,8 +9,34 @@ interface CalendarDataApi {
     fun observeMarkedDates(from: LocalDate, to: LocalDate): Flow<Map<LocalDate, DayProgress>>
     suspend fun get(entryId: Long, date: LocalDate): CalendarCardModel?
 
+    suspend fun getGoalDetails(
+        entryId: Long,
+        date: LocalDate,
+    ): List<CalendarGoalExpandedModel>
+
+    suspend fun getTimerHistory(
+        entryId: Long,
+        date: LocalDate,
+    ): List<CalendarTimerHistoryItem>
+
     suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long)
     suspend fun toggleAllGoals(entryId: Long, date: LocalDate)
     suspend fun skipAllGoals(entryId: Long, date: LocalDate)
+
+    suspend fun setGoalAmount(
+        entryId: Long,
+        date: LocalDate,
+        goalId: Long,
+        actualAmount: Int,
+    )
+
     suspend fun markEventVisited(entryId: Long, date: LocalDate, visited: Boolean)
+
+    suspend fun startTimer(entryId: Long, date: LocalDate, startedAtMs: Long)
+    suspend fun finishTimer(
+        entryId: Long,
+        date: LocalDate,
+        endedAtMs: Long,
+        actualMinutes: Int,
+    )
 }
