@@ -6,19 +6,17 @@ import androidx.lifecycle.viewModelScope
 import app.lade.calendar.api.config.DefaultTimelineWindowConfig
 import app.lade.calendar.api.config.TimelineWindowConfig
 import app.lade.calendar.internal.data.MarkedDatesStore
-import app.lade.calendar.internal.data.buildTimelineDays
 import app.lade.calendar.internal.data.calendarRange
 import app.lade.calendar.internal.data.shiftCalendarDate
 import app.lade.calendar.internal.data.timelineWindow
-import app.lade.calendar.internal.domain.CalendarDateMode
-import app.lade.calendar.internal.domain.CalendarStateModel
-import app.lade.calendar.internal.domain.CalendarUiEvent
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarDateMode
+import app.lade.calendar.internal.main.CalendarMode
+import app.lade.calendar.internal.main.CalendarStateModel
+import app.lade.calendar.internal.main.CalendarUiEvent
 import app.lade.calendardata.api.CalendarDataApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,7 +32,6 @@ import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -53,10 +50,12 @@ internal class CalendarViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         CalendarStateModel(
-            currentDate = initialDate,
             mode = savedStateHandle.get<String>(keyMode)
                 ?.let { runCatching { CalendarMode.valueOf(it) }.getOrNull() }
                 ?: CalendarMode.LIST,
+            currentDate = initialDate,
+            days = emptyList(),
+            marks = emptyMap(),
         )
     )
     val state: StateFlow<CalendarStateModel> = _state.asStateFlow()
@@ -66,7 +65,7 @@ internal class CalendarViewModel @Inject constructor(
 
     private val weekFields: WeekFields = WeekFields.of(Locale.getDefault())
 
-    private var entriesJob: Job? = null
+    private var daysJob: Job? = null
     private var timelineJob: Job? = null
 
     private var timelineWindow = timelineWindow(_state.value.currentDate, timelineConfig)
@@ -110,7 +109,6 @@ internal class CalendarViewModel @Inject constructor(
 
     fun onSwipe(direction: CalendarDateMode, isMonth: Boolean) {
         if (_state.value.mode == CalendarMode.LIST) return
-
         val delta = when (direction) {
             CalendarDateMode.FORWARD -> 1L
             CalendarDateMode.BACKWARD -> -1L
@@ -145,85 +143,12 @@ internal class CalendarViewModel @Inject constructor(
         _events.tryEmit(CalendarUiEvent.Error("Not implemented"))
     }
 
-    fun loadGoalDetails(entryId: Long, date: LocalDate) {
-        val key = expandableKey(entryId, date)
-        if (_state.value.goalDetailsCache.containsKey(key)) return
-        viewModelScope.launch {
-            runCatching {
-                calendarData.getGoalDetails(entryId, date)
-            }.onSuccess { details ->
-                _state.update {
-                    it.copy(goalDetailsCache = it.goalDetailsCache + (key to details))
-                }
-            }.onFailure {
-                _events.tryEmit(CalendarUiEvent.Error("Failed to load goal details"))
-            }
-        }
-    }
-
     fun setGoalAmount(entryId: Long, date: LocalDate, goalId: Long, amount: Int) {
         viewModelScope.launch {
-            runCatching {
-                calendarData.setGoalAmount(entryId, date, goalId, amount)
-            }.onSuccess {
-                val key = expandableKey(entryId, date)
-                _state.update { state ->
-                    val cached = state.goalDetailsCache[key] ?: return@update state
-                    val updated = cached.map { goal ->
-                        if (goal.id == goalId) {
-                            goal.copy(
-                                actualAmount = amount,
-                                isDone = goal.plannedAmount?.let { amount >= it } ?: goal.isDone,
-                            )
-                        } else {
-                            goal
-                        }
-                    }
-                    state.copy(goalDetailsCache = state.goalDetailsCache + (key to updated))
+            runCatching { calendarData.setGoalAmount(entryId, date, goalId, amount) }
+                .onFailure {
+                    _events.tryEmit(CalendarUiEvent.Error("Failed to set goal amount"))
                 }
-            }.onFailure {
-                _events.tryEmit(CalendarUiEvent.Error("Failed to set goal amount"))
-            }
-        }
-    }
-
-    private var saveGoalJob: Job? = null
-
-    fun setGoalValue(
-        entryId: Long,
-        date: LocalDate,
-        goalId: Long,
-        value: Int,
-    ) {
-        val key = expandableKey(entryId, date)
-        val cached = _state.value.goalDetailsCache[key]
-        val goal = cached?.firstOrNull { it.id == goalId } ?: return
-        val planned = goal.plannedAmount ?: return
-        val clamped = value.coerceIn(0, planned)
-
-        _state.update { state ->
-            val list = state.goalDetailsCache[key] ?: return@update state
-            val updated = list.map { g ->
-                if (g.id == goalId) {
-                    g.copy(
-                        actualAmount = clamped,
-                        isDone = clamped >= planned,
-                    )
-                } else {
-                    g
-                }
-            }
-            state.copy(goalDetailsCache = state.goalDetailsCache + (key to updated))
-        }
-
-        saveGoalJob?.cancel()
-        saveGoalJob = viewModelScope.launch {
-            delay(SAVE_GOAL_DEBOUNCE_MS.milliseconds)
-            runCatching {
-                calendarData.setGoalAmount(entryId, date, goalId, clamped)
-            }.onFailure {
-                _events.tryEmit(CalendarUiEvent.Error("Failed to save goal"))
-            }
         }
     }
 
@@ -252,13 +177,6 @@ internal class CalendarViewModel @Inject constructor(
         }
     }
 
-    private companion object {
-        const val SAVE_GOAL_DEBOUNCE_MS = 400L
-    }
-
-    private fun expandableKey(entryId: Long, date: LocalDate): String =
-        "expandable-$entryId-${date.toEpochDay()}"
-
     private fun observeModeAndDate() {
         viewModelScope.launch {
             _state
@@ -271,7 +189,7 @@ internal class CalendarViewModel @Inject constructor(
                             observeTimeline()
                         }
 
-                        else -> observeEntries(date, mode)
+                        else -> observeDays(date, mode)
                     }
                 }
         }
@@ -292,8 +210,8 @@ internal class CalendarViewModel @Inject constructor(
                 }
         }
         viewModelScope.launch {
-            markedDatesStore.marked.collect { dates ->
-                _state.update { it.copy(markedDates = dates) }
+            markedDatesStore.marked.collect { marks ->
+                _state.update { it.copy(marks = marks) }
             }
         }
     }
@@ -302,69 +220,29 @@ internal class CalendarViewModel @Inject constructor(
         val s = _state.value
         when (s.mode) {
             CalendarMode.TIMELINE -> observeTimeline()
-            else -> observeEntries(s.currentDate, s.mode)
+            else -> observeDays(s.currentDate, s.mode)
         }
     }
 
-    private fun observeEntries(date: LocalDate, mode: CalendarMode) {
-        entriesJob?.cancel()
-        entriesJob = viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            try {
-                val flow = when (mode) {
-                    CalendarMode.LIST -> calendarData.observeList(date)
-                    CalendarMode.TIMELINE -> return@launch
-                    else -> {
-                        val range = calendarRange(date, mode, weekFields) ?: return@launch
-                        calendarData.observeRange(range.start, range.endInclusive)
-                    }
-                }
-                flow
-                    .catch { t ->
-                        _state.update {
-                            it.copy(isLoading = false, error = t.message ?: "Load error")
-                        }
-                    }
-                    .collect { cards ->
-                        _state.update { it.copy(entries = cards, isLoading = false) }
-                    }
-            } catch (t: Throwable) {
-                _state.update {
-                    it.copy(isLoading = false, error = t.message ?: "Load error")
-                }
-            }
+    private fun observeDays(date: LocalDate, mode: CalendarMode) {
+        daysJob?.cancel()
+        daysJob = viewModelScope.launch {
+            val range = calendarRange(date, mode, weekFields) ?: return@launch
+            calendarData.observeRangeDays(range.start, range.endInclusive)
+                .catch { t -> _events.tryEmit(CalendarUiEvent.Error(t.message ?: "Load error")) }
+                .collect { days -> _state.update { it.copy(days = days) } }
         }
     }
 
     private fun observeTimeline() {
         timelineJob?.cancel()
         timelineJob = viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
             val window = timelineWindow
-            try {
-                calendarData.observeRange(window.start, window.end)
-                    .catch { t ->
-                        _state.update {
-                            it.copy(isLoading = false, error = t.message ?: "Load error")
-                        }
-                    }
-                    .collect { cards ->
-                        _state.update {
-                            it.copy(
-                                timelineDays = buildTimelineDays(
-                                    start = window.start,
-                                    end = window.end,
-                                    cards = cards,
-                                ),
-                                isLoading = false,
-                            )
-                        }
-                    }
-            } catch (t: Throwable) {
-                _state.update {
-                    it.copy(isLoading = false, error = t.message ?: "Load error")
+            calendarData.observeRangeDays(window.start, window.end)
+                .catch { t ->
+                    _events.tryEmit(CalendarUiEvent.Error(t.message ?: "Load error"))
                 }
-            }
+                .collect { days -> _state.update { it.copy(days = days) } }
         }
     }
 

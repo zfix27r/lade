@@ -1,19 +1,18 @@
 package app.lade.calendar.internal.appbar.data
 
 import app.lade.calendar.internal.data.buildTimelineDays
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.entry.EntryKind
 import junit.framework.TestCase
 import org.junit.Test
 import java.time.LocalDate
-import kotlin.collections.get
 
 class TimelineDaysTest {
 
     private fun card(
         date: LocalDate,
         id: Long = date.toEpochDay(),
-    ): CalendarCardModel = CalendarCardModel(
+    ): CalendarDataAgendaModel = CalendarDataAgendaModel(
         date = date,
         entryId = id,
         entryKind = EntryKind.NOTE,

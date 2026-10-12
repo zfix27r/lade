@@ -1,14 +1,14 @@
 package app.lade.calendar
 
 import app.lade.calendar.internal.list.data.ListGoalsVisibility
-import app.lade.calendardata.api.CalendarGoalModel
+import app.lade.calendardata.api.agenda.CalendarDataGoalModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class ListGoalsVisibilityTest {
 
-    private fun goal(id: Long): CalendarGoalModel = CalendarGoalModel(
+    private fun goal(id: Long): CalendarDataGoalModel = CalendarDataGoalModel(
         id = id,
         title = "g$id",
         description = "",
@@ -17,7 +17,7 @@ class ListGoalsVisibilityTest {
         plannedAmount = null,
     )
 
-    private fun goals(count: Int): List<CalendarGoalModel> =
+    private fun goals(count: Int): List<CalendarDataGoalModel> =
         (1..count).map { goal(it.toLong()) }
 
     @Test

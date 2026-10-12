@@ -6,22 +6,20 @@ import app.lade.agendastore.goal.GoalDao
 import app.lade.agendastore.goal.GoalEntity
 import app.lade.agendastore.log.LogDao
 import app.lade.agendastore.log.LogEntity
-import app.lade.calendardata.api.CalendarCardModel
 import app.lade.calendardata.api.CalendarDataApi
-import app.lade.calendardata.api.CalendarGoalExpandedModel
-import app.lade.calendardata.api.CalendarGoalModel
-import app.lade.calendardata.api.CalendarTimerHistoryItem
-import app.lade.calendardata.api.CalendarTimerModel
-import app.lade.calendardata.api.DayProgress
-import app.lade.calendardata.internal.mapper.isAlarm
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.agenda.CalendarDataEntryModel
+import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.agenda.CalendarDataGoalsModel
+import app.lade.calendardata.api.agenda.CalendarDataTimerModel
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import app.lade.calendardata.internal.mapper.isDone
-import app.lade.calendardata.internal.mapper.isSeries
 import app.lade.calendardata.internal.mapper.toEntryKind
 import app.lade.calendardata.internal.mapper.toLocalTimeFrom
 import app.lade.calendardata.internal.mapper.toLocalTimeTo
 import app.lade.entry.EntryKind
 import app.lade.goal.GoalUnit
-import app.lade.humanize.api.Humanize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
@@ -34,42 +32,12 @@ internal class CalendarDataApiImpl @Inject constructor(
     private val goalDao: GoalDao,
     private val logDao: LogDao,
     private val projector: CalendarDayProjector,
-    private val humanize: Humanize,
 ) : CalendarDataApi {
 
-    override fun observeList(date: LocalDate): Flow<List<CalendarCardModel>> {
-        val epochDay = date.toEpochDay()
-        return combine(
-            entryDao.observeActive(),
-            goalDao.observeAll(),
-            logDao.observeByDay(epochDay),
-        ) { entries, goals, logs ->
-            buildCards(date, entries, goals, logs)
-        }
-    }
-
-    override fun observeRange(from: LocalDate, to: LocalDate): Flow<List<CalendarCardModel>> {
-        val fromEpoch = from.toEpochDay()
-        val toEpoch = to.toEpochDay()
-        return combine(
-            entryDao.observeActive(),
-            goalDao.observeAll(),
-            logDao.observeBetween(fromEpoch, toEpoch),
-        ) { entries, goals, logs ->
-            val result = mutableListOf<CalendarCardModel>()
-            var date = from
-            while (!date.isAfter(to)) {
-                result += buildCards(date, entries, goals, logs)
-                date = date.plusDays(1)
-            }
-            result
-        }
-    }
-
-    override fun observeMarkedDates(
+    override fun observeRangeDays(
         from: LocalDate,
         to: LocalDate,
-    ): Flow<Map<LocalDate, DayProgress>> {
+    ): Flow<List<CalendarDataDayModel>> {
         val fromEpoch = from.toEpochDay()
         val toEpoch = to.toEpochDay()
         return combine(
@@ -79,16 +47,48 @@ internal class CalendarDataApiImpl @Inject constructor(
         ) { entries, goals, logs ->
             val goalsByEntry = goals.groupBy { it.entryId }
             val logsByEntry = logs.groupBy { it.entryId }
-            val result = mutableMapOf<LocalDate, DayProgress>()
+            val result = mutableListOf<CalendarDataDayModel>()
+            var date = from
+            while (!date.isAfter(to)) {
+                val epochDay = date.toEpochDay()
+                val agendas = entries.mapNotNull { entry ->
+                    if (!projector.appliesTo(entry, date)) return@mapNotNull null
+                    buildAgenda(
+                        entry = entry,
+                        goals = goalsByEntry[entry.id].orEmpty(),
+                        logs = logsByEntry[entry.id].orEmpty()
+                            .filter { it.epochDay == epochDay },
+                        date = date,
+                    )
+                }
+                result += CalendarDataDayModel(date = date, agendas = agendas)
+                date = date.plusDays(1)
+            }
+            result
+        }
+    }
+
+    override fun observeMarkedDates(
+        from: LocalDate,
+        to: LocalDate,
+    ): Flow<Map<LocalDate, CalendarDataMarkModel>> {
+        val fromEpoch = from.toEpochDay()
+        val toEpoch = to.toEpochDay()
+        return combine(
+            entryDao.observeActive(),
+            goalDao.observeAll(),
+            logDao.observeBetween(fromEpoch, toEpoch),
+        ) { entries, goals, logs ->
+            val goalsByEntry = goals.groupBy { it.entryId }
+            val logsByEntry = logs.groupBy { it.entryId }
+            val result = mutableMapOf<LocalDate, CalendarDataMarkModel>()
             var date = from
             while (!date.isAfter(to)) {
                 val epochDay = date.toEpochDay()
                 var total = 0
                 var done = 0
-                var hasEntry = false
                 entries.forEach { entry ->
                     if (!projector.appliesTo(entry, date)) return@forEach
-                    hasEntry = true
                     val entryGoals = goalsByEntry[entry.id].orEmpty()
                     if (entryGoals.isEmpty()) return@forEach
                     val entryLogs = logsByEntry[entry.id].orEmpty()
@@ -100,51 +100,23 @@ internal class CalendarDataApiImpl @Inject constructor(
                         if (goal.isDone(logsByGoal[goal.id])) done++
                     }
                 }
-                if (hasEntry) {
-                    result[date] = DayProgress(total = total, done = done)
-                }
+                result[date] = CalendarDataMarkModel(total = total, done = done)
                 date = date.plusDays(1)
             }
             result
         }
     }
 
-    override suspend fun get(entryId: Long, date: LocalDate): CalendarCardModel? {
-        val entry = entryDao.getById(entryId) ?: return null
-        if (!projector.appliesTo(entry, date)) return null
-        val goals = goalDao.getByEntryId(entryId)
-        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
-        return buildCard(date, entry, goals, logs)
-    }
-
     override suspend fun getGoalDetails(
         entryId: Long,
         date: LocalDate,
-    ): List<CalendarGoalExpandedModel> {
+    ): List<CalendarDataGoalModel> {
         val entry = entryDao.getById(entryId) ?: return emptyList()
         if (!projector.appliesTo(entry, date)) return emptyList()
         val goals = goalDao.getByEntryId(entryId)
         val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
         val logsByGoal = logs.filter { it.goalId != null }.associateBy { it.goalId }
-        return goals.map { goal ->
-            val log = logsByGoal[goal.id]
-            CalendarGoalExpandedModel(
-                id = goal.id,
-                title = goal.title,
-                description = humanize.goalDetails(
-                    unit = GoalUnit.fromStorage(goal.unit),
-                    amount = goal.amount,
-                    repeat = goal.repeat,
-                    weight = goal.weight,
-                ).best,
-                isDone = goal.isDone(log),
-                actualAmount = log?.actualAmount,
-                plannedAmount = goal.amount,
-                unit = GoalUnit.fromStorage(goal.unit),
-                repeat = goal.repeat,
-                weight = goal.weight,
-            )
-        }
+        return goals.map { goal -> goal.toModel(logsByGoal[goal.id]) }
     }
 
     override suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long) {
@@ -176,10 +148,7 @@ internal class CalendarDataApiImpl @Inject constructor(
         if (goals.isEmpty()) return
         val existing = logDao.getByEntryAndDay(entryId, date.toEpochDay())
         val logsByGoal = existing.filter { it.goalId != null }.associateBy { it.goalId }
-        val allDone = goals.all { goal ->
-            val log = logsByGoal[goal.id]
-            goal.isDone(log)
-        }
+        val allDone = goals.all { goal -> goal.isDone(logsByGoal[goal.id]) }
         val logs = goals.map { goal ->
             LogEntity(
                 entryId = entryId,
@@ -252,19 +221,6 @@ internal class CalendarDataApiImpl @Inject constructor(
         logDao.insertAll(listOf(log))
     }
 
-    override suspend fun markEventVisited(entryId: Long, date: LocalDate, visited: Boolean) {
-        val log = LogEntity(
-            entryId = entryId,
-            epochDay = date.toEpochDay(),
-            goalId = null,
-            actualAmount = if (visited) 1 else 0,
-            origin = "calendar",
-            createdAtEpochMs = System.currentTimeMillis(),
-        )
-        logDao.deleteByEntryAndDay(entryId, date.toEpochDay())
-        logDao.insertAll(listOf(log))
-    }
-
     override suspend fun startTimer(entryId: Long, date: LocalDate, startedAtMs: Long) {
         val entry = entryDao.getById(entryId) ?: return
         val log = LogEntity(
@@ -292,85 +248,61 @@ internal class CalendarDataApiImpl @Inject constructor(
             .filter { it.goalId == null && it.origin == "timer" && it.actualAmount == null }
             .maxByOrNull { it.createdAtEpochMs }
             ?: return
-
         logDao.insertAll(
             listOf(lastTimer.copy(actualAmount = actualMinutes.coerceAtLeast(0)))
         )
     }
 
-    private fun buildCards(
-        date: LocalDate,
-        entries: List<EntryEntity>,
-        goals: List<GoalEntity>,
-        logs: List<LogEntity>,
-    ): List<CalendarCardModel> {
-        val epochDay = date.toEpochDay()
-        val goalsByEntry = goals.groupBy { it.entryId }
-        val logsByEntry = logs.filter { it.epochDay == epochDay }.groupBy { it.entryId }
-        return entries.mapNotNull { entry ->
-            if (!projector.appliesTo(entry, date)) return@mapNotNull null
-            buildCard(
-                date = date,
-                entry = entry,
-                goals = goalsByEntry[entry.id].orEmpty(),
-                logs = logsByEntry[entry.id].orEmpty(),
-            )
-        }
-    }
-
-    private fun buildCard(
-        date: LocalDate,
+    private fun buildAgenda(
         entry: EntryEntity,
         goals: List<GoalEntity>,
         logs: List<LogEntity>,
-    ): CalendarCardModel? {
+        date: LocalDate,
+    ): CalendarDataAgendaModel? {
         val kind = entry.toEntryKind() ?: return null
         val logsByGoal = logs.filter { it.goalId != null }.associateBy { it.goalId }
-        val isVisited = logs.any { it.goalId == null && (it.actualAmount ?: 0) > 0 }
-        val cardGoals = goals.map { goal ->
-            val log = logsByGoal[goal.id]
-            CalendarGoalModel(
-                id = goal.id,
-                title = goal.title,
-                description = humanize.goalDetails(
-                    unit = GoalUnit.fromStorage(goal.unit),
-                    amount = goal.amount,
-                    repeat = goal.repeat,
-                    weight = goal.weight,
-                ).best,
-                isDone = goal.isDone(log),
-                actualAmount = log?.actualAmount,
-                plannedAmount = goal.amount,
-            )
-        }
-
+        val cardGoals = goals.map { goal -> goal.toModel(logsByGoal[goal.id]) }
         val daysLeft = entry.dateToEpochDay
             ?.let { it - date.toEpochDay() }
             ?.takeIf { it >= 0 }
             ?.toInt()
 
-        return CalendarCardModel(
-            date = date,
-            entryId = entry.id,
-            entryKind = kind,
-            title = entry.title,
-            timeFrom = entry.toLocalTimeFrom(),
-            timeTo = entry.toLocalTimeTo(),
-            isSeries = entry.isSeries(),
-            isAlarm = entry.isAlarm(),
-            isVisited = isVisited,
-            goals = cardGoals,
-            goalsDone = cardGoals.count { it.isDone },
-            goalsTotal = cardGoals.size,
-            daysLeft = daysLeft,
+        return CalendarDataAgendaModel(
+            entry = CalendarDataEntryModel(
+                id = entry.id,
+                kind = kind,
+                title = entry.title,
+                timeFrom = entry.toLocalTimeFrom(),
+                timeTo = entry.toLocalTimeTo(),
+            ),
+            goals = if (cardGoals.isEmpty()) null else CalendarDataGoalsModel(
+                goals = cardGoals,
+                goalsDone = cardGoals.count { it.isDone },
+                goalsTotal = cardGoals.size,
+                isAllDone = cardGoals.isNotEmpty() && cardGoals.all { it.isDone },
+            ),
             timer = buildTimer(entry, logs),
+            notifications = null,
+            daysLeft = daysLeft,
         )
     }
+
+    private fun GoalEntity.toModel(log: LogEntity?): CalendarDataGoalModel =
+        CalendarDataGoalModel(
+            id = id,
+            title = title,
+            isDone = isDone(log),
+            actualAmount = log?.actualAmount,
+            plannedAmount = amount,
+            unit = GoalUnit.fromStorage(unit),
+            repeat = repeat,
+            weight = weight,
+        )
 
     private fun buildTimer(
         entry: EntryEntity,
         logs: List<LogEntity>,
-    ): CalendarTimerModel? {
+    ): CalendarDataTimerModel? {
         if (entry.kind != EntryKind.HABIT.storage) return null
         val duration = entry.durationMinutes ?: return null
         val startMinutes = entry.startTimeMinutes ?: return null
@@ -378,45 +310,12 @@ internal class CalendarDataApiImpl @Inject constructor(
         val lastTimer = logs
             .filter { it.goalId == null && it.origin == "timer" }
             .maxByOrNull { it.createdAtEpochMs }
-            ?: return CalendarTimerModel(
-                plannedStartMinutes = startMinutes,
-                durationMinutes = duration,
-                startedAtMs = null,
-                actualMinutes = null,
-            )
 
-        val startedAt = lastTimer.timerStartedAtMs
-        val actual = lastTimer.actualAmount
-
-        return CalendarTimerModel(
+        return CalendarDataTimerModel(
             plannedStartMinutes = startMinutes,
             durationMinutes = duration,
-            startedAtMs = startedAt,
-            actualMinutes = actual,
+            startedAtMs = lastTimer?.timerStartedAtMs,
+            actualMinutes = lastTimer?.actualAmount,
         )
-    }
-
-    override suspend fun getTimerHistory(
-        entryId: Long,
-        date: LocalDate,
-    ): List<CalendarTimerHistoryItem> {
-        val entry = entryDao.getById(entryId) ?: return emptyList()
-        val planned = entry.durationMinutes ?: return emptyList()
-
-        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
-            .filter { it.goalId == null && it.origin == "timer" && it.timerStartedAtMs != null }
-            .sortedByDescending { it.createdAtEpochMs }
-
-        return logs.map { log ->
-            val actual = log.actualAmount
-            val started = log.timerStartedAtMs!!
-            CalendarTimerHistoryItem(
-                id = log.id,
-                startedAtMs = started,
-                finishedAtMs = actual?.let { started + it * 60_000L },
-                actualMinutes = actual,
-                plannedMinutes = log.plannedAmount ?: planned,
-            )
-        }
     }
 }

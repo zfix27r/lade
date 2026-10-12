@@ -15,17 +15,17 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
-import app.lade.calendar.internal.domain.CalendarStateModel
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendar.internal.main.CalendarStateModel
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineLayout(
     state: CalendarStateModel,
-    onOpenAgenda: (CalendarCardModel) -> Unit,
-    onToggleDone: (Long, LocalDate) -> Unit,
+    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
-    onEntryLongPress: (CalendarCardModel) -> Unit,
+    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
     onTimelineScroll: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
@@ -33,10 +33,10 @@ internal fun TimelineLayout(
     val listState = rememberLazyListState()
     val today = remember { LocalDate.now() }
 
-    LaunchedEffect(listState, state.timelineDays) {
+    LaunchedEffect(listState, state.days) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                val day = state.timelineDays.getOrNull(index) ?: return@collect
+                val day = state.days.getOrNull(index) ?: return@collect
                 onTimelineScroll(day.date)
             }
     }
@@ -49,20 +49,21 @@ internal fun TimelineLayout(
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(
-                bottom = config.timelineLayout.bottomPaddingForInputBar + config.timelineLayout.contentBottomPadding,
+                bottom = config.timelineLayout.bottomPaddingForInputBar +
+                        config.timelineLayout.contentBottomPadding,
             ),
             modifier = Modifier.fillMaxSize(),
         ) {
             items(
-                items = state.timelineDays,
+                items = state.days,
                 key = { "day-${it.date.toEpochDay()}" },
             ) { day ->
                 TimelineDayRow(
                     day = day,
                     isToday = day.date == today,
                     onOpenAgenda = onOpenAgenda,
-                    onToggleDone = onToggleDone,
                     onGoalToggle = onGoalToggle,
+                    onGoalValueChange = onGoalValueChange,
                     onEntryLongPress = onEntryLongPress,
                     config = config,
                 )

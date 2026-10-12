@@ -1,6 +1,6 @@
 package app.lade.calendar.internal.appbar.data
 
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarMode
 import app.lade.resources.R
 
 internal fun CalendarMode.labelRes() = when (this) {

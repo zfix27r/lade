@@ -1,6 +1,6 @@
 package app.lade.calendar.internal.data
 
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarMode
 import java.time.LocalDate
 
 internal fun shiftCalendarDate(

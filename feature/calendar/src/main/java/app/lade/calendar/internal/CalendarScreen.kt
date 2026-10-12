@@ -29,12 +29,11 @@ import app.lade.agendaui.internal.AgendaDetailScreen
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.appbar.AppBarView
-import app.lade.calendar.internal.domain.CalendarUiEvent
-import app.lade.calendar.internal.domain.mode.CalendarMode
-import app.lade.calendar.internal.domain.mode.CalendarModeActions
-import app.lade.calendar.internal.ui.EntryActionsSheet
-import app.lade.calendar.internal.ui.mode.CalendarModeContent
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendar.internal.main.CalendarMode
+import app.lade.calendar.internal.main.CalendarModeActions
+import app.lade.calendar.internal.main.CalendarModeContent
+import app.lade.calendar.internal.main.CalendarUiEvent
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.draft.api.DraftApi
 import app.lade.draft.api.DraftHost
 import app.lade.draft.api.DraftPhase
@@ -44,6 +43,7 @@ import app.lade.ui.share.shareBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,8 +55,8 @@ internal fun CalendarScreen(
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var selectedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
-    var openedEntry by remember { mutableStateOf<CalendarCardModel?>(null) }
+    var selectedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
+    var openedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
     val view = LocalView.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -81,12 +81,11 @@ internal fun CalendarScreen(
             onSwipe = viewModel::onSwipe,
             onDateSelected = viewModel::onDateSelected,
             onEditEntry = { entryId -> draftApi.open(entryId) },
-            onOpenAgenda = { card -> openedEntry = card },
-            onEntryLongPress = { card -> selectedEntry = card },
+            onOpenAgenda = { date, agenda -> openedEntry = date to agenda },
+            onEntryLongPress = { date, agenda -> selectedEntry = date to agenda },
             onToggleDone = viewModel::toggleDone,
             onGoalToggle = viewModel::toggleGoal,
-            onGoalValueChange = viewModel::setGoalValue,
-            onLoadGoalDetails = viewModel::loadGoalDetails,
+            onGoalValueChange = viewModel::setGoalAmount,
             onStartTimer = viewModel::startTimer,
             onFinishTimer = viewModel::finishTimer,
             onOpenDay = { date ->
@@ -107,17 +106,18 @@ internal fun CalendarScreen(
         ScrimHost(isVisible = selectedEntry != null || draftIsEditing) {
             val opened = openedEntry
             if (opened != null) {
+                val (date, agenda) = opened
                 AgendaDetailScreen(
-                    entryId = opened.entryId,
-                    date = opened.date,
+                    entryId = agenda.entry.id,
+                    date = date,
                     onBack = { openedEntry = null },
                     onEdit = {
                         openedEntry = null
-                        draftApi.open(opened.entryId)
+                        draftApi.open(agenda.entry.id)
                     },
                     onDelete = {
                         openedEntry = null
-                        viewModel.archiveEntry(opened.entryId)
+                        viewModel.archiveEntry(agenda.entry.id)
                     },
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -159,22 +159,22 @@ internal fun CalendarScreen(
             }
         }
 
-        selectedEntry?.let { card ->
-            key(card.entryId) {
+        selectedEntry?.let { (_, agenda) ->
+            key(agenda.entry.id) {
                 ModalBottomSheet(
                     onDismissRequest = { selectedEntry = null },
                     sheetState = sheetState,
                     scrimColor = Color.Transparent,
                 ) {
                     EntryActionsSheet(
-                        title = card.title,
+                        title = agenda.entry.title,
                         onEdit = {
                             selectedEntry = null
-                            draftApi.open(card.entryId)
+                            draftApi.open(agenda.entry.id)
                         },
                         onDelete = {
                             selectedEntry = null
-                            viewModel.archiveEntry(card.entryId)
+                            viewModel.archiveEntry(agenda.entry.id)
                         },
                     )
                 }

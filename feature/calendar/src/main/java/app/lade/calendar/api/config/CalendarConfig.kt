@@ -7,6 +7,7 @@ data class CalendarConfig(
     val timelineWindow: TimelineWindowConfig = DefaultTimelineWindowConfig,
     val timelineLayout: TimelineLayoutConfig = DefaultTimelineLayoutConfig,
     val timer: TimerConfig = DefaultTimerConfig,
+    val card: CalendarCardConfig = DefaultCalendarCardConfig,
 )
 
 val DefaultCalendarConfig = CalendarConfig()

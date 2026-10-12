@@ -1,7 +1,7 @@
 package app.lade.calendar.internal.data
 
 import app.lade.calendardata.api.CalendarDataApi
-import app.lade.calendardata.api.DayProgress
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,8 +22,8 @@ class MarkedDatesStore @Inject constructor(
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val _marked = MutableStateFlow<Map<LocalDate, DayProgress>>(emptyMap())
-    val marked: StateFlow<Map<LocalDate, DayProgress>> = _marked.asStateFlow()
+    private val _marked = MutableStateFlow<Map<LocalDate, CalendarDataMarkModel>>(emptyMap())
+    val marked: StateFlow<Map<LocalDate, CalendarDataMarkModel>> = _marked.asStateFlow()
 
     private var loadedRange: MarkedRange? = null
     private var initialJob: Job? = null

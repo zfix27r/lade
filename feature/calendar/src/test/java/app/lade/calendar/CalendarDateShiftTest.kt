@@ -1,7 +1,7 @@
 package app.lade.calendar
 
 import app.lade.calendar.internal.data.shiftCalendarDate
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarMode
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.time.LocalDate

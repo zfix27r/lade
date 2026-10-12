@@ -1,14 +1,14 @@
 package app.lade.calendar.internal.list.data
 
-import app.lade.calendardata.api.CalendarGoalModel
+import app.lade.calendardata.api.agenda.CalendarDataGoalModel
 
 internal data class ListGoalsVisibility(
-    val visible: List<CalendarGoalModel>,
+    val visible: List<CalendarDataGoalModel>,
     val hiddenCount: Int,
 ) {
     companion object {
         fun of(
-            pending: List<CalendarGoalModel>,
+            pending: List<CalendarDataGoalModel>,
             expanded: Boolean,
             limit: Int,
         ): ListGoalsVisibility {

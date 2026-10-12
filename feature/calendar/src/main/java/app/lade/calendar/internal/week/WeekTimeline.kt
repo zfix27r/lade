@@ -26,7 +26,7 @@ import app.lade.calendar.api.config.WeekConfig
 import app.lade.calendar.internal.week.data.GRID_HOUR_FROM
 import app.lade.calendar.internal.week.data.GRID_HOUR_TO
 import app.lade.calendar.internal.week.data.coversHour
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.entry.EntryKind
 import app.lade.ui.theme.Spacing
 import java.time.LocalDate
@@ -35,7 +35,7 @@ import java.time.format.TextStyle
 @Composable
 internal fun WeekTimeline(
     days: List<LocalDate>,
-    entriesByDate: Map<LocalDate, List<CalendarCardModel>>,
+    agendasByDate: Map<LocalDate, List<CalendarDataAgendaModel>>,
     today: LocalDate,
     selectedDate: LocalDate,
     onOpenDay: (LocalDate) -> Unit,
@@ -88,12 +88,13 @@ internal fun WeekTimeline(
                         .padding(end = Spacing.xs),
                 )
                 days.forEach { date ->
-                    val covering = entriesByDate[date].orEmpty().filter { card ->
-                        if (card.entryKind != EntryKind.SCHEDULE && card.entryKind != EntryKind.EVENT) {
+                    val covering = agendasByDate[date].orEmpty().filter { agenda ->
+                        val kind = agenda.entry.kind
+                        if (kind != EntryKind.SCHEDULE && kind != EntryKind.EVENT) {
                             return@filter false
                         }
-                        val start = card.timeFrom ?: return@filter false
-                        val end = card.timeTo ?: return@filter false
+                        val start = agenda.entry.timeFrom ?: return@filter false
+                        val end = agenda.entry.timeTo ?: return@filter false
                         coversHour(start, end, hour)
                     }
                     Box(
@@ -115,7 +116,7 @@ internal fun WeekTimeline(
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(
-                                    text = covering.first().title.ifBlank { "·" },
+                                    text = covering.first().entry.title.ifBlank { "·" },
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     maxLines = 1,

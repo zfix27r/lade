@@ -9,14 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
 import app.lade.calendar.api.config.WeekConfig
 import app.lade.calendar.internal.week.data.weekDays
-import app.lade.calendardata.api.CalendarCardModel
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 
 @Composable
 internal fun WeekStrip(
     currentDate: LocalDate,
-    entries: List<CalendarCardModel>,
+    dates: Set<LocalDate>,
     onDateSelected: (LocalDate) -> Unit,
     config: WeekConfig,
     modifier: Modifier = Modifier,
@@ -24,7 +23,6 @@ internal fun WeekStrip(
     val weekFields = WeekFields.of(LocalLocale.current.platformLocale)
     val days = weekDays(currentDate, weekFields)
     val today = LocalDate.now()
-    val datesWithEntries = entries.map { it.date }.toSet()
 
     Row(
         modifier = modifier
@@ -40,7 +38,7 @@ internal fun WeekStrip(
                 date = date,
                 isSelected = date == currentDate,
                 isToday = date == today,
-                hasEntries = date in datesWithEntries,
+                hasEntries = date in dates,
                 onClick = { onDateSelected(date) },
                 config = config,
                 modifier = Modifier.weight(1f),

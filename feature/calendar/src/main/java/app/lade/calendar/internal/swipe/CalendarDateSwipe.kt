@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
-import app.lade.calendar.internal.domain.CalendarDateMode
+import app.lade.calendar.internal.main.CalendarDateMode
 import app.lade.resources.R
 import kotlin.math.abs
 

@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CalendarViewWeek
 import androidx.compose.material.icons.filled.ViewAgenda
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarMode
 
 internal fun CalendarMode.icon() = when (this) {
     CalendarMode.LIST -> Icons.AutoMirrored.Filled.ViewList

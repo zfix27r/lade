@@ -17,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import app.lade.calendar.internal.appbar.data.icon
 import app.lade.calendar.internal.appbar.data.labelRes
-import app.lade.calendar.internal.domain.mode.CalendarMode
+import app.lade.calendar.internal.main.CalendarMode
 import app.lade.resources.R
 
 @Composable

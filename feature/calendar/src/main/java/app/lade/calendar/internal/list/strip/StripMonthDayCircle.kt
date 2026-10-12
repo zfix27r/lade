@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
 import app.lade.calendar.api.config.StripConfig
-import app.lade.calendardata.api.DayProgress
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import java.time.LocalDate
 
 @Composable
@@ -23,7 +23,7 @@ internal fun StripMonthDayCircle(
     date: LocalDate,
     isActive: Boolean,
     isToday: Boolean,
-    progress: DayProgress?,
+    progress: CalendarDataMarkModel?,
     isOutOfMonth: Boolean,
     config: StripConfig,
 ) {

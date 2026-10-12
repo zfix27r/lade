@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.Dp
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.data.MarkedDatesStore
-import app.lade.calendar.internal.domain.CalendarStateModel
+import app.lade.calendar.internal.main.CalendarStateModel
 import app.lade.calendar.internal.list.strip.StripHost
 import app.lade.calendar.internal.list.strip.StripHostParams
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import java.time.LocalDate
 
 @Composable
@@ -25,13 +25,10 @@ internal fun ListLayout(
     state: CalendarStateModel,
     markedDatesStore: MarkedDatesStore,
     onDateSelected: (LocalDate) -> Unit,
-    onOpenAgenda: (CalendarCardModel) -> Unit,
-    onEntryLongPress: (CalendarCardModel) -> Unit,
+    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
     onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
-    onLoadGoalDetails: (Long, LocalDate) -> Unit,
-    onStartTimer: (Long, LocalDate) -> Unit,
-    onFinishTimer: (Long, LocalDate, Int) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
@@ -63,20 +60,15 @@ internal fun ListLayout(
                 .nestedScroll(stripResult.listPort.connection),
         ) {
             ListContent(
-                entries = state.entries,
+                days = state.days,
                 topOffsetProvider = topOffsetProvider,
                 config = config.list,
-                timerConfig = config.timer,
                 panelHeight = panelHeight,
                 listState = listState,
-                goalDetailsCache = state.goalDetailsCache,
                 onOpenAgenda = onOpenAgenda,
                 onEntryLongPress = onEntryLongPress,
                 onGoalToggle = onGoalToggle,
                 onGoalValueChange = onGoalValueChange,
-                onLoadGoalDetails = onLoadGoalDetails,
-                onStartTimer = onStartTimer,
-                onFinishTimer = onFinishTimer,
                 modifier = Modifier.fillMaxSize(),
             )
         }

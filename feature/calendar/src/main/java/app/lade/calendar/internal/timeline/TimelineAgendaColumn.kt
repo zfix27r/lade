@@ -1,75 +1,68 @@
 package app.lade.calendar.internal.timeline
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
-import app.lade.calendar.internal.list.ListCard
-import app.lade.calendar.internal.list.ListRow
-import app.lade.calendar.internal.timeline.data.TimelineDay
-import app.lade.calendardata.api.CalendarCardModel
-import app.lade.entry.ui.color
+import app.lade.calendar.internal.card.CalendarCardEntry
+import app.lade.calendar.internal.card.expandable.CardExpandableKey
+import app.lade.calendar.internal.card.expandable.rememberCardExpandableState
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineAgendaColumn(
-    day: TimelineDay,
-    onOpenAgenda: (CalendarCardModel) -> Unit,
-    onToggleDone: (Long, LocalDate) -> Unit,
+    day: CalendarDataDayModel,
+    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
-    onEntryLongPress: (CalendarCardModel) -> Unit,
+    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
     val layout = config.timelineLayout
-    val listConfig = config.list
+    val expandableState = rememberCardExpandableState()
 
-    if (day.entries.isEmpty() && !layout.showEmptyDays) return
+    if (day.agendas.isEmpty() && !layout.showEmptyDays) return
 
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(layout.daySpacing),
     ) {
-        if (day.entries.isEmpty()) {
+        if (day.agendas.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(layout.emptyDayHeight),
             )
         } else {
-            day.entries.forEach { card ->
-                val containerColor by animateColorAsState(
-                    targetValue = if (card.allGoalsDone) {
-                        MaterialTheme.colorScheme.surfaceContainerHighest
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainerLow
-                    },
-                    label = "timelineCardContainerColor",
+            day.agendas.forEach { agenda ->
+                val expandableKey = CardExpandableKey.of(
+                    entryId = agenda.entry.id,
+                    epochDay = day.date.toEpochDay(),
                 )
-                ListCard(
-                    cornerRadius = layout.cardCornerRadius,
-                    stripeColor = card.entryKind.color(),
-                    stripeWidth = layout.cardStripeWidth,
-                    containerColor = containerColor,
-                ) {
-                    ListRow(
-                        card = card,
-                        onOpenAgenda = { onOpenAgenda(card) },
-                        onToggleDone = { onToggleDone(card.entryId, card.date) },
-                        onGoalToggle = { goalId -> onGoalToggle(card.entryId, card.date, goalId) },
-                        onLongPress = { onEntryLongPress(card) },
-                        enableMarkHaptics = layout.enableMarkHaptics,
-                        goalsVisibilityLimit = listConfig.goalsVisibilityLimit,
-                    )
-                }
+                val isExpanded = expandableState.isExpanded(expandableKey)
+
+                CalendarCardEntry(
+                    agenda = agenda,
+                    date = day.date,
+                    expanded = isExpanded,
+                    onOpenAgenda = { onOpenAgenda(day.date, agenda) },
+                    onLongPress = { onEntryLongPress(day.date, agenda) },
+                    onToggleExpand = { expandableState.toggle(expandableKey) },
+                    onGoalBinaryClick = { goalId ->
+                        onGoalToggle(agenda.entry.id, day.date, goalId)
+                    },
+                    onGoalValueChange = { goalId, value ->
+                        onGoalValueChange(agenda.entry.id, day.date, goalId, value)
+                    },
+                )
             }
         }
     }

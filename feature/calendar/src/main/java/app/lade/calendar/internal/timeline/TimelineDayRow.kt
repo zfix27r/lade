@@ -10,18 +10,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
-import app.lade.calendar.internal.timeline.data.TimelineDay
-import app.lade.calendardata.api.CalendarCardModel
+import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineDayRow(
-    day: TimelineDay,
+    day: CalendarDataDayModel,
     isToday: Boolean,
-    onOpenAgenda: (CalendarCardModel) -> Unit,
-    onToggleDone: (Long, LocalDate) -> Unit,
+    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
-    onEntryLongPress: (CalendarCardModel) -> Unit,
+    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
@@ -40,8 +40,8 @@ internal fun TimelineDayRow(
         TimelineAgendaColumn(
             day = day,
             onOpenAgenda = onOpenAgenda,
-            onToggleDone = onToggleDone,
             onGoalToggle = onGoalToggle,
+            onGoalValueChange = onGoalValueChange,
             onEntryLongPress = onEntryLongPress,
             modifier = Modifier
                 .weight(1f)

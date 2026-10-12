@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.res.colorResource
 import app.lade.ui.R
+import app.lade.ui.components.card.LadeCardColors
+import app.lade.ui.components.card.LocalLadeCardColors
 import app.lade.ui.theme.helper.rememberToday
 import java.util.Locale
 
@@ -29,6 +31,10 @@ fun LadeTheme(
         LocalMotionScale provides motionScale,
         LocalAppLocale provides locale,
         LocalToday provides today,
+        LocalLadeCardColors provides LadeCardColors(
+            completedContainer = colorScheme.surfaceContainerLow,
+            activeContainer = colorScheme.secondaryContainer,
+        ),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
