@@ -9,11 +9,14 @@ import app.lade.calendar.internal.data.MarkedDatesStore
 import app.lade.calendar.internal.data.calendarRange
 import app.lade.calendar.internal.data.shiftCalendarDate
 import app.lade.calendar.internal.data.timelineWindow
+import app.lade.calendar.internal.dates.CalendarDatesWeekModel
+import app.lade.calendar.internal.dates.grid.buildCalendarDatesWeeks
 import app.lade.calendar.internal.main.CalendarDateMode
 import app.lade.calendar.internal.main.CalendarMode
-import app.lade.calendar.internal.main.CalendarStateModel
 import app.lade.calendar.internal.main.CalendarUiEvent
 import app.lade.calendardata.api.CalendarDataApi
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -24,9 +27,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.WeekFields
@@ -42,23 +44,31 @@ internal class CalendarViewModel @Inject constructor(
     private val timelineConfig: TimelineWindowConfig = DefaultTimelineWindowConfig,
 ) : ViewModel() {
 
-    private val keyDate = "calendar.currentDate"
+    private val keyDate = "calendar.selectedDate"
     private val keyMode = "calendar.mode"
 
-    private val initialDate = savedStateHandle.get<String>(keyDate)?.let(LocalDate::parse)
+    private val initialMode: CalendarMode = savedStateHandle.get<String>(keyMode)
+        ?.let { runCatching { CalendarMode.valueOf(it) }.getOrNull() }
+        ?: CalendarMode.WEEK
+
+    private val initialDate: LocalDate = savedStateHandle.get<String>(keyDate)
+        ?.let(LocalDate::parse)
         ?: LocalDate.now()
 
-    private val _state = MutableStateFlow(
-        CalendarStateModel(
-            mode = savedStateHandle.get<String>(keyMode)
-                ?.let { runCatching { CalendarMode.valueOf(it) }.getOrNull() }
-                ?: CalendarMode.LIST,
-            currentDate = initialDate,
-            days = emptyList(),
-            marks = emptyMap(),
-        )
-    )
-    val state: StateFlow<CalendarStateModel> = _state.asStateFlow()
+    private val _mode = MutableStateFlow(initialMode)
+    val mode: StateFlow<CalendarMode> = _mode.asStateFlow()
+
+    private val _selectedDate = MutableStateFlow(initialDate)
+    val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+
+    private val _visibleDate = MutableStateFlow(initialDate)
+    val visibleDate: StateFlow<LocalDate> = _visibleDate.asStateFlow()
+
+    private val _days = MutableStateFlow(emptyList<CalendarDataDayModel>())
+    val days: StateFlow<List<CalendarDataDayModel>> = _days.asStateFlow()
+
+    private val _marks = MutableStateFlow(emptyMap<LocalDate, CalendarDataMarkModel>())
+    val marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>> = _marks.asStateFlow()
 
     private val _events = MutableSharedFlow<CalendarUiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<CalendarUiEvent> = _events.asSharedFlow()
@@ -68,31 +78,68 @@ internal class CalendarViewModel @Inject constructor(
     private var daysJob: Job? = null
     private var timelineJob: Job? = null
 
-    private var timelineWindow = timelineWindow(_state.value.currentDate, timelineConfig)
+    private var timelineWindow = timelineWindow(initialDate, timelineConfig)
 
     private var markedDatesStoreStarted = false
 
+    private val _weeks = MutableStateFlow<List<CalendarDatesWeekModel>>(emptyList())
+    val weeks: StateFlow<List<CalendarDatesWeekModel>> = _weeks.asStateFlow()
+
+
     init {
-        observeModeAndDate()
+        observeWeeks()
+        observeModeAndVisibleDate()
         observeMarkedDates()
         persistState()
     }
 
+    private fun observeWeeks() {
+        val today = LocalDate.now()
+        val from = today.minusYears(RANGE_YEARS_BACK)
+        val to = today.plusYears(RANGE_YEARS_FORWARD)
+        val weekFields = WeekFields.of(Locale.getDefault())
+
+        viewModelScope.launch {
+            calendarData.observeMarkedDates(from, to)
+                .catch { t -> _events.tryEmit(CalendarUiEvent.Error(t.message ?: "Load error")) }
+                .collect { marks ->
+                    _weeks.value = buildCalendarDatesWeeks(from, to, marks, weekFields)
+                }
+        }
+    }
+
     fun onModeChange(mode: CalendarMode) {
-        _state.update { it.copy(mode = mode) }
+        _mode.value = mode
         reload()
     }
 
     fun onDateSelected(date: LocalDate) {
-        _state.update { it.copy(currentDate = date) }
+        _selectedDate.value = date
+        _visibleDate.value = date
+    }
+
+    fun onVisibleDateChange(date: LocalDate) {
+        _visibleDate.value = date
     }
 
     fun goToday() {
-        _state.update { it.copy(currentDate = LocalDate.now()) }
+        val today = LocalDate.now()
+        _selectedDate.value = today
+        _visibleDate.value = today
+    }
+
+    fun onSwipe(direction: CalendarDateMode, isMonth: Boolean) {
+        if (_mode.value == CalendarMode.LIST) return
+        val delta = when (direction) {
+            CalendarDateMode.FORWARD -> 1L
+            CalendarDateMode.BACKWARD -> -1L
+        }
+        _visibleDate.value = shiftCalendarDate(_visibleDate.value, _mode.value, delta)
     }
 
     fun onTimelineScroll(firstVisibleDate: LocalDate) {
-        if (_state.value.mode != CalendarMode.TIMELINE) return
+        if (_mode.value != CalendarMode.TIMELINE) return
+        _visibleDate.value = firstVisibleDate
         val window = timelineWindow
         var next = window
         if (window.isNearStart(firstVisibleDate, timelineConfig.loadThresholdDays)) {
@@ -104,17 +151,6 @@ internal class CalendarViewModel @Inject constructor(
         if (next != window) {
             timelineWindow = next
             observeTimeline()
-        }
-    }
-
-    fun onSwipe(direction: CalendarDateMode, isMonth: Boolean) {
-        if (_state.value.mode == CalendarMode.LIST) return
-        val delta = when (direction) {
-            CalendarDateMode.FORWARD -> 1L
-            CalendarDateMode.BACKWARD -> -1L
-        }
-        _state.update { s ->
-            s.copy(currentDate = shiftCalendarDate(s.currentDate, s.mode, delta))
         }
     }
 
@@ -177,10 +213,9 @@ internal class CalendarViewModel @Inject constructor(
         }
     }
 
-    private fun observeModeAndDate() {
+    private fun observeModeAndVisibleDate() {
         viewModelScope.launch {
-            _state
-                .map { it.mode to it.currentDate }
+            combine(_mode, _visibleDate) { mode, date -> mode to date }
                 .distinctUntilChanged()
                 .collect { (mode, date) ->
                     when (mode) {
@@ -197,9 +232,7 @@ internal class CalendarViewModel @Inject constructor(
 
     private fun observeMarkedDates() {
         viewModelScope.launch {
-            _state
-                .map { it.currentDate }
-                .distinctUntilChanged()
+            _visibleDate
                 .collect { date ->
                     if (!markedDatesStoreStarted) {
                         markedDatesStore.start(date)
@@ -210,17 +243,14 @@ internal class CalendarViewModel @Inject constructor(
                 }
         }
         viewModelScope.launch {
-            markedDatesStore.marked.collect { marks ->
-                _state.update { it.copy(marks = marks) }
-            }
+            markedDatesStore.marked.collect { marks -> _marks.value = marks }
         }
     }
 
     private fun reload() {
-        val s = _state.value
-        when (s.mode) {
+        when (_mode.value) {
             CalendarMode.TIMELINE -> observeTimeline()
-            else -> observeDays(s.currentDate, s.mode)
+            else -> observeDays(_visibleDate.value, _mode.value)
         }
     }
 
@@ -230,7 +260,7 @@ internal class CalendarViewModel @Inject constructor(
             val range = calendarRange(date, mode, weekFields) ?: return@launch
             calendarData.observeRangeDays(range.start, range.endInclusive)
                 .catch { t -> _events.tryEmit(CalendarUiEvent.Error(t.message ?: "Load error")) }
-                .collect { days -> _state.update { it.copy(days = days) } }
+                .collect { days -> _days.value = days }
         }
     }
 
@@ -242,18 +272,23 @@ internal class CalendarViewModel @Inject constructor(
                 .catch { t ->
                     _events.tryEmit(CalendarUiEvent.Error(t.message ?: "Load error"))
                 }
-                .collect { days -> _state.update { it.copy(days = days) } }
+                .collect { days -> _days.value = days }
         }
     }
 
     private fun persistState() {
         viewModelScope.launch {
-            _state.map { it.currentDate }.distinctUntilChanged()
+            _selectedDate
                 .collect { savedStateHandle[keyDate] = it.toString() }
         }
         viewModelScope.launch {
-            _state.map { it.mode }.distinctUntilChanged()
+            _mode
                 .collect { savedStateHandle[keyMode] = it.name }
         }
+    }
+
+    companion object {
+        private const val RANGE_YEARS_BACK = 1L
+        private const val RANGE_YEARS_FORWARD = 2L
     }
 }

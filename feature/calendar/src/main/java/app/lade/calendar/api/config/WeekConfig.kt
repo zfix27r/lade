@@ -17,10 +17,10 @@ data class WeekConfig(
     val dotPadding: Dp = Spacing.xs,
     val gridPadding: Dp = Spacing.sm,
     val hourHeight: Dp = Spacing.xxxl,
-    val hourLabelWidth: Dp = 40.dp,
     val dayColumnWidth: Dp = 72.dp,
     val gridCellBorderWidth: Dp = StrokeWidth.hairline,
     val gridCellPadding: Dp = StrokeWidth.hairline,
+    val stripHeight: Dp = 44.dp,
 )
 
 val DefaultWeekConfig = WeekConfig()

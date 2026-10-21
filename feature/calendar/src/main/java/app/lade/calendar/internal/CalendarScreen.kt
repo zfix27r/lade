@@ -54,7 +54,6 @@ internal fun CalendarScreen(
     config: CalendarConfig = DefaultCalendarConfig,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     var selectedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
     var openedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
     val view = LocalView.current
@@ -80,6 +79,7 @@ internal fun CalendarScreen(
         CalendarModeActions(
             onSwipe = viewModel::onSwipe,
             onDateSelected = viewModel::onDateSelected,
+            onVisibleDateChange = { date -> viewModel.onVisibleDateChange(date) },
             onEditEntry = { entryId -> draftApi.open(entryId) },
             onOpenAgenda = { date, agenda -> openedEntry = date to agenda },
             onEntryLongPress = { date, agenda -> selectedEntry = date to agenda },
@@ -126,8 +126,8 @@ internal fun CalendarScreen(
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                     topBar = {
                         AppBarView(
-                            mode = state.mode,
-                            stripDate = state.currentDate,
+                            mode = viewModel.mode,
+                            currentDate = viewModel.selectedDate,
                             onModeChange = viewModel::onModeChange,
                             onTitleClick = viewModel::goToday,
                             onShare = {
@@ -148,8 +148,12 @@ internal fun CalendarScreen(
                             .padding(padding),
                     ) {
                         CalendarModeContent(
-                            state = state,
-                            markedDatesStore = viewModel.markedDatesStore,
+                            mode = viewModel.mode,
+                            selectedDate = viewModel.selectedDate,
+                            visibleDate = viewModel.visibleDate,
+                            weeks = viewModel.weeks,
+                            days = viewModel.days,
+                            marks = viewModel.marks,
                             actions = actions,
                             config = config,
                             modifier = Modifier.fillMaxSize(),
@@ -183,7 +187,7 @@ internal fun CalendarScreen(
     }
 
     DraftHost(
-        defaultDate = state.currentDate,
+        defaultDate = viewModel.selectedDate,
         modifier = Modifier.fillMaxSize(),
     )
 }

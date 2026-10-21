@@ -15,22 +15,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.calendar.internal.appbar.data.icon
 import app.lade.calendar.internal.appbar.data.labelRes
 import app.lade.calendar.internal.main.CalendarMode
 import app.lade.resources.R
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal fun AppBarModeBtn(
-    mode: CalendarMode,
+    mode: StateFlow<CalendarMode>,
     onModeChange: (CalendarMode) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val modeState by mode.collectAsStateWithLifecycle()
 
     Box {
         IconButton(onClick = { expanded = true }) {
             Icon(
-                imageVector = mode.icon(),
+                imageVector = modeState.icon(),
                 contentDescription = stringResource(R.string.calendar_mode_menu_cd),
             )
         }
@@ -46,7 +49,7 @@ internal fun AppBarModeBtn(
                         onModeChange(item)
                     },
                     leadingIcon = { Icon(item.icon(), contentDescription = null) },
-                    trailingIcon = if (item == mode) {
+                    trailingIcon = if (item == modeState) {
                         {
                             Icon(
                                 Icons.Filled.Check,

@@ -10,34 +10,37 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
-import app.lade.calendar.internal.main.CalendarStateModel
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
+import app.lade.calendar.internal.main.CalendarModeActions
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineLayout(
-    state: CalendarStateModel,
-    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
-    onGoalToggle: (Long, LocalDate, Long) -> Unit,
-    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
-    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
-    onTimelineScroll: (LocalDate) -> Unit,
+    currentDate: StateFlow<LocalDate>,
+    days: StateFlow<List<CalendarDataDayModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
     val listState = rememberLazyListState()
     val today = remember { LocalDate.now() }
+    val daysValue by days.collectAsState()
 
-    LaunchedEffect(listState, state.days) {
+    LaunchedEffect(listState, daysValue) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                val day = state.days.getOrNull(index) ?: return@collect
-                onTimelineScroll(day.date)
+                val day = daysValue.getOrNull(index) ?: return@collect
+                actions.onTimelineScroll(day.date)
             }
     }
 
@@ -55,16 +58,16 @@ internal fun TimelineLayout(
             modifier = Modifier.fillMaxSize(),
         ) {
             items(
-                items = state.days,
+                items = daysValue,
                 key = { "day-${it.date.toEpochDay()}" },
             ) { day ->
                 TimelineDayRow(
                     day = day,
                     isToday = day.date == today,
-                    onOpenAgenda = onOpenAgenda,
-                    onGoalToggle = onGoalToggle,
-                    onGoalValueChange = onGoalValueChange,
-                    onEntryLongPress = onEntryLongPress,
+                    onOpenAgenda = actions.onOpenAgenda,
+                    onGoalToggle = actions.onGoalToggle,
+                    onGoalValueChange = actions.onGoalValueChange,
+                    onEntryLongPress = actions.onEntryLongPress,
                     config = config,
                 )
             }

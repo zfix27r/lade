@@ -10,11 +10,17 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import app.lade.calendar.api.config.CalendarConfig
+import app.lade.calendar.api.config.DefaultCalendarConfig
+import app.lade.calendar.internal.main.CalendarModeActions
 import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import app.lade.resources.R
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
@@ -23,15 +29,19 @@ import java.util.Locale
 
 @Composable
 internal fun YearGrid(
-    year: Int,
-    marks: Map<LocalDate, CalendarDataMarkModel>,
-    onOpenMonth: (YearMonth) -> Unit,
+    currentDate: StateFlow<LocalDate>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    actions: CalendarModeActions,
     modifier: Modifier = Modifier,
+    config: CalendarConfig = DefaultCalendarConfig,
 ) {
     val locale = remember { Locale.getDefault() }
     val today = remember { LocalDate.now() }
+    val date by currentDate.collectAsState()
+    val marksValue by marks.collectAsState()
+    val year = date.year
     val months = remember(year) { Month.entries.map { YearMonth.of(year, it) } }
-    val monthsWithEntries = marks
+    val monthsWithEntries = marksValue
         .filter { it.value.total > 0 }
         .map { YearMonth.from(it.key) }
         .toSet()
@@ -59,7 +69,7 @@ internal fun YearGrid(
                         },
                     isCurrent = yearMonth == YearMonth.from(today),
                     hasEntries = yearMonth in monthsWithEntries,
-                    onClick = { onOpenMonth(yearMonth) },
+                    onClick = { actions.onOpenMonth(yearMonth) },
                 )
             }
         }

@@ -13,20 +13,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.calendar.api.config.ListConfig
 import app.lade.calendar.internal.card.CalendarCardEntry
 import app.lade.calendar.internal.card.expandable.CardExpandableKey
 import app.lade.calendar.internal.card.expandable.rememberCardExpandableState
 import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @Composable
 internal fun ListContent(
-    days: List<CalendarDataDayModel>,
+    days: StateFlow<List<CalendarDataDayModel>>,
     topOffsetProvider: () -> Dp,
     config: ListConfig,
     panelHeight: Dp,
@@ -37,6 +40,7 @@ internal fun ListContent(
     onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val daysValue by days.collectAsStateWithLifecycle()
     val expandableState = rememberCardExpandableState()
 
     Box(
@@ -55,7 +59,7 @@ internal fun ListContent(
             verticalArrangement = Arrangement.spacedBy(config.entrySpacing),
             modifier = Modifier.fillMaxSize(),
         ) {
-            days.forEach { day ->
+            daysValue.forEach { day ->
                 items(
                     items = day.agendas,
                     key = { agenda -> "entry-${agenda.entry.id}-${day.date.toEpochDay()}" },
@@ -83,7 +87,7 @@ internal fun ListContent(
                 }
             }
         }
-        if (days.all { it.agendas.isEmpty() }) {
+        if (daysValue.all { it.agendas.isEmpty() }) {
             CalendarListEmptyState(
                 icon = Icons.AutoMirrored.Filled.EventNote,
                 modifier = Modifier.fillMaxSize(),

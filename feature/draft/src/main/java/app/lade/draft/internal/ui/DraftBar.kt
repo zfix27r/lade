@@ -24,12 +24,13 @@ import app.lade.draft.api.DraftPhase
 import app.lade.draft.internal.snackbar.DraftSnackBar
 import app.lade.draft.internal.ui.bar.BarView
 import app.lade.draft.internal.ui.bar.DraftBarEvent
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun DraftBar(
-    defaultDate: LocalDate?,
+    defaultDate: StateFlow<LocalDate>,
     modifier: Modifier = Modifier,
     viewModel: DraftBarViewModel = hiltViewModel(),
 ) {
@@ -40,8 +41,8 @@ internal fun DraftBar(
     val isImeVisible = WindowInsets.isImeVisible
     val isEditing = lifecycle.phase == DraftPhase.EDIT
 
-    LaunchedEffect(defaultDate) {
-        viewModel.setDefaultDate(defaultDate)
+    LaunchedEffect(Unit) {
+        viewModel.setDefaultDate(defaultDate.value)
     }
 
     LaunchedEffect(isImeVisible) {

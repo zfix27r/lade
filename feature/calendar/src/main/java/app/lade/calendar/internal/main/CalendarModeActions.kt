@@ -7,6 +7,7 @@ import java.time.YearMonth
 data class CalendarModeActions(
     val onSwipe: (CalendarDateMode, Boolean) -> Unit,
     val onDateSelected: (LocalDate) -> Unit,
+    val onVisibleDateChange: (LocalDate) -> Unit,
     val onEditEntry: (Long) -> Unit,
     val onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
     val onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,

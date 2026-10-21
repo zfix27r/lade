@@ -3,11 +3,12 @@ package app.lade.draft.api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.lade.draft.internal.ui.DraftBar
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @Composable
 fun DraftHost(
-    defaultDate: LocalDate?,
+    defaultDate: StateFlow<LocalDate>,
     modifier: Modifier = Modifier,
 ) {
     DraftBar(

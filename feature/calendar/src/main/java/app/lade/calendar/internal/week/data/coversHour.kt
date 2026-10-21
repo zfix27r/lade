@@ -10,5 +10,5 @@ internal fun coversHour(start: LocalTime, end: LocalTime, hour: Int): Boolean {
     return startMin < hourEnd && endMin > hourStart
 }
 
-internal const val GRID_HOUR_FROM = 6
-internal const val GRID_HOUR_TO = 22
+internal const val GRID_HOUR_FROM = 0
+internal const val GRID_HOUR_TO = 24

@@ -5,70 +5,88 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.unit.Dp
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
-import app.lade.calendar.internal.data.MarkedDatesStore
-import app.lade.calendar.internal.main.CalendarStateModel
-import app.lade.calendar.internal.list.strip.StripHost
-import app.lade.calendar.internal.list.strip.StripHostParams
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
+import app.lade.calendar.internal.main.CalendarModeActions
+import app.lade.calendar.internal.strip.CalendarStripView
+import app.lade.calendar.internal.strip.rememberStripHostState
+import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
+import java.time.temporal.WeekFields
 
 @Composable
 internal fun ListLayout(
-    state: CalendarStateModel,
-    markedDatesStore: MarkedDatesStore,
-    onDateSelected: (LocalDate) -> Unit,
-    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
-    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
-    onGoalToggle: (Long, LocalDate, Long) -> Unit,
-    onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
+    currentDate: StateFlow<LocalDate>,
+    days: StateFlow<List<CalendarDataDayModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {
     val listState = rememberLazyListState()
-    val markedDates = markedDatesStore.marked.collectAsState()
     val panelHeight = config.list.bottomPaddingForInputBar
 
-    Box(modifier = modifier.fillMaxSize()) {
-        val stripResult = StripHost(
-            StripHostParams(
-                calendarDate = state.currentDate,
-                calendarMarkedDates = markedDates,
-                config = config.strip,
-                listState = listState,
-                onDateSelected = onDateSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter),
-            )
-        )
+    val density = LocalDensity.current
+    val locale = LocalLocale.current.platformLocale
+    val weekFields = remember(locale) { WeekFields.of(locale) }
+    val fullScrollPx = with(density) {
+        (config.strip.rowHeight * config.strip.scrollRows).toPx()
+    }
 
-        val topOffsetProvider: () -> Dp = remember(stripResult) {
-            stripResult.topOffset
+    val host = rememberStripHostState(
+        currentDate = currentDate,
+        config = config.strip,
+        listState = listState,
+        weekFields = weekFields,
+        fullScrollPx = fullScrollPx,
+    )
+
+    val topOffsetProvider: () -> Dp = remember(host) {
+        {
+            val layout = host.layout.value
+            val progress = host.progress.value
+            layout.listTopOffsetY(progress)
         }
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        CalendarStripView(
+            host = host,
+            currentDate = currentDate,
+            days = days,
+            marks = marks,
+            actions = actions,
+            onDateSelected = actions.onDateSelected,
+            config = config.strip,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
+        )
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(stripResult.listPort.connection),
+                .nestedScroll(host.connection),
         ) {
             ListContent(
-                days = state.days,
+                days = days,
                 topOffsetProvider = topOffsetProvider,
                 config = config.list,
                 panelHeight = panelHeight,
                 listState = listState,
-                onOpenAgenda = onOpenAgenda,
-                onEntryLongPress = onEntryLongPress,
-                onGoalToggle = onGoalToggle,
-                onGoalValueChange = onGoalValueChange,
+                onOpenAgenda = actions.onOpenAgenda,
+                onEntryLongPress = actions.onEntryLongPress,
+                onGoalToggle = actions.onGoalToggle,
+                onGoalValueChange = actions.onGoalValueChange,
                 modifier = Modifier.fillMaxSize(),
             )
         }
