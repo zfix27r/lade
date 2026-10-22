@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 
 @Composable
 internal fun CardExpandableDetails(

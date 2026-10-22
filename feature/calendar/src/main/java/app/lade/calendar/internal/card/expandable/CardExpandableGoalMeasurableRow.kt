@@ -25,7 +25,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 import kotlin.math.roundToInt
 
 @Composable

@@ -16,16 +16,22 @@ data class EntryEntity(
 	val kind: String,
 	val title: String,
 	val templateId: Long?,
-	val dateFromEpochDay: Long? = null,
-	val dateToEpochDay: Long? = null,
+
+	val dateFrom: Long? = null,
+	val dateTo: Long? = null,
 	val startTimeMinutes: Int? = null,
 	val endTimeMinutes: Int? = null,
-	val durationMinutes: Int? = null,
+
 	val rrule: String? = null,
+
+	val durationMinutes: Int? = null,
 	val alarmMode: String = "none",
 	val reminderMinutesBefore: Int? = null,
-	val archivedAtEpochMs: Long? = null,
-	val pausedAtEpochMs: Long? = null,
-	val createdAtEpochMs: Long,
-	val updatedAtEpochMs: Long? = null,
+
+	val archivedAt: Long? = null,
+	val pausedAt: Long? = null,
+	// Дата обновления записи. Устанавливается при создании, каждом обновлении записи.
+	val updatedAt: Long,
+	// Дата создания записи. Устанавливается единожды.
+	val createdAt: Long,
 )

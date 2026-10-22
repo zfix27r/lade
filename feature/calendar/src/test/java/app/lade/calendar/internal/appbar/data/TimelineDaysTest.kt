@@ -1,7 +1,6 @@
 package app.lade.calendar.internal.appbar.data
 
 import app.lade.calendar.internal.data.buildTimelineDays
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.entry.EntryKind
 import junit.framework.TestCase
 import org.junit.Test
@@ -12,7 +11,7 @@ class TimelineDaysTest {
     private fun card(
         date: LocalDate,
         id: Long = date.toEpochDay(),
-    ): CalendarDataAgendaModel = CalendarDataAgendaModel(
+    ): CalendarDataFullAgendaModel = CalendarDataFullAgendaModel(
         date = date,
         entryId = id,
         entryKind = EntryKind.NOTE,

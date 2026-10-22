@@ -1,7 +1,7 @@
 package app.lade.calendar
 
 import app.lade.calendar.internal.list.ListGoalsVisibility
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test

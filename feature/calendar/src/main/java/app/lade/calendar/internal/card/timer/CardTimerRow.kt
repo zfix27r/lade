@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import app.lade.calendardata.api.agenda.CalendarDataTimerModel
+import app.lade.calendardata.api.models.CalendarDataTimerModel
 import kotlinx.coroutines.delay
 
 @Composable

@@ -1,9 +1,8 @@
-package app.lade.calendardata.api.agenda
+package app.lade.calendardata.api.models
 
-data class CalendarDataAgendaModel(
+data class CalendarDataModel(
     val entry: CalendarDataEntryModel,
     val goals: CalendarDataGoalsModel?,
     val timer: CalendarDataTimerModel?,
     val notifications: CalendarDataNotificationsModel?,
-    val daysLeft: Int?,
 )

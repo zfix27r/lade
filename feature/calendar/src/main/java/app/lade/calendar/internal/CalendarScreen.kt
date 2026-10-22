@@ -33,7 +33,6 @@ import app.lade.calendar.internal.main.CalendarMode
 import app.lade.calendar.internal.main.CalendarModeActions
 import app.lade.calendar.internal.main.CalendarModeContent
 import app.lade.calendar.internal.main.CalendarUiEvent
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.draft.api.DraftApi
 import app.lade.draft.api.DraftHost
 import app.lade.draft.api.DraftPhase
@@ -54,8 +53,8 @@ internal fun CalendarScreen(
     config: CalendarConfig = DefaultCalendarConfig,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
-    var selectedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
-    var openedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataAgendaModel>?>(null) }
+    var selectedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataFullAgendaModel>?>(null) }
+    var openedEntry by remember { mutableStateOf<Pair<LocalDate, CalendarDataFullAgendaModel>?>(null) }
     val view = LocalView.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

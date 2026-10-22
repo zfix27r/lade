@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 
 @Composable
 internal fun CardExpandableGoalBinaryRow(

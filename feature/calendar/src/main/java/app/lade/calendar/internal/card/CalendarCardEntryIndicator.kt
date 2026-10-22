@@ -12,11 +12,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import app.lade.calendar.internal.card.expandable.CardExpandableGoalDots
 import app.lade.calendar.internal.card.timer.CardTimerIndicator
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 
 @Composable
 internal fun CalendarCardEntryIndicator(
-    agenda: CalendarDataAgendaModel,
+    agenda: CalendarDataFullAgendaModel,
     onToggleExpand: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

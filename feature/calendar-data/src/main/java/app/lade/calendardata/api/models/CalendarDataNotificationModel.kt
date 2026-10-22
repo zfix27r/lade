@@ -1,4 +1,4 @@
-package app.lade.calendardata.api.agenda
+package app.lade.calendardata.api.models
 
 import java.time.LocalDate
 import java.time.LocalTime

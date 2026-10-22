@@ -2,7 +2,7 @@ package app.lade.calendar.internal.card.expandable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 
 @Composable
 internal fun CardExpandableGoalRow(

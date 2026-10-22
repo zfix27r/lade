@@ -7,13 +7,11 @@ import app.lade.agendastore.goal.GoalEntity
 import app.lade.agendastore.log.LogDao
 import app.lade.agendastore.log.LogEntity
 import app.lade.calendardata.api.CalendarDataApi
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
-import app.lade.calendardata.api.agenda.CalendarDataEntryModel
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
-import app.lade.calendardata.api.agenda.CalendarDataGoalsModel
-import app.lade.calendardata.api.agenda.CalendarDataTimerModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import app.lade.calendardata.api.models.CalendarDataModel
+import app.lade.calendardata.api.models.CalendarDataEntryModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalsModel
+import app.lade.calendardata.api.models.CalendarDataTimerModel
 import app.lade.calendardata.internal.mapper.isDone
 import app.lade.calendardata.internal.mapper.toEntryKind
 import app.lade.calendardata.internal.mapper.toLocalTimeFrom
@@ -37,9 +35,10 @@ internal class CalendarDataApiImpl @Inject constructor(
     override fun observeRangeDays(
         from: LocalDate,
         to: LocalDate,
-    ): Flow<List<CalendarDataDayModel>> {
+    ): Flow<List<CalendarDataModel>> {
         val fromEpoch = from.toEpochDay()
         val toEpoch = to.toEpochDay()
+
         return combine(
             entryDao.observeActive(),
             goalDao.observeAll(),
@@ -47,7 +46,7 @@ internal class CalendarDataApiImpl @Inject constructor(
         ) { entries, goals, logs ->
             val goalsByEntry = goals.groupBy { it.entryId }
             val logsByEntry = logs.groupBy { it.entryId }
-            val result = mutableListOf<CalendarDataDayModel>()
+            val result = mutableListOf<CalendarDataModel>()
             var date = from
             while (!date.isAfter(to)) {
                 val epochDay = date.toEpochDay()
@@ -61,62 +60,11 @@ internal class CalendarDataApiImpl @Inject constructor(
                         date = date,
                     )
                 }
-                result += CalendarDataDayModel(date = date, agendas = agendas)
+                result += CalendarDataModel(date = date, agendas = agendas)
                 date = date.plusDays(1)
             }
             result
         }
-    }
-
-    override fun observeMarkedDates(
-        from: LocalDate,
-        to: LocalDate,
-    ): Flow<Map<LocalDate, CalendarDataMarkModel>> {
-        val fromEpoch = from.toEpochDay()
-        val toEpoch = to.toEpochDay()
-        return combine(
-            entryDao.observeActive(),
-            goalDao.observeAll(),
-            logDao.observeBetween(fromEpoch, toEpoch),
-        ) { entries, goals, logs ->
-            val goalsByEntry = goals.groupBy { it.entryId }
-            val logsByEntry = logs.groupBy { it.entryId }
-            val result = mutableMapOf<LocalDate, CalendarDataMarkModel>()
-            var date = from
-            while (!date.isAfter(to)) {
-                val epochDay = date.toEpochDay()
-                var total = 0
-                var done = 0
-                entries.forEach { entry ->
-                    if (!projector.appliesTo(entry, date)) return@forEach
-                    val entryGoals = goalsByEntry[entry.id].orEmpty()
-                    if (entryGoals.isEmpty()) return@forEach
-                    val entryLogs = logsByEntry[entry.id].orEmpty()
-                        .filter { it.epochDay == epochDay }
-                    val logsByGoal = entryLogs.filter { it.goalId != null }
-                        .associateBy { it.goalId }
-                    entryGoals.forEach { goal ->
-                        total++
-                        if (goal.isDone(logsByGoal[goal.id])) done++
-                    }
-                }
-                result[date] = CalendarDataMarkModel(total = total, done = done)
-                date = date.plusDays(1)
-            }
-            result
-        }
-    }
-
-    override suspend fun getGoalDetails(
-        entryId: Long,
-        date: LocalDate,
-    ): List<CalendarDataGoalModel> {
-        val entry = entryDao.getById(entryId) ?: return emptyList()
-        if (!projector.appliesTo(entry, date)) return emptyList()
-        val goals = goalDao.getByEntryId(entryId)
-        val logs = logDao.getByEntryAndDay(entryId, date.toEpochDay())
-        val logsByGoal = logs.filter { it.goalId != null }.associateBy { it.goalId }
-        return goals.map { goal -> goal.toModel(logsByGoal[goal.id]) }
     }
 
     override suspend fun toggleGoal(entryId: Long, date: LocalDate, goalId: Long) {
@@ -258,7 +206,7 @@ internal class CalendarDataApiImpl @Inject constructor(
         goals: List<GoalEntity>,
         logs: List<LogEntity>,
         date: LocalDate,
-    ): CalendarDataAgendaModel? {
+    ): CalendarDataFullAgendaModel? {
         val kind = entry.toEntryKind() ?: return null
         val logsByGoal = logs.filter { it.goalId != null }.associateBy { it.goalId }
         val cardGoals = goals.map { goal -> goal.toModel(logsByGoal[goal.id]) }
@@ -267,7 +215,7 @@ internal class CalendarDataApiImpl @Inject constructor(
             ?.takeIf { it >= 0 }
             ?.toInt()
 
-        return CalendarDataAgendaModel(
+        return CalendarDataFullAgendaModel(
             entry = CalendarDataEntryModel(
                 id = entry.id,
                 kind = kind,
@@ -277,8 +225,8 @@ internal class CalendarDataApiImpl @Inject constructor(
             ),
             goals = if (cardGoals.isEmpty()) null else CalendarDataGoalsModel(
                 goals = cardGoals,
-                goalsDone = cardGoals.count { it.isDone },
-                goalsTotal = cardGoals.size,
+                done = cardGoals.count { it.isDone },
+                total = cardGoals.size,
                 isAllDone = cardGoals.isNotEmpty() && cardGoals.all { it.isDone },
             ),
             timer = buildTimer(entry, logs),

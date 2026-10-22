@@ -23,8 +23,7 @@ import app.lade.calendar.internal.main.CalendarModeActions
 import app.lade.calendar.internal.strip.data.stripWeeks
 import app.lade.calendar.internal.strip.swipe.rememberStripSwipeAnimations
 import app.lade.calendar.internal.strip.swipe.stripGesture
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.temporal.WeekFields
@@ -33,8 +32,8 @@ import java.time.temporal.WeekFields
 internal fun CalendarStripView(
     host: StripHostState,
     currentDate: StateFlow<LocalDate>,
-    days: StateFlow<List<CalendarDataDayModel>>,
-    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    days: StateFlow<List<CalendarDataModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     actions: CalendarModeActions,
     onDateSelected: (LocalDate) -> Unit,
     config: StripConfig,

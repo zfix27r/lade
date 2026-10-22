@@ -1,4 +1,4 @@
-package app.lade.calendar.internal.appbar
+ package app.lade.calendar.internal.appbar
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons

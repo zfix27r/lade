@@ -18,16 +18,15 @@ import androidx.compose.ui.Modifier
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.main.CalendarModeActions
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineLayout(
     currentDate: StateFlow<LocalDate>,
-    days: StateFlow<List<CalendarDataDayModel>>,
-    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    days: StateFlow<List<CalendarDataModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,

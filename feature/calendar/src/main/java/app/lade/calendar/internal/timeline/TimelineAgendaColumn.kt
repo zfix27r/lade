@@ -12,17 +12,16 @@ import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.card.CalendarCardEntry
 import app.lade.calendar.internal.card.expandable.CardExpandableKey
 import app.lade.calendar.internal.card.expandable.rememberCardExpandableState
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import java.time.LocalDate
 
 @Composable
 internal fun TimelineAgendaColumn(
-    day: CalendarDataDayModel,
-    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
+    day: CalendarDataModel,
+    onOpenAgenda: (LocalDate, CalendarDataFullAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
     onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
-    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataFullAgendaModel) -> Unit,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
 ) {

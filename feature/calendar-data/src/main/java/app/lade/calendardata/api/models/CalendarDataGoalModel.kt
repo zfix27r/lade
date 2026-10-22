@@ -1,4 +1,4 @@
-package app.lade.calendardata.api.agenda
+package app.lade.calendardata.api.models
 
 import app.lade.goal.GoalUnit
 

@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lade.calendar.api.config.StripConfig
 import app.lade.calendar.internal.strip.swipe.stripOutOfMonthAlpha
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import app.lade.ui.theme.LocalToday
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
@@ -24,7 +23,7 @@ internal fun StripWeekRow(
     week: List<LocalDate>,
     calendarDate: StateFlow<LocalDate>,
     pageMonth: Month,
-    markedDates: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    markedDates: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     progressState: State<Float>,
     config: StripConfig,
     modifier: Modifier = Modifier,

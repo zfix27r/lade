@@ -15,10 +15,8 @@ import app.lade.calendar.internal.main.CalendarDateMode
 import app.lade.calendar.internal.main.CalendarMode
 import app.lade.calendar.internal.main.CalendarUiEvent
 import app.lade.calendardata.api.CalendarDataApi
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +33,6 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class CalendarViewModel @Inject constructor(
     private val calendarData: CalendarDataApi,
@@ -64,11 +61,11 @@ internal class CalendarViewModel @Inject constructor(
     private val _visibleDate = MutableStateFlow(initialDate)
     val visibleDate: StateFlow<LocalDate> = _visibleDate.asStateFlow()
 
-    private val _days = MutableStateFlow(emptyList<CalendarDataDayModel>())
-    val days: StateFlow<List<CalendarDataDayModel>> = _days.asStateFlow()
+    private val _days = MutableStateFlow(emptyList<CalendarDataModel>())
+    val days: StateFlow<List<CalendarDataModel>> = _days.asStateFlow()
 
-    private val _marks = MutableStateFlow(emptyMap<LocalDate, CalendarDataMarkModel>())
-    val marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>> = _marks.asStateFlow()
+    private val _marks = MutableStateFlow(emptyMap<LocalDate, CalendarDataMinModel>())
+    val marks: StateFlow<Map<LocalDate, CalendarDataMinModel>> = _marks.asStateFlow()
 
     private val _events = MutableSharedFlow<CalendarUiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<CalendarUiEvent> = _events.asSharedFlow()
@@ -87,10 +84,10 @@ internal class CalendarViewModel @Inject constructor(
 
 
     init {
-        observeWeeks()
-        observeModeAndVisibleDate()
-        observeMarkedDates()
-        persistState()
+      //  observeWeeks()
+       // observeModeAndVisibleDate()
+        //observeMarkedDates()
+        //persistState()
     }
 
     private fun observeWeeks() {
@@ -212,6 +209,7 @@ internal class CalendarViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun observeModeAndVisibleDate() {
         viewModelScope.launch {

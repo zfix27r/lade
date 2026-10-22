@@ -1,15 +1,14 @@
 package app.lade.calendar.internal.drag
 
-/**
- * Снапшот состояния жеста. Источник правды — [CalendarDragStateHolder.state].
- *
- * Знак направления не хранится отдельно — он в знаке [totalOffset]:
- *  - `> 0` — вправо (Horizontal) или вниз (Vertical);
- *  - `< 0` — влево (Horizontal) или вверх (Vertical).
- */
-internal data class DragState(
-    val phase: CalendarDragPhase = CalendarDragPhase.IDLE,
-    val direction: CalendarDragDirection = CalendarDragDirection.NONE,
-    val totalOffset: Float = 0f,
-    val velocity: Float = 0f,
-)
+internal data class CalendarDragState(
+    val phase: CalendarDragPhase,
+    val direction: CalendarDragDirection,
+    val offset: Float,
+    val velocity: Float,
+) {
+    val isDraggingVertical: Boolean
+        get() = phase == CalendarDragPhase.DRAGGING && direction == CalendarDragDirection.VERTICAL
+
+    val isDraggingHorizontal: Boolean
+        get() = phase == CalendarDragPhase.DRAGGING && direction == CalendarDragDirection.HORIZONTAL
+}

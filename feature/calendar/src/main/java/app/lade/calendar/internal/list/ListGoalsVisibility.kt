@@ -1,6 +1,6 @@
 package app.lade.calendar.internal.list
 
-import app.lade.calendardata.api.agenda.CalendarDataGoalModel
+import app.lade.calendardata.api.models.CalendarDataGoalModel
 
 internal data class ListGoalsVisibility(
     val visible: List<CalendarDataGoalModel>,

@@ -21,14 +21,13 @@ import app.lade.calendar.internal.dates.CalendarDatesWeekModel
 import app.lade.calendar.internal.week.data.GRID_HOUR_FROM
 import app.lade.calendar.internal.week.data.GRID_HOUR_TO
 import app.lade.calendar.internal.week.data.coversHour
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.entry.EntryKind
 import java.time.LocalDate
 
 @Composable
 internal fun WeekTimeline(
     week: CalendarDatesWeekModel,
-    agendasByDate: Map<LocalDate, List<CalendarDataAgendaModel>>,
+    agendasByDate: Map<LocalDate, List<CalendarDataFullAgendaModel>>,
     today: LocalDate,
     selectedDate: LocalDate,
     onOpenDay: (LocalDate) -> Unit,
@@ -53,7 +52,7 @@ internal fun WeekTimeline(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(config.hourHeight)
+                            .height(config.rowHeight)
                             .border(
                                 width = config.gridCellBorderWidth,
                                 color = MaterialTheme.colorScheme.outlineVariant,

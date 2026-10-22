@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import app.lade.calendardata.api.agenda.CalendarDataTimerModel
+import app.lade.calendardata.api.models.CalendarDataTimerModel
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

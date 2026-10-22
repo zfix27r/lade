@@ -1,86 +1,154 @@
 package app.lade.calendar.internal.drag
 
-import androidx.compose.runtime.withFrameNanos
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
-internal class CalendarDragStateHolder(
-    private val scope: CoroutineScope,
-) {
-    private val _state = MutableStateFlow(DragState())
-    val state: StateFlow<DragState> = _state.asStateFlow()
-
-    private val _settleEvents = MutableSharedFlow<Float>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+internal class CalendarDragStateHolder {
+    private val _state = MutableStateFlow(
+        CalendarDragState(
+            phase = CalendarDragPhase.IDLE,
+            direction = CalendarDragDirection.NONE,
+            offset = 0f,
+            velocity = 0f,
+        ),
     )
-    val settleEvents: SharedFlow<Float> = _settleEvents.asSharedFlow()
+    val state: StateFlow<CalendarDragState> = _state.asStateFlow()
 
     @Volatile
-    private var phase: CalendarDragPhase = CalendarDragPhase.IDLE
+    var horizontal: CalendarDragBehavior = CalendarDragBehavior.disabled
+        private set
 
     @Volatile
-    private var direction: CalendarDragDirection = CalendarDragDirection.NONE
+    var vertical: CalendarDragBehavior = CalendarDragBehavior.disabled
+        private set
 
-    @Volatile
-    private var totalOffset: Float = 0f
+    @Volatile private var phase: CalendarDragPhase = CalendarDragPhase.IDLE
+    @Volatile private var direction: CalendarDragDirection = CalendarDragDirection.NONE
+    @Volatile private var offset: Float = 0f
+    @Volatile private var velocity: Float = 0f
 
-    @Volatile
-    private var velocity: Float = 0f
+    @Volatile private var settledX: Float? = null
+    @Volatile private var settledY: Float? = null
 
-    internal val currentOffset: Float get() = totalOffset
     internal val isSettling: Boolean get() = phase == CalendarDragPhase.SETTLED
 
-    private val pump: Job = scope.launch {
-        while (true) {
-            withFrameNanos { }
-            _state.value = DragState(
-                phase = phase,
-                direction = direction,
-                totalOffset = totalOffset,
-                velocity = velocity,
-            )
+    internal fun updateAxes(horizontal: CalendarDragBehavior, vertical: CalendarDragBehavior) {
+        val previousHorizontalInitial = this.horizontal.initial
+        val previousVerticalInitial = this.vertical.initial
+
+        this.horizontal = horizontal
+        this.vertical = vertical
+
+        if (horizontal.mode == CalendarDragMode.PAGES) {
+            settledX = null
+        } else if (settledX == null || settledX == previousHorizontalInitial) {
+            settledX = horizontal.initial
         }
+
+        if (vertical.mode == CalendarDragMode.PAGES) {
+            settledY = null
+        } else if (settledY == null || settledY == previousVerticalInitial) {
+            settledY = vertical.initial
+        }
+
+        if (phase == CalendarDragPhase.IDLE) {
+            direction = when {
+                settledY != null && vertical.enabled -> CalendarDragDirection.VERTICAL
+                settledX != null && horizontal.enabled -> CalendarDragDirection.HORIZONTAL
+                else -> CalendarDragDirection.NONE
+            }
+            offset = when (direction) {
+                CalendarDragDirection.HORIZONTAL -> settledX ?: horizontal.initial
+                CalendarDragDirection.VERTICAL -> settledY ?: vertical.initial
+                CalendarDragDirection.NONE -> 0f
+            }
+        }
+
+        publish()
     }
 
     internal fun reset() {
         phase = CalendarDragPhase.PRESSED
-        direction = CalendarDragDirection.NONE
-        totalOffset = 0f        // ← единственное изменение
         velocity = 0f
+
+        val keepHorizontal = horizontal.mode == CalendarDragMode.SCROLL && settledX != null
+        val keepVertical = vertical.mode == CalendarDragMode.SCROLL && settledY != null
+
+        direction = when {
+            keepHorizontal && !keepVertical -> CalendarDragDirection.HORIZONTAL
+            keepVertical && !keepHorizontal -> CalendarDragDirection.VERTICAL
+            else -> CalendarDragDirection.NONE
+        }
+        offset = when (direction) {
+            CalendarDragDirection.HORIZONTAL -> settledX ?: horizontal.initial
+            CalendarDragDirection.VERTICAL -> settledY ?: vertical.initial
+            CalendarDragDirection.NONE -> 0f
+        }
+        publish()
     }
 
     internal fun lock(direction: CalendarDragDirection) {
-        this.phase = CalendarDragPhase.DRAGGING
+        phase = CalendarDragPhase.DRAGGING
         this.direction = direction
+        offset = when (direction) {
+            CalendarDragDirection.HORIZONTAL -> settledX ?: horizontal.initial
+            CalendarDragDirection.VERTICAL -> settledY ?: vertical.initial
+            CalendarDragDirection.NONE -> 0f
+        }
+        publish()
     }
 
-    internal fun drag(totalOffset: Float) {
-        this.totalOffset = totalOffset
+    internal fun drag(value: Float) {
+        if (offset == value) return
+        offset = value
+        publish()
     }
 
     internal fun settle(velocity: Float) {
-        this.phase = CalendarDragPhase.SETTLED
-        this.velocity = velocity
-        _settleEvents.tryEmit(velocity)
+        commitCurrentOffset()
+        phase = CalendarDragPhase.IDLE
+        this.velocity = 0f
+        publish()
     }
 
     internal fun cancel() {
-        this.phase = CalendarDragPhase.IDLE
-        this.direction = CalendarDragDirection.NONE
-        this.totalOffset = 0f
-        this.velocity = 0f
+        commitCurrentOffset()
+        phase = CalendarDragPhase.IDLE
+        velocity = 0f
+        publish()
     }
 
-    internal fun dispose() {
-        pump.cancel()
+    private fun commitCurrentOffset() {
+        when (direction) {
+            CalendarDragDirection.HORIZONTAL -> {
+                if (horizontal.mode == CalendarDragMode.SCROLL) {
+                    settledX = offset
+                } else {
+                    direction = CalendarDragDirection.NONE
+                    offset = 0f
+                }
+            }
+            CalendarDragDirection.VERTICAL -> {
+                if (vertical.mode == CalendarDragMode.SCROLL) {
+                    settledY = offset
+                } else {
+                    direction = CalendarDragDirection.NONE
+                    offset = 0f
+                }
+            }
+            CalendarDragDirection.NONE -> {
+                offset = 0f
+            }
+        }
+    }
+
+    private fun publish() {
+        _state.value = CalendarDragState(
+            phase = phase,
+            direction = direction,
+            offset = offset,
+            velocity = velocity,
+        )
     }
 }

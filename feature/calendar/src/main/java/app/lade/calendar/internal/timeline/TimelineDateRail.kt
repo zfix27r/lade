@@ -17,12 +17,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.style.TextAlign
 import app.lade.calendar.api.config.TimelineLayoutConfig
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import java.time.format.TextStyle
 
 @Composable
 internal fun TimelineDateRail(
-    day: CalendarDataDayModel,
+    day: CalendarDataModel,
     isToday: Boolean,
     config: TimelineLayoutConfig,
     modifier: Modifier = Modifier,

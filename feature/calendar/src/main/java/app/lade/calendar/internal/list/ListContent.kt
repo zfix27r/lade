@@ -22,25 +22,25 @@ import app.lade.calendar.api.config.ListConfig
 import app.lade.calendar.internal.card.CalendarCardEntry
 import app.lade.calendar.internal.card.expandable.CardExpandableKey
 import app.lade.calendar.internal.card.expandable.rememberCardExpandableState
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
 @Composable
 internal fun ListContent(
-    days: StateFlow<List<CalendarDataDayModel>>,
+    days: StateFlow<List<CalendarDataModel>>,
     topOffsetProvider: () -> Dp,
     config: ListConfig,
     panelHeight: Dp,
     listState: LazyListState,
-    onOpenAgenda: (LocalDate, CalendarDataAgendaModel) -> Unit,
-    onEntryLongPress: (LocalDate, CalendarDataAgendaModel) -> Unit,
+    onOpenAgenda: (LocalDate, CalendarDataFullAgendaModel) -> Unit,
+    onEntryLongPress: (LocalDate, CalendarDataFullAgendaModel) -> Unit,
     onGoalToggle: (Long, LocalDate, Long) -> Unit,
     onGoalValueChange: (Long, LocalDate, Long, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val daysValue by days.collectAsStateWithLifecycle()
+    println(daysValue)
     val expandableState = rememberCardExpandableState()
 
     Box(

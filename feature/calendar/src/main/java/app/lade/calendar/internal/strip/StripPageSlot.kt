@@ -6,7 +6,6 @@ import androidx.compose.runtime.remember
 import app.lade.calendar.api.config.StripConfig
 import app.lade.calendar.internal.strip.data.stripWeeks
 import app.lade.calendar.internal.strip.layout.StripLayout
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.temporal.WeekFields
@@ -16,7 +15,7 @@ internal fun StripPageSlot(
     pageDate: LocalDate,
     stripDate: LocalDate,
     calendarDate: StateFlow<LocalDate>,
-    markedDates: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    markedDates: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     progressState: State<Float>,
     offsetXState: State<Float>,
     pageIndex: Int,

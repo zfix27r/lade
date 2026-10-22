@@ -3,14 +3,13 @@ package app.lade.calendar.internal.dates.grid
 import app.lade.calendar.internal.dates.CalendarDatesDayModel
 import app.lade.calendar.internal.dates.CalendarDatesWeekKey
 import app.lade.calendar.internal.dates.CalendarDatesWeekModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 
 internal fun buildCalendarDatesWeeks(
     from: LocalDate,
     to: LocalDate,
-    marks: Map<LocalDate, CalendarDataMarkModel>,
+    marks: Map<LocalDate, CalendarDataMinModel>,
     weekFields: WeekFields,
 ): List<CalendarDatesWeekModel> {
     val start = from.with(weekFields.dayOfWeek(), 1L)

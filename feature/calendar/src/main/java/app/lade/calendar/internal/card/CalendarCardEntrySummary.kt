@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.lade.calendar.R
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.entry.ui.icon
 import app.lade.ui.theme.IconSizes
 import app.lade.ui.theme.Row
@@ -29,7 +28,7 @@ import app.lade.ui.theme.Spacing
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun CalendarCardEntrySummary(
-    agenda: CalendarDataAgendaModel,
+    agenda: CalendarDataFullAgendaModel,
     onOpenAgenda: () -> Unit,
     onLongPress: () -> Unit,
     onToggleExpand: () -> Unit,

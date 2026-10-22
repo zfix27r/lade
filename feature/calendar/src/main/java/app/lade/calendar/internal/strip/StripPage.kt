@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import app.lade.calendar.api.config.StripConfig
 import app.lade.calendar.internal.strip.layout.StripLayout
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -19,7 +18,7 @@ import kotlin.math.roundToInt
 internal fun StripPage(
     pageDate: LocalDate,
     calendarDate: StateFlow<LocalDate>,
-    markedDates: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    markedDates: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     progressState: State<Float>,
     offsetXState: State<Float>,
     pageIndex: Int,

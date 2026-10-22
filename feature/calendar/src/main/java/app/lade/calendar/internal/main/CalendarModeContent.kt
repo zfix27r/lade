@@ -10,12 +10,10 @@ import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.dates.CalendarDatesHost
 import app.lade.calendar.internal.dates.CalendarDatesWeekModel
 import app.lade.calendar.internal.list.ListLayout
-import app.lade.calendar.internal.drag.CalendarDragDirection
 import app.lade.calendar.internal.timeline.TimelineLayout
 import app.lade.calendar.internal.week.WeekLayout
 import app.lade.calendar.internal.year.YearGrid
-import app.lade.calendardata.api.agenda.CalendarDataDayModel
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
+import app.lade.calendardata.api.models.CalendarDataModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 
@@ -25,8 +23,8 @@ internal fun CalendarModeContent(
     visibleDate: StateFlow<LocalDate>,
     selectedDate: StateFlow<LocalDate>,
     weeks: StateFlow<List<CalendarDatesWeekModel>>,
-    days: StateFlow<List<CalendarDataDayModel>>,
-    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    days: StateFlow<List<CalendarDataModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,

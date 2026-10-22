@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.lade.calendar.internal.card.expandable.CardExpandableDetails
 import app.lade.calendar.internal.card.timer.CardTimerRow
-import app.lade.calendardata.api.agenda.CalendarDataAgendaModel
 import app.lade.ui.components.card.ladeCardContainerColor
 import app.lade.ui.theme.Radius
 import app.lade.ui.theme.Spacing
@@ -23,7 +22,7 @@ import java.time.LocalDate
 
 @Composable
 internal fun CalendarCardEntry(
-    agenda: CalendarDataAgendaModel,
+    agenda: CalendarDataFullAgendaModel,
     date: LocalDate,
     expanded: Boolean,
     onOpenAgenda: () -> Unit,

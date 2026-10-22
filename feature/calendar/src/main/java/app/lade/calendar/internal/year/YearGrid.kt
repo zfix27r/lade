@@ -18,7 +18,6 @@ import androidx.compose.ui.res.dimensionResource
 import app.lade.calendar.api.config.CalendarConfig
 import app.lade.calendar.api.config.DefaultCalendarConfig
 import app.lade.calendar.internal.main.CalendarModeActions
-import app.lade.calendardata.api.mark.CalendarDataMarkModel
 import app.lade.resources.R
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
@@ -30,7 +29,7 @@ import java.util.Locale
 @Composable
 internal fun YearGrid(
     currentDate: StateFlow<LocalDate>,
-    marks: StateFlow<Map<LocalDate, CalendarDataMarkModel>>,
+    marks: StateFlow<Map<LocalDate, CalendarDataMinModel>>,
     actions: CalendarModeActions,
     modifier: Modifier = Modifier,
     config: CalendarConfig = DefaultCalendarConfig,
